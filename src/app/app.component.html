@@ -1,20 +1,2 @@
-<amplify-authenticator *ngIf="!isSignedIn">
-    <amplify-sign-up
-        slot="sign-up"
-        usernameAlias="email"
-        [formFields]="formFields"
-    ></amplify-sign-up>
-    <amplify-sign-in
-        slot="sign-in"
-        usernameAlias="email"
-        [federated]="federatedConfig"
-    >
-    </amplify-sign-in>
-</amplify-authenticator>
-
-<div *ngIf="isSignedIn && user" class="App">
-    <amplify-sign-out></amplify-sign-out>
-    <div>Hello, {{user.email}}</div>
-    <!-- This is where you application template code goes -->  
-    <router-outlet></router-outlet>
-</div>
+<ngx-spinner></ngx-spinner>
+<router-outlet></router-outlet>
