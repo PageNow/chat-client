@@ -1,6 +1,6 @@
 {
   "auth": {
-    "pagenow714b1415": {
+    "pagenow82cf5108": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
