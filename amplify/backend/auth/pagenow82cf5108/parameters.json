@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "pagenow714b1415_identitypool_714b1415",
+    "identityPoolName": "pagenow82cf5108_identitypool_82cf5108",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "pageno714b1415",
-    "userPoolName": "pagenow714b1415_userpool_714b1415",
+    "resourceNameTruncated": "pageno82cf5108",
+    "userPoolName": "pagenow82cf5108_userpool_82cf5108",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "pageno714b1415_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "pageno82cf5108_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "714b1415",
-    "resourceName": "pagenow714b1415",
+    "sharedId": "82cf5108",
+    "resourceName": "pagenow82cf5108",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -56,7 +56,7 @@
         "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"id\"}},{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://www.pagenow.io/\"],\"LogoutURLs\":[\"https://www.pagenow.io/\"]}",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:4200/\"],\"LogoutURLs\":[\"http://localhost:4200/\"]}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
