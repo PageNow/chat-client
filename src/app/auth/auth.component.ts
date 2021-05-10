@@ -1,9 +1,12 @@
-import { Component, NgZone } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Auth, Hub } from 'aws-amplify';
+import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
+
+import { AuthService } from './auth.service';
+import { AuthState } from './auth.model';
 
 @Component({
     selector: 'app-auth',
@@ -14,14 +17,16 @@ export class AuthComponent {
     authForm: FormGroup;
     forgotPasswordForm: FormGroup;
     recoverPasswordForm: FormGroup;
+    
+    authState: AuthState;
 
     authMode = 'sign-in';
 
     constructor(
         private spinner: NgxSpinnerService,
         private router: Router,
-        private zone: NgZone,
         private fb: FormBuilder,
+        private authService: AuthService
     ) {
         // add password validator
         this.authForm = this.fb.group({
@@ -39,23 +44,15 @@ export class AuthComponent {
             'passwordConfirm': ['', Validators.required]
         });
 
-        // Used for listening to login events
-        Hub.listen("auth", ({ payload: { event, data } }) => {
-            if (event === "cognitoHostedUI" || event === "signedIn") {
-                this.zone.run(() => this.router.navigate(['/']));
-            } else {
-                this.spinner.hide();
+        this.authService.auth$.subscribe((authState: AuthState) => {
+            if (authState.isAuthenticated) {
+                if (authState.username?.startsWith('google_')) {
+                    window.close();
+                } else {
+                    this.router.navigate(['/home'], { replaceUrl: true });
+                }
             }
         });
-
-        //currentAuthenticatedUser: when user comes to login page again
-        Auth.currentAuthenticatedUser()
-            .then(() => {
-                this.router.navigate(['/home'], { replaceUrl: true });
-            }).catch((err) => {
-                this.spinner.hide();
-                console.log(err);
-            });
     }
 
     onSetAuthMode(authMode: string): void {
@@ -74,7 +71,7 @@ export class AuthComponent {
             .catch(err => {
                 this.spinner.hide();
                 console.log(err);
-            })
+            });
     }
 
     onEmailSignIn(): void {
@@ -82,28 +79,39 @@ export class AuthComponent {
         const email = this.authForm.get('email')?.value;
         const password = this.authForm.get('password')?.value;
         Auth.signIn(email, password)
-            .then(() => {
+            .then(data => {
                 this.spinner.hide();
-                this.router.navigate(['/home'], { replaceUrl: true });
+                this.authService.publishSignIn({
+                    username: data.username,
+                    email: data.attributes.email
+                });
+                window.close();
             })
             .catch(err => {
                 this.spinner.hide();
                 console.log(err);
-            });        
+            });
     }
 
     onFacebookSignIn(): void {
         this.spinner.show();
         Auth.federatedSignIn({
             provider: CognitoHostedUIIdentityProvider.Facebook
-        }).then(() => { this.spinner.hide() });
+        }).then(() => {
+            this.spinner.hide();
+            window.close();
+        });
     }
 
     onGoogleSignIn(): void {
         this.spinner.show();
         Auth.federatedSignIn({
             provider: CognitoHostedUIIdentityProvider.Google
-        }).then(() => { this.spinner.hide() });
+        }).then(() => {
+            this.spinner.hide();
+        }).catch(err => {
+            console.log(err);
+        });
     }
 
     onResetPassword(): void {
@@ -134,6 +142,10 @@ export class AuthComponent {
                 console.log(err);
             })
     }
+
+    onSignOut(): void {
+        this.authService.publishSignOut();
+    }
 }
 
 /* Referecnes
@@ -142,4 +154,5 @@ export class AuthComponent {
  * https://github.com/daikiojm/angular-aws-amplify
  * https://docs.amplify.aws/lib/auth/emailpassword/q/platform/js
  * https://docs.amplify.aws/lib/auth/manageusers/q/platform/js#password-operations
+ * https://jasonwatmore.com/post/2020/07/06/angular-10-communicating-between-components-with-observable-subject
  */
