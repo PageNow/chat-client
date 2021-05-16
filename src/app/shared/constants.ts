@@ -6,3 +6,5 @@ export const DEFAULT_AUTH_STATE: AuthState = {
     username: null,
     email: null
 };
+
+export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';

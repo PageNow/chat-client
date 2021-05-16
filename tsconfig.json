@@ -21,7 +21,8 @@
       "es2018",
       "dom"
     ],
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "types": ["chrome"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

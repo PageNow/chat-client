@@ -22,10 +22,4 @@ export class AuthGateComponent {
             }
         });
     }
-
-    onClickSignIn(): void {
-        this.router.navigate([]).then(() => {
-            window.open('/auth', '_blank')
-        });
-    }
 }
