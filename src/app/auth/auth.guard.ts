@@ -15,12 +15,10 @@ export class AuthGuard implements CanActivate {
 
         return Auth.currentAuthenticatedUser()
             .then(() => {
-                console.log('auth');
                 return true;
             })
             .catch(() => {
-                console.log('non-auth');
-                this._router.navigate(['/auth']);
+                this._router.navigate(['/auth-gate']);
                 return false;
             });
     }
