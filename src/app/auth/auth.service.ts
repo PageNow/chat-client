@@ -35,7 +35,7 @@ export class AuthService implements OnDestroy  {
             .then(data => {
                 const authState: AuthState = {
                     isAuthenticated: true,
-                    username: data.username,
+                    userId: data.username,
                     email: data.attributes.email
                 };
                 this.setAuthState(authState);
@@ -99,7 +99,7 @@ export class AuthService implements OnDestroy  {
                 if(session){
                     this.setAuthState({
                         isAuthenticated: true,
-                        username: session.idToken.payload['cognito:username'],
+                        userId: session.idToken.payload['cognito:username'],
                         email: session.idToken.payload['email']
                     });
                 } else {

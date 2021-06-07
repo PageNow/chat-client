@@ -46,7 +46,7 @@ export class AuthComponent {
 
         this.authService.auth$.subscribe((authState: AuthState) => {
             if (authState.isAuthenticated) {
-                if (authState.username?.startsWith('google_')) {
+                if (authState.userId?.startsWith('google_')) {
                     window.close();
                 } else {
                     this.router.navigate(['/home'], { replaceUrl: true });
@@ -82,7 +82,7 @@ export class AuthComponent {
             .then(data => {
                 this.spinner.hide();
                 this.authService.publishSignIn({
-                    username: data.username,
+                    userId: data.username,
                     email: data.attributes.email
                 });
                 window.close();

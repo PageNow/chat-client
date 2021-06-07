@@ -30,7 +30,7 @@ export class AuthSyncComponent {
                     this.spinner.hide();
                     if (res.code === 'success') {
                         this.authService.publishSignIn({
-                            username: session.idToken.payload['cognito:username'],
+                            userId: session.idToken.payload['cognito:username'],
                             email: session.idToken.payload.email
                         });
                     }
