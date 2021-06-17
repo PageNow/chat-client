@@ -23,6 +23,18 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+                "fast-xml-parser",
+                "js-cookie",
+                "crypto-js",
+                "buffer",
+                "lodash",
+                "uuid",
+                "axios",
+                "aws-amplify",
+                "zen-observable",
+                "isomorphic-unfetch"
+            ],
             "outputPath": "dist/chat-client",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -34,7 +46,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@nebular/theme/styles/prebuilt/default.css"
             ],
             "scripts": []
           },

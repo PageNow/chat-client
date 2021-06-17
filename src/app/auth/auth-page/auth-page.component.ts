@@ -5,22 +5,22 @@ import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
 
-import { AuthService } from './auth.service';
-import { AuthState } from './auth.model';
+import { AuthService } from '../auth.service';
+import { AuthState } from '../auth.model';
 
 @Component({
-    selector: 'app-auth',
-    templateUrl: './auth.component.html',
-    styleUrls: ['./auth.component.scss']
+    selector: 'app-auth-page',
+    templateUrl: './auth-page.component.html',
+    styleUrls: ['./auth-page.component.scss']
 })
-export class AuthComponent {
+export class AuthPageComponent {
     authForm: FormGroup;
     forgotPasswordForm: FormGroup;
     recoverPasswordForm: FormGroup;
     
     authState: AuthState;
 
-    authMode = 'sign-in';
+    authMode = 'sign-up';
 
     constructor(
         private spinner: NgxSpinnerService,

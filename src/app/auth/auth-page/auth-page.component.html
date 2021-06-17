@@ -1,12 +1,18 @@
-<div *ngIf="authMode === 'sign-in' || authMode === 'sign-up'">
+<div *ngIf="authMode === 'sign-in' || authMode === 'sign-up'" class='main-div'>
+    <div class='auth-header-div' *ngIf="authMode === 'sign-in'">
+        PageNow Sign In
+    </div>
+    <div class='auth-header-div' *ngIf="authMode === 'sign-up'">
+        PageNow Sign Up
+    </div>
     <form [formGroup]="authForm">
-        <div>
-            <label>Email</label>
-            <input type="email" formControlName="email">
+        <div class='auth-input-div'>
+            <label class='auth-label'>Email</label>
+            <input class='auth-input' type="email" formControlName="email">
         </div>
-        <div>
-            <label>Password</label>
-            <input type="password" formControlName="password">
+        <div class='auth-input-div'>
+            <label class='auth-label'>Password</label>
+            <input class='auth-input' fieldSize="large" type="password" formControlName="password">
         </div>
     </form> 
     <div *ngIf="authMode === 'sign-in'">
@@ -15,14 +21,18 @@
         </span>
     </div>   
     <div *ngIf="authMode === 'sign-in'">
-        <button (click)="onEmailSignIn()">Sign In</button>
+        <button (click)="onEmailSignIn()" class='auth-button'>
+            <strong>Sign In</strong>
+        </button>
         <div>
             Need an account?
             <span (click)="onSetAuthMode('sign-up')">Sign up</span>
         </div>
     </div>
     <div *ngIf="authMode === 'sign-up'">
-        <button (click)="onEmailSignUp()">Sign Up</button>
+        <button (click)="onEmailSignUp()" class='auth-button'>
+            <strong>Sign Up</strong>
+        </button>
         <div>
             Already have an account?
             <span (click)="onSetAuthMode('sign-in')">Sign in</span>
@@ -40,7 +50,7 @@
         <button (click)="onGoogleSignIn()">Google</button>
     </div>
 </div>
-<div *ngIf="authMode === 'forgot-password'">
+<div *ngIf="authMode === 'forgot-password'" class='main-div'>
     <div>Forgot your password?</div>
     <div>Enter your email and we will send you a verification code</div>
     <form [formGroup]="forgotPasswordForm">
@@ -54,7 +64,7 @@
     </div>
     <span (click)="onSetAuthMode('sign-in')">Back</span>
 </div>
-<div *ngIf="authMode === 'recover-password'">
+<div *ngIf="authMode === 'recover-password'" class='main-div'>
     <div>We sent a password reset code to your email. Enter it below to reset your password.</div>
     <form [formGroup]="recoverPasswordForm">
         <div>
