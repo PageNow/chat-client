@@ -2,7 +2,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NbInputModule, NbButtonModule } from '@nebular/theme';
-import { NgxSpinnerModule } from "ngx-spinner";
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { AuthSyncComponent } from './auth-sync/auth-sync.component';

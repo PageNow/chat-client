@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
-import { NgxSpinnerService } from "ngx-spinner";
+import { NgxSpinnerService } from 'ngx-spinner';
 
 import { EXTENSION_ID } from '../../shared/constants';
 import { AuthService } from '../auth.service';
@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
     styleUrls: ['./auth-sync.component.scss']
 })
 export class AuthSyncComponent {
-    constructor (
+    constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
         private authService: AuthService
