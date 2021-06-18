@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxSpinnerModule } from "ngx-spinner";
 import { NbInputModule, NbButtonModule } from '@nebular/theme';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { AuthSyncComponent } from './auth-sync/auth-sync.component';
@@ -19,10 +19,11 @@ import { AuthRoutingModule } from './auth-routing.module';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        NgxSpinnerModule,
         NbInputModule,
         NbButtonModule,
-        AuthRoutingModule
-    ]
+        AuthRoutingModule,
+        NgxSpinnerModule
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AuthModule { }

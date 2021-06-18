@@ -7,6 +7,7 @@ import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
 
 import { AuthService } from '../auth.service';
 import { AuthState } from '../auth.model';
+import { passwordValidator } from '../../shared/custom-validators';
 
 @Component({
     selector: 'app-auth-page',
@@ -16,11 +17,12 @@ import { AuthState } from '../auth.model';
 export class AuthPageComponent {
     authForm: FormGroup;
     forgotPasswordForm: FormGroup;
-    recoverPasswordForm: FormGroup;
+    resetPasswordForm: FormGroup;
     
     authState: AuthState;
 
     authMode = 'sign-up';
+    errorMsg = '';
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -31,16 +33,17 @@ export class AuthPageComponent {
         // add password validator
         this.authForm = this.fb.group({
             'email': ['', [Validators.required, Validators.email]],
-            'password': ['', Validators.required]
+            'password': ['', [Validators.required, passwordValidator()]],
+            'passwordConfirm': ['', [Validators.required]]
         });
 
         this.forgotPasswordForm = this.fb.group({
             'email': ['', [Validators.required, Validators.email]]
         });
 
-        this.recoverPasswordForm = this.fb.group({
+        this.resetPasswordForm = this.fb.group({
             'code': ['', [Validators.required]],
-            'newPassword': ['', Validators.required],
+            'password': ['', [Validators.required, passwordValidator()]],
             'passwordConfirm': ['', Validators.required]
         });
 
@@ -57,20 +60,27 @@ export class AuthPageComponent {
 
     onSetAuthMode(authMode: string): void {
         this.authMode = authMode;
+        this.errorMsg = '';
     }
 
     onEmailSignUp(): void {
-        this.spinner.show();
         const email = this.authForm.get('email')?.value;
         const password = this.authForm.get('password')?.value;
+        const passwordConfirm = this.authForm.get('passwordConfirm')?.value;
+        if (password !== passwordConfirm) {
+            this.errorMsg = 'Please re-confirm the password';
+            return;
+        }
+        this.spinner.show();
         Auth.signUp(email, password)
             .then(() => {
                 this.spinner.hide();
+                this.errorMsg = '';
                 this.router.navigate(['/home'], { replaceUrl: true });
             })
             .catch(err => {
                 this.spinner.hide();
-                console.log(err);
+                this.errorMsg = err.message;
             });
     }
 
@@ -85,11 +95,12 @@ export class AuthPageComponent {
                     userId: data.username,
                     email: data.attributes.email
                 });
-                window.close();
+                this.errorMsg = '';
+                this.router.navigate(['/home'], { replaceUrl: true });
             })
             .catch(err => {
                 this.spinner.hide();
-                console.log(err);
+                this.errorMsg = err.message;
             });
     }
 
@@ -114,32 +125,47 @@ export class AuthPageComponent {
         });
     }
 
-    onResetPassword(): void {
+    onSendVerificationCode(): void {
         this.spinner.show();
         Auth.forgotPassword(this.forgotPasswordForm.value.email)
             .then(() => {
                 this.spinner.hide();
-                this.authMode = 'recover-password';
+                this.authMode = 'reset-password';
+                this.errorMsg = '';
             })
             .catch(err => {
-                // TODO - error handling (warning message)
                 this.spinner.hide();
-                console.log(err);
+                if (err.code === 'InvalidParameterException') {
+                    this.errorMsg = 'Please verify your email before resetting the password';
+                } else if (err.code === 'UserNotFoundException') {
+                    this.errorMsg = 'Your email is not registered.';
+                } else {
+                    this.errorMsg = err.message;
+                }
             });
     }
 
-    onChangePassword(): void {
+    onResetPassword(): void {
+        const forgotFormValue = this.forgotPasswordForm.value;
+        const resetFormValue = this.resetPasswordForm.value;
+        if (resetFormValue.password !== resetFormValue.passwordConfirm) {
+            this.errorMsg = 'Please re-confirm your password.';
+            return;
+        }
         this.spinner.show();
-        const formValue = this.recoverPasswordForm.value;
-        Auth.forgotPasswordSubmit(formValue.email, formValue.code, formValue.password)
+        Auth.forgotPasswordSubmit(forgotFormValue.email, resetFormValue.code, resetFormValue.password)
             .then(() => {
                 this.spinner.hide();
-                this.router.navigate(['/home'], { replaceUrl: true });
+                this.router.navigate(['/auth/page'], { replaceUrl: true });
+                this.errorMsg = '';
             })
             .catch(err => {
-                // need error handling
                 this.spinner.hide();
-                console.log(err);
+                if (err.message === 'Username cannot be empty') {
+                    this.errorMsg = 'You must enter the correct email in the previous page.'
+                } else {
+                    this.errorMsg = err.message;
+                }
             })
     }
 
