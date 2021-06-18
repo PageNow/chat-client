@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
+import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth/lib/types';
 
 import { AuthService } from '../auth.service';
 import { AuthState } from '../auth.model';
@@ -18,11 +18,13 @@ export class AuthPageComponent {
     authForm: FormGroup;
     forgotPasswordForm: FormGroup;
     resetPasswordForm: FormGroup;
-    
+
     authState: AuthState;
 
     authMode = 'sign-up';
     errorMsg = '';
+    notificationMsg = '';
+    confirmEmail = '';
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -32,19 +34,19 @@ export class AuthPageComponent {
     ) {
         // add password validator
         this.authForm = this.fb.group({
-            'email': ['', [Validators.required, Validators.email]],
-            'password': ['', [Validators.required, passwordValidator()]],
-            'passwordConfirm': ['', [Validators.required]]
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, passwordValidator()]],
+            passwordConfirm: ['', [Validators.required]]
         });
 
         this.forgotPasswordForm = this.fb.group({
-            'email': ['', [Validators.required, Validators.email]]
+            email: ['', [Validators.required, Validators.email]]
         });
 
         this.resetPasswordForm = this.fb.group({
-            'code': ['', [Validators.required]],
-            'password': ['', [Validators.required, passwordValidator()]],
-            'passwordConfirm': ['', Validators.required]
+            code: ['', [Validators.required]],
+            password: ['', [Validators.required, passwordValidator()]],
+            passwordConfirm: ['', Validators.required]
         });
 
         this.authService.auth$.subscribe((authState: AuthState) => {
@@ -61,6 +63,7 @@ export class AuthPageComponent {
     onSetAuthMode(authMode: string): void {
         this.authMode = authMode;
         this.errorMsg = '';
+        this.notificationMsg = '';
     }
 
     onEmailSignUp(): void {
@@ -76,7 +79,8 @@ export class AuthPageComponent {
             .then(() => {
                 this.spinner.hide();
                 this.errorMsg = '';
-                this.router.navigate(['/home'], { replaceUrl: true });
+                this.confirmEmail = email;
+                this.onSetAuthMode('confirm-user');
             })
             .catch(err => {
                 this.spinner.hide();
@@ -100,7 +104,12 @@ export class AuthPageComponent {
             })
             .catch(err => {
                 this.spinner.hide();
-                this.errorMsg = err.message;
+                if (err.code === 'UserNotConfirmedException') {
+                    this.confirmEmail = email;
+                    this.onSetAuthMode('confirm-user');
+                } else {
+                    this.errorMsg = err.message;
+                }
             });
     }
 
@@ -156,17 +165,32 @@ export class AuthPageComponent {
         Auth.forgotPasswordSubmit(forgotFormValue.email, resetFormValue.code, resetFormValue.password)
             .then(() => {
                 this.spinner.hide();
-                this.router.navigate(['/auth/page'], { replaceUrl: true });
                 this.errorMsg = '';
+                this.onSetAuthMode('sign-in');
             })
             .catch(err => {
                 this.spinner.hide();
                 if (err.message === 'Username cannot be empty') {
-                    this.errorMsg = 'You must enter the correct email in the previous page.'
+                    this.errorMsg = 'You must enter the correct email in the previous page.';
                 } else {
                     this.errorMsg = err.message;
                 }
+            });
+    }
+
+    onSendVerificationLink(): void {
+        this.spinner.show();
+        Auth.resendSignUp(this.confirmEmail)
+            .then(() => {
+                this.spinner.hide();
+                this.notificationMsg = 'The verification link has been sent to ' + this.confirmEmail;
+                this.errorMsg = '';
             })
+            .catch(err => {
+                this.spinner.hide();
+                this.errorMsg = err.message;
+                this.notificationMsg = '';
+            });
     }
 
     onSignOut(): void {

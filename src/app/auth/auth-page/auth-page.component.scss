@@ -47,8 +47,17 @@ $link-color: #0074D9;
     padding: 3px 5px 5px 5px;
 }
 
+.auth-p-div {
+    font-size: 18px;
+}
+
 .error-div {
     color: #DC143C;
+    margin: 10px 0 -7px 0;
+}
+
+.notification-div {
+    color: #003366;
     margin: 10px 0 -7px 0;
 }
 

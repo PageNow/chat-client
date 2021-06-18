@@ -155,3 +155,28 @@
         </span>
     </div>
 </div>
+<div *ngIf="authMode === 'confirm-user'" class='main-div'>
+    <div class='auth-header-div'>Confirm Email</div>
+    <div class='auth-p-div'>
+        <p>
+            Please <strong>confirm your email</strong> by clicking the verification link sent to your email.
+        </p>
+        <p>
+            Refresh the page after you confirm your email and sign in again.
+        </p>
+        <p>
+            If you cannot find the email, check the spam folder or click the button below to resend the link.
+        </p>
+    </div>
+    <div>
+        <button (click)="onSendVerificationLink()" class='auth-button'>
+            <strong>Resend Verification Link</strong>
+        </button>
+    </div>
+    <div *ngIf="errorMsg !== ''" class='error-div'>
+        {{ errorMsg }}
+    </div>
+    <div *ngIf="notificationMsg !== ''" class='notification-div'>
+        {{ notificationMsg }}
+    </div>
+</div>

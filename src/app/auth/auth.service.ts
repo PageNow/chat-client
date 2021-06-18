@@ -3,13 +3,13 @@ import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Auth } from 'aws-amplify';
 import {
-    CognitoIdToken, 
-    CognitoAccessToken, 
-    CognitoRefreshToken, 
+    CognitoIdToken,
+    CognitoAccessToken,
+    CognitoRefreshToken,
     CognitoUserSession,
     CognitoUser,
     CognitoUserPool
-} from "amazon-cognito-identity-js";
+} from 'amazon-cognito-identity-js';
 import awsmobile from '../../aws-exports';
 
 import { AuthState, User } from './auth.model';
@@ -20,11 +20,11 @@ import { AUTH_STATE_KEY, DEFAULT_AUTH_STATE } from '../shared/constants';
 })
 export class AuthService implements OnDestroy  {
     private _authState = new Subject<AuthState>();
-    
+
     /* AuthState as an Observable */
     readonly auth$ = this._authState.asObservable();
     auth: AuthState;
-    authFirst = this._authState.pipe(take(1))
+    authFirst = this._authState.pipe(take(1));
 
     constructor() {
         window.addEventListener('storage',
@@ -46,11 +46,11 @@ export class AuthService implements OnDestroy  {
                 this.auth = DEFAULT_AUTH_STATE;
             });
 
-        window.addEventListener("message",
+        window.addEventListener('message',
             this.messageEventListener.bind(this));
     }
 
-    private storageEventListener(event: StorageEvent) {
+    private storageEventListener(event: StorageEvent): void {
         if (event.storageArea == localStorage) {
             if (event.key === AUTH_STATE_KEY && event.newValue) {
                 const newAuthState = JSON.parse(event.newValue);
@@ -78,8 +78,8 @@ export class AuthService implements OnDestroy  {
                 AccessToken: accessToken,
                 RefreshToken: refreshToken,
                 ClockDrift: clockDrift
-            }
-            
+            };
+
             // Create the session
             const userSession  = new CognitoUserSession(sessionData);
             const userData = {
@@ -96,16 +96,16 @@ export class AuthService implements OnDestroy  {
             cognitoUser.setSignInUserSession(userSession);
             // Check to make sure it works
             cognitoUser.getSession((err: any , session: any) => {
-                if(session){
+                if(session) {
                     this.setAuthState({
                         isAuthenticated: true,
                         userId: session.idToken.payload['cognito:username'],
-                        email: session.idToken.payload['email']
+                        email: session.idToken.payload.email
                     });
                 } else {
                     console.error(err);
                 }
-            })
+            });
         } else if (event.data.type === 'auth-null') {
             console.log('Auth signout');
             Auth.signOut()
@@ -120,7 +120,7 @@ export class AuthService implements OnDestroy  {
     }
 
     ngOnDestroy(): void {
-        window.removeEventListener("storage",
+        window.removeEventListener('storage',
             this.storageEventListener.bind(this));
     }
 
@@ -138,7 +138,7 @@ export class AuthService implements OnDestroy  {
         this.auth = DEFAULT_AUTH_STATE;
     }
 
-    private setAuthState(authState: AuthState) {
+    private setAuthState(authState: AuthState): void {
         localStorage.setItem(AUTH_STATE_KEY, JSON.stringify(authState));
         this._authState.next(authState);
     }

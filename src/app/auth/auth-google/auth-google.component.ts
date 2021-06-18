@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 import { Auth } from 'aws-amplify';
-import { CognitoHostedUIIdentityProvider } from "@aws-amplify/auth/lib/types";
-import { AuthService } from "../auth.service";
-import { AuthState } from "../auth.model";
-import { Router } from "@angular/router";
+import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth/lib/types';
+import { AuthService } from '../auth.service';
+import { AuthState } from '../auth.model';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-auth-google',
@@ -28,6 +28,5 @@ export class AuthGoogleComponent {
         } else {
             router.navigate(['/home'], { replaceUrl: true });
         }
-        
     }
 }
