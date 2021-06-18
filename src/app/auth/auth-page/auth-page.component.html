@@ -1,0 +1,157 @@
+<div *ngIf="authMode === 'sign-in' || authMode === 'sign-up'" class='main-div'>
+    <div class='auth-header-div' *ngIf="authMode === 'sign-in'">
+        PageNow Sign In
+    </div>
+    <div class='auth-header-div' *ngIf="authMode === 'sign-up'">
+        PageNow Sign Up
+    </div>
+    <form [formGroup]="authForm">
+        <div class='auth-input-div'>
+            <label class='auth-label'>Email</label>
+            <input class='auth-input' type="email" formControlName="email"
+                placeholder="Enter email">
+        </div>
+        <div class='auth-input-div'>
+            <label class='auth-label'>Password</label>
+            <input class='auth-input' fieldSize="large" type="password"
+                formControlName="password" placeholder="Enter password">
+        </div>
+        <div class='auth-input-div' *ngIf="authMode === 'sign-up'">
+            <label class='auth-label'>Confirm Password</label>
+            <input class='auth-input' fieldSize="large" type="password"
+                formControlName="passwordConfirm" placeholder="Confirm password">
+        </div>
+    </form>
+    <div *ngIf="authForm.controls.email.invalid && (authForm.controls.email.dirty || authForm.controls.email.touched)"
+        class='error-div'>
+        Email has invalid format.
+    </div>
+    <div *ngIf="authMode === 'sign-up' && authForm.controls.email.valid && authForm.controls.password.invalid && (authForm.controls.password.dirty || authForm.controls.password.touched)"
+        class='error-div'>
+        <div *ngIf="authForm.controls.password.errors?.passwordUppercaseError">
+            Password must have uppercase characters.
+        </div>
+        <div *ngIf="authForm.controls.password.errors?.passwordLowercaseError">
+            Password must have lowercase characters.
+        </div>
+        <div *ngIf="authForm.controls.password.errors?.passwordNumberError">
+            Password must contain a number.
+        </div>
+        <div *ngIf="authForm.controls.password.errors?.passwordLengthError">
+            Password must have at least 8 characters.
+        </div>
+    </div>
+    <div *ngIf="errorMsg !== ''" class='error-div'>
+        {{ errorMsg }}
+    </div>
+    <div *ngIf="authMode === 'sign-in'" class='forgot-password-div'>
+        <span (click)="onSetAuthMode('forgot-password')" class='forgot-password-span'>
+            Forgot your password?
+        </span>
+    </div>   
+    <div *ngIf="authMode === 'sign-in'">
+        <button (click)="onEmailSignIn()" class='auth-button' [disabled]="authForm.controls.email.errors || authForm.controls.password.value === ''">
+            <strong>Sign In</strong>
+        </button>
+        <div class='change-mode-div'>
+            Need an account?
+            <span (click)="onSetAuthMode('sign-up')" class='change-mode-span'>
+                Sign up
+            </span>
+        </div>
+    </div>
+    <div *ngIf="authMode === 'sign-up'">
+        <button (click)="onEmailSignUp()" class='auth-button' [disabled]=!authForm.valid>
+            <strong>Sign Up</strong>
+        </button>
+        <div class='change-mode-div'>
+            Already have an account?
+            <span (click)="onSetAuthMode('sign-in')" class='change-mode-span'>
+                Sign in
+            </span>
+        </div>
+    </div>
+    <span class='or-span'>Or</span>
+    <!-- <div>
+        Facebook Login
+        <button (click)="onFacebookSignIn()">Facebook</button>
+    </div> -->
+    <div class='google-btn' (click)="onGoogleSignIn()">
+        <div class='google-icon-wrapper'>
+            <img class='google-icon' src='assets/g-logo.png' alt="google-logo"/>
+        </div>
+        <p class='btn-text'><b>Continue with google</b></p>
+    </div>
+</div>
+<div *ngIf="authMode === 'forgot-password'" class='main-div'>
+    <div class='auth-header-div'>Forgot Password?</div>
+    <div class='auth-subheader-div'>
+        Enter your email and we will send you a verification code
+    </div>
+    <form [formGroup]="forgotPasswordForm" class='auth-input-div'>
+        <label class='auth-label'>Email</label>
+        <input type="email" formControlName="email" class='auth-input'>
+    </form>
+    <div *ngIf="forgotPasswordForm.controls.email.invalid && (forgotPasswordForm.controls.email.dirty || forgotPasswordForm.controls.email.touched)" class='error-div'>
+        Email has invalid format.
+    </div>
+    <div *ngIf="errorMsg !== ''" class='error-div'>
+        {{ errorMsg }}
+    </div>
+    <div>
+        <button (click)="onSendVerificationCode()" class='auth-button' [disabled]="forgotPasswordForm.invalid">
+            <strong>Send Verification Code</strong>
+        </button>
+    </div>
+    <div (click)="onSetAuthMode('sign-in')" class='change-mode-div'>
+        <span class='change-mode-span'>Back</span>
+    </div>
+</div>
+<div *ngIf="authMode === 'reset-password'" class='main-div'>
+    <div class='auth-header-div'>Reset Password</div>
+    <div class='auth-subheader-div'>We sent a password reset code to your email. Enter it below to reset your password.</div>
+    <form [formGroup]="resetPasswordForm">
+        <div class='auth-input-div'>
+            <label class='auth-label'>Code</label>
+            <input class='auth-input' formControlName="code" placeholder="Enter code">
+        </div>
+        <div class='auth-input-div'>
+            <label class='auth-label'>New Password</label>
+            <input class='auth-input' formControlName="password" type="password" placeholder="Enter new password">
+        </div>
+        <div class='auth-input-div'>
+            <label class='auth-label'>Confirm Password</label>
+            <input class='auth-input' formControlName="passwordConfirm" type="password" placeholder="Confirm password">
+        </div>
+    </form>
+    <div *ngIf="resetPasswordForm.controls.password.invalid && (resetPasswordForm.controls.password.dirty || resetPasswordForm.controls.password.touched)"
+        class='error-div'>
+        <div *ngIf="resetPasswordForm.controls.password.errors?.passwordUppercaseError">
+            Password must have uppercase characters.
+        </div>
+        <div *ngIf="resetPasswordForm.controls.password.errors?.passwordLowercaseError">
+            Password must have lowercase characters.
+        </div>
+        <div *ngIf="resetPasswordForm.controls.password.errors?.passwordNumberError">
+            Password must contain a number.
+        </div>
+        <div *ngIf="resetPasswordForm.controls.password.errors?.passwordLengthError">
+            Password must have at least 8 characters.
+        </div>
+    </div>
+    <div *ngIf="errorMsg !== ''" class='error-div'>
+        {{ errorMsg }}
+    </div>
+    <div>
+        <button (click)="onResetPassword()" class='auth-button'
+            [disabled]="resetPasswordForm.invalid"
+        >
+            Reset Password
+        </button>
+    </div>
+    <div class='change-mode-div'>
+        <span class='change-mode-span' (click)="onSetAuthMode('forgot-password')">
+            Back
+        </span>
+    </div>
+</div>

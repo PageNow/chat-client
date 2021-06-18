@@ -30,7 +30,7 @@ export class HomeComponent implements OnDestroy {
         this.authService.auth$.subscribe((authState: AuthState) => {
             console.log(authState);
             if (!authState.isAuthenticated) {
-                this.router.navigate(['/auth-gate'], { replaceUrl: true });
+                this.router.navigate(['/auth/gate'], { replaceUrl: true });
             } else {
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.has('code') && urlParams.has('state')) {
