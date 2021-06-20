@@ -8,10 +8,10 @@ import { DEFAULT_AUTH_STATE } from '../shared/constants';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  templateUrl: './layout.component.html',
+  styleUrls: ['./layout.component.scss']
 })
-export class HomeComponent implements OnDestroy {
+export class LayoutComponent implements OnDestroy {
     url: string;
     authState: AuthState = DEFAULT_AUTH_STATE;
     iframeUrl: string;
