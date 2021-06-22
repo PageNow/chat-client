@@ -34,7 +34,9 @@ export class AuthSyncComponent {
                             email: session.idToken.payload.email
                         });
                     }
+                    // window may not close due to Chrome's security
                     window.close();
+                    window.location.href = 'https://pagenow.io';
                 });
             });
     }

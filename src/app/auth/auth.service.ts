@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Auth } from 'aws-amplify';
 import {
@@ -20,6 +20,7 @@ import { AUTH_STATE_KEY, DEFAULT_AUTH_STATE } from '../shared/constants';
 })
 export class AuthService implements OnDestroy  {
     private _authState = new Subject<AuthState>();
+    private uuidSubscription: Subscription;
 
     /* AuthState as an Observable */
     readonly auth$ = this._authState.asObservable();
@@ -27,12 +28,14 @@ export class AuthService implements OnDestroy  {
     authFirst = this._authState.pipe(take(1));
 
     constructor() {
-        window.addEventListener('storage',
-            this.storageEventListener.bind(this));
+        // window.addEventListener('storage',
+        //     this.storageEventListener.bind(this));
 
         /* Get the user on creation of this service */
+        console.log('auth.service constructor');
         Auth.currentAuthenticatedUser()
             .then(data => {
+                console.log(data);
                 const authState: AuthState = {
                     isAuthenticated: true,
                     userId: data.username,
@@ -50,6 +53,7 @@ export class AuthService implements OnDestroy  {
             this.messageEventListener.bind(this));
     }
 
+    // TODO: test if we need this storage event listener
     private storageEventListener(event: StorageEvent): void {
         if (event.storageArea == localStorage) {
             if (event.key === AUTH_STATE_KEY && event.newValue) {
@@ -120,8 +124,8 @@ export class AuthService implements OnDestroy  {
     }
 
     ngOnDestroy(): void {
-        window.removeEventListener('storage',
-            this.storageEventListener.bind(this));
+        // window.removeEventListener('storage',
+        //     this.storageEventListener.bind(this));
     }
 
     publishSignIn(user: User): void {

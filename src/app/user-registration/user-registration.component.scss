@@ -1,0 +1,68 @@
+$input-div-padding-bottom: 15px;
+
+.main-div {
+    width: 90%;
+    margin: auto;
+}
+
+.header-div {
+    text-align: center;
+    font-family: 'Roboto' sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    padding: 20px 0 10px 0;
+}
+
+.subheader-div {
+    font-size: 15px;
+    padding-bottom: 5px;
+}
+
+.name-input-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: $input-div-padding-bottom;
+}
+
+.name-input {
+    width: 48%;
+}
+
+.dob-input-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: $input-div-padding-bottom;
+}
+
+.dob-select {
+    width: 31%;
+}
+
+.gender-input-div {
+    width: 31%;
+    margin: 0;
+    padding-bottom: 5px;
+}
+
+.other-gender-div {
+    padding-bottom: $input-div-padding-bottom;
+}
+
+.button-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 5px;
+}
+
+.error-msg-div {
+    color: #DC143C;
+    font-size: 16px;
+    padding-bottom: 5px;
+}
+
+.submit-btn {
+    width: 120px;
+}

@@ -19,10 +19,12 @@
     "module": "es2020",
     "lib": [
       "es2018",
-      "dom"
+      "dom",
+      "esnext.asynciterable"
     ],
     "strictPropertyInitialization": false,
-    "types": ["chrome"]
+    "types": ["chrome"],
+    "allowSyntheticDefaultImports": true,
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
