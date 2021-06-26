@@ -5,11 +5,33 @@
 </ngx-spinner>
 <div>
     <div>
-        <div>Pages</div>
-        <div>Chats</div>
-        <div>Search</div>
-        <div>Notifications</div>
-        <div>Profile</div>
+        <div>
+            <a [ngClass]="{'selected-tab': currTab === 'pages'}">
+                Pages
+            </a>
+        </div>
+        <div>
+            <a [ngClass]="{'selected-tab': currTab === 'chats'}">
+                Chats
+            </a>
+        </div>
+        <div>
+            <a [ngClass]="{'selected-tab': currTab === 'search'}">
+                Search
+            </a>
+        </div>
+        <div>
+            <a [ngClass]="{'selected-tab': currTab === 'notifications'}">
+                Notifications
+            </a>
+        </div>
+        <div>
+            <a [ngClass]="{'selected-tab': currTab === 'profile'}"
+               [routerLink]="['/profile', userUuid]"
+            >
+                Profile
+            </a>
+        </div>
     </div>
 
     Current url: {{ url }}

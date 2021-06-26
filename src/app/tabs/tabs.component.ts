@@ -1,12 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Apollo, gql } from 'apollo-angular';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { AuthService } from '../auth/auth.service';
 import { AuthState } from '../auth/auth.model';
 import { DEFAULT_AUTH_STATE } from '../shared/constants';
-import { Subscription } from 'rxjs';
+import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-tabs',
@@ -16,15 +15,14 @@ import { Subscription } from 'rxjs';
 export class TabsComponent implements OnDestroy {
     url: string;
     authState: AuthState = DEFAULT_AUTH_STATE;
-    userUuid: string;
-    private uuidSubscription: Subscription;
+    userUuid: string | null;
     @Input() currTab: string;
 
     constructor(
         private router: Router,
+        private spinner: NgxSpinnerService,
         private authService: AuthService,
-        private apollo: Apollo,
-        private spinner: NgxSpinnerService
+        private userService: UserService
     ) {
         console.log('tabs.component constructor');
 
@@ -34,30 +32,23 @@ export class TabsComponent implements OnDestroy {
         this.authState = this.authService.auth;
 
         this.authService.auth$.subscribe((authState: AuthState) => {
-            console.log(authState);
             this.spinner.show();            
             if (!authState.isAuthenticated) {
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl: true });
             } else {
-                // TODO: use local cache to reduce this additional query to server 
-                this.uuidSubscription = this.apollo.watchQuery({
-                    query: gql`{
-                        user(userId: "${authState.userId}") {
-                            userUuid
+                this.userService.getCurrentUserInfo().subscribe(
+                    res => {
+                        console.log(res);
+                        this.userUuid = res.userUuid
+                        this.spinner.hide();
+                    },
+                    err => {
+                        this.spinner.hide();
+                        if (err.status === 404) {
+                            this.router.navigate(['/user-registration'], { replaceUrl: true});
                         }
-                    }`,
-                })
-                .valueChanges.subscribe((res: any) => {
-                    if (res.data?.user) {
-                        this.userUuid = res.data.user.userUuid;
-                        this.spinner.hide();
-                    } else {
-                        this.spinner.hide();
-                        this.router.navigate(['/user-registration'], { replaceUrl: true});
-                    }
-                });
-
+                    });
             }
         });
     }
@@ -65,7 +56,6 @@ export class TabsComponent implements OnDestroy {
     ngOnDestroy(): void {
         window.removeEventListener("message",
             this.messageEventListener.bind(this));
-        this.uuidSubscription.unsubscribe();
     }
 
     private messageEventListener(event: MessageEvent): void {

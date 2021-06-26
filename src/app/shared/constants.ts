@@ -5,8 +5,9 @@ export const DEFAULT_AUTH_STATE: AuthState = {
     isAuthenticated: false,
     userId: null,
     email: null,
+    jwt: null
 };
 
 export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';
 
-export const LOCAL_GRAPHQL_URI = 'http://localhost:8007';
+export const USER_API_URL = 'http://localhost:8007';

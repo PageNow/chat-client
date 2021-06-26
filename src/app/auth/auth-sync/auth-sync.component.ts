@@ -29,10 +29,7 @@ export class AuthSyncComponent {
                 chrome.runtime.sendMessage(EXTENSION_ID, message, res => {
                     this.spinner.hide();
                     if (res.code === 'success') {
-                        this.authService.publishSignIn({
-                            userId: session.idToken.payload['cognito:username'],
-                            email: session.idToken.payload.email
-                        });
+                        this.authService.publishSignIn();
                     }
                     // window may not close due to Chrome's security
                     window.close();

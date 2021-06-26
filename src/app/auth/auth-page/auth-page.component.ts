@@ -93,12 +93,9 @@ export class AuthPageComponent {
         const email = this.authForm.get('email')?.value;
         const password = this.authForm.get('password')?.value;
         Auth.signIn(email, password)
-            .then(data => {
+            .then(() => {
                 this.spinner.hide();
-                this.authService.publishSignIn({
-                    userId: data.username,
-                    email: data.attributes.email
-                });
+                this.authService.publishSignIn();
                 this.errorMsg = '';
                 this.router.navigate(['/home'], { replaceUrl: true });
             })

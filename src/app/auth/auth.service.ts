@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Auth } from 'aws-amplify';
 import {
@@ -12,7 +12,7 @@ import {
 } from 'amazon-cognito-identity-js';
 import awsmobile from '../../aws-exports';
 
-import { AuthState, User } from './auth.model';
+import { AuthState } from './auth.model';
 import { AUTH_STATE_KEY, DEFAULT_AUTH_STATE } from '../shared/constants';
 
 @Injectable({
@@ -20,7 +20,6 @@ import { AUTH_STATE_KEY, DEFAULT_AUTH_STATE } from '../shared/constants';
 })
 export class AuthService implements OnDestroy  {
     private _authState = new Subject<AuthState>();
-    private uuidSubscription: Subscription;
 
     /* AuthState as an Observable */
     readonly auth$ = this._authState.asObservable();
@@ -30,16 +29,15 @@ export class AuthService implements OnDestroy  {
     constructor() {
         // window.addEventListener('storage',
         //     this.storageEventListener.bind(this));
-
+        console.log('auth service constructor');
         /* Get the user on creation of this service */
-        console.log('auth.service constructor');
-        Auth.currentAuthenticatedUser()
+        Auth.currentSession()
             .then(data => {
-                console.log(data);
                 const authState: AuthState = {
                     isAuthenticated: true,
-                    userId: data.username,
-                    email: data.attributes.email
+                    userId: data.getIdToken().payload['cognito:username'],
+                    email: data.getIdToken().payload['email'],
+                    jwt: data.getIdToken().getJwtToken()
                 };
                 this.setAuthState(authState);
                 this.auth = authState;
@@ -103,8 +101,9 @@ export class AuthService implements OnDestroy  {
                 if(session) {
                     this.setAuthState({
                         isAuthenticated: true,
-                        userId: session.idToken.payload['cognito:username'],
-                        email: session.idToken.payload.email
+                        userId: session.getIdToken().payload['cognito:username'],
+                        email: session.getIdToken().payload['email'],
+                        jwt: session.getIdToken().getJwtToken()
                     });
                 } else {
                     console.error(err);
@@ -128,13 +127,22 @@ export class AuthService implements OnDestroy  {
         //     this.storageEventListener.bind(this));
     }
 
-    publishSignIn(user: User): void {
-        const authState: AuthState = {
-            ...user,
-            isAuthenticated: true
-        };
-        this.setAuthState(authState);
-        this.auth = authState;
+    publishSignIn(): void {
+        Auth.currentSession()
+            .then(data => {
+                const authState: AuthState = {
+                    isAuthenticated: true,
+                    userId: data.getIdToken().payload['cognito:username'],
+                    email: data.getIdToken().payload['email'],
+                    jwt: data.getIdToken().getJwtToken()
+                };
+                this.setAuthState(authState);
+                this.auth = authState;
+            })
+            .catch(() => {
+                this.setAuthState(DEFAULT_AUTH_STATE);
+                this.auth = DEFAULT_AUTH_STATE;
+            });
     }
 
     publishSignOut(): void {
