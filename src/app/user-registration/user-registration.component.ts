@@ -1,7 +1,5 @@
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { AuthState } from "../auth/auth.model";
@@ -12,6 +10,7 @@ import {
     isDateValid, MONTHS_STR_TO_NUM
 } from "../shared/time_utils";
 import { UserService } from "../user/user.service";
+import { UserCreate } from "../user/user.model";
 
 @Component({
     selector: 'app-user-registration',
@@ -78,29 +77,24 @@ export class UserRegistrationComponent {
         if (this.gender === 'other' && this.otherGender !== '') {
             gender = this.otherGender;
         }
-        // this.apollo.mutate({
-        //     mutation: gql`mutation createMutation {
-        //         createUser(userData: {
-        //             userId: "${this.authState.userId}",
-        //             email: "${this.authState.email}",
-        //             firstName: "${this.firstName}",
-        //             middleName: "",
-        //             lastName: "${this.lastName}",
-        //             dob: "${dob}", gender: "${gender}"
-        //         }) {
-        //             user {
-        //                 userId, email, firstName, lastName,
-        //                 dob, gender
-        //             }
-        //         }
-        //     }`
-        // }).subscribe(res => {
-        //     this.spinner.hide();
-        //     this.router.navigate(['/pages'], { replaceUrl: true});
-        // }, err => {
-        //     this.spinner.hide();
-        //     this.errorMsg = 'An error occurred! Please try again after refreshing!';
-        // });
+        
+        const userInfo: UserCreate = {
+            first_name: this.firstName,
+            middle_name: "",
+            last_name: this.lastName,
+            dob: dob,
+            gender: gender
+        }
+        this.userService.submitCurrentUserInfo(userInfo).subscribe(
+            res => {
+                this.spinner.hide();
+                this.router.navigate(['/pages'], { replaceUrl: true});
+            },
+            err => {
+                this.spinner.hide();
+                this.errorMsg = 'Sorry, there is an error. Please try again after refreshing.';
+            }
+        );
     }
 }
 
