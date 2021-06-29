@@ -53,7 +53,7 @@ export class UserRegistrationComponent {
                 this.userService.getCurrentUserInfo().subscribe(
                     res => {
                         this.spinner.hide();
-                        this.router.navigate([`/profile/${res.userUuid}`]);
+                        this.router.navigate([`/profile/${res.user_uuid}`]);
                     },
                     () => {
                         this.spinner.hide();

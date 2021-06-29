@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
 import { AuthState } from '../auth/auth.model';
@@ -16,6 +17,7 @@ export class TabsComponent implements OnDestroy {
     url: string;
     authState: AuthState = DEFAULT_AUTH_STATE;
     userUuid: string | null;
+    userInfoSubscription: Subscription;
     @Input() currTab: string;
 
     constructor(
@@ -37,10 +39,9 @@ export class TabsComponent implements OnDestroy {
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl: true });
             } else {
-                this.userService.getCurrentUserInfo().subscribe(
+                this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
                     res => {
-                        console.log(res);
-                        this.userUuid = res.userUuid
+                        this.userUuid = res['user_uuid']
                         this.spinner.hide();
                     },
                     err => {
@@ -54,6 +55,8 @@ export class TabsComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.userInfoSubscription.unsubscribe();
+        
         window.removeEventListener("message",
             this.messageEventListener.bind(this));
     }

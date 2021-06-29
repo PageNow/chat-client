@@ -1,0 +1,8 @@
+<div>
+    <app-tabs [currTab]="'profile'"></app-tabs>
+    Profile Page of {{ userInfo ? userInfo.user_uuid : '' }}
+
+    <div *ngIf="userInfo !== null">
+        {{ userInfo.first_name }} {{ userInfo.last_name }}
+    </div>
+</div>

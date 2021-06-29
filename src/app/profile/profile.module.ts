@@ -1,18 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { ProfileRoutingModule } from './profile-routing.module';
-import { ProfileComponent } from './profile.component';
 import { TabsModule } from '../tabs/tabs.module';
+import { ProfilePrivateComponent } from './profile-private/profile-private.component';
+import { ProfilePublicComponent } from './profile-public/profile-public.component';
 
 @NgModule({
     declarations: [
-        ProfileComponent,
+        ProfilePublicComponent,
+        ProfilePrivateComponent,
     ],
     imports: [
         CommonModule,
         ProfileRoutingModule,
-        TabsModule
+        TabsModule,
+        NgxSpinnerModule
     ]
 })
 export class ProfileModule { }

@@ -40,8 +40,6 @@ export class UserService {
                 'Authorization': `Bearer ${this.authState.jwt}`
             })
         };
-        console.log(httpOptions);
-        console.log(JSON.stringify({user: userInfo}));
         return this.http.post(
             `${USER_API_URL}/users/me`,
             JSON.stringify(userInfo),
