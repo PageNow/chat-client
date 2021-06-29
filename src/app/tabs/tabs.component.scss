@@ -1,13 +1,51 @@
-:host nb-tab {
-    padding: 1.25rem;
+$default-color: #485063;
+
+.tabs-main-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: $default-color;
+    align-items: center;
+    height: 32px;
 }
 
-.selected-tab {
-    color: red;
-    text-decoration: none;
+.tab-list-div {
+    display: flex;
+    flex-direction: row;
+    font-size: 19px;
+    height: 100%;
+    align-items: center;
 }
 
-a {
-    text-decoration: none;
-    color: blue;
+.tab-div {
+    width: 40px;
+    text-align: center;
+    height: 100%;
+    vertical-align: middle;
+    display: table;
+}
+
+fa-icon {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.selected-tab-div {
+    background-color: white;
+}
+
+.selected-fa-icon {
+    color: $default-color;
+}
+
+.default-fa-icon {
+    color: white;
+}
+
+.close-div {
+    color: white;
+    width: 40px;
+    display: table;
+    text-align: center;
+    font-size: 18px;
 }
