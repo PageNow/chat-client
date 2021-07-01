@@ -1,6 +1,7 @@
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { TabsComponent } from "./tabs.component";
 import { RouterModule } from "@angular/router";
@@ -10,8 +11,10 @@ import { RouterModule } from "@angular/router";
     imports: [
         CommonModule,
         RouterModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        FontAwesomeModule
     ],
-    exports: [TabsComponent]
+    exports: [TabsComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TabsModule {}

@@ -23,6 +23,7 @@
     "@aws-amplify/ui-angular": "^1.0.7",
     "@fortawesome/angular-fontawesome": "^0.8.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-regular-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@types/chrome": "^0.0.137",
     "@types/filesystem": "^0.0.30",

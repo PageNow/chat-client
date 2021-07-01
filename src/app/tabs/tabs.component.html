@@ -3,36 +3,41 @@
         <strong>Fetching user data...</strong>
     </p>
 </ngx-spinner>
-<div>
-    <div>
-        <div>
-            <a [ngClass]="{'selected-tab': currTab === 'pages'}">
-                Pages
-            </a>
+<div class='tabs-main-div'>
+    <div class='tab-list-div'>
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'pages'}">
+            <fa-icon [icon]="faFileAlt" [routerLink]="['/pages']"
+                [ngClass]="{'selected-fa-icon': currTab === 'pages',
+                            'default-fa-icon': currTab !== 'pages'}">
+            </fa-icon>
         </div>
-        <div>
-            <a [ngClass]="{'selected-tab': currTab === 'chats'}">
-                Chats
-            </a>
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'chat'}">
+            <fa-icon [icon]="faComment" [routerLink]="['/chat']"
+                [ngClass]="{'selected-fa-icon': currTab === 'chat',
+                            'default-fa-icon': currTab !== 'chat'}">
+            </fa-icon>
         </div>
-        <div>
-            <a [ngClass]="{'selected-tab': currTab === 'search'}">
-                Search
-            </a>
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'search'}">
+            <fa-icon [icon]="faSearch" [routerLink]="['/search']"
+                [ngClass]="{'selected-fa-icon': currTab === 'search',
+                            'default-fa-icon': currTab !== 'search'}">
+            </fa-icon>
         </div>
-        <div>
-            <a [ngClass]="{'selected-tab': currTab === 'notifications'}">
-                Notifications
-            </a>
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'notifications'}">
+            <fa-icon [icon]="faBell" [routerLink]="['/notifications']"
+                [ngClass]="{'selected-fa-icon': currTab === 'notifications',
+                            'default-fa-icon': currTab !== 'notifications'}">
+            </fa-icon>
         </div>
-        <div>
-            <a [ngClass]="{'selected-tab': currTab === 'profile'}"
-               [routerLink]="['/profile', 'me']"
-            >
-                Profile
-            </a>
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'profile'}">
+            <fa-icon [icon]="faUserCircle" [routerLink]="['/profile', 'me']"
+                [ngClass]="{'selected-fa-icon': currTab === 'profile',
+                            'default-fa-icon': currTab !== 'profile'}">
+            </fa-icon>
         </div>
     </div>
-
-    Current url: {{ url }}
+    <div class='close-div'>
+        <fa-icon [icon]="faTimes" (click)="onCloseChatbox()">
+        </fa-icon>
+    </div>
 </div>

@@ -2,6 +2,9 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
+import {
+    faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
+} from '@fortawesome/free-solid-svg-icons';
 
 import { AuthService } from '../auth/auth.service';
 import { AuthState } from '../auth/auth.model';
@@ -19,6 +22,14 @@ export class TabsComponent implements OnDestroy {
     userUuid: string | null;
     userInfoSubscription: Subscription;
     @Input() currTab: string;
+
+    // fontawesome icons
+    faSearch = faSearch;
+    faComment = faComment;
+    faBell = faBell;
+    faUserCircle = faUserCircle;
+    faFileAlt = faFileAlt;
+    faTimes = faTimes;
 
     constructor(
         private router: Router,
@@ -55,7 +66,7 @@ export class TabsComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.userInfoSubscription.unsubscribe();
+        this.userInfoSubscription?.unsubscribe();
         
         window.removeEventListener("message",
             this.messageEventListener.bind(this));
@@ -65,6 +76,10 @@ export class TabsComponent implements OnDestroy {
         if (event.data.type === 'update-url') {
             this.url = event.data.data?.url;
         }
+    }
+
+    onCloseChatbox(): void {
+        alert('chatbox closed');
     }
 
     // onSignOut(): void {

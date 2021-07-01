@@ -44,6 +44,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
     
     ngOnDestroy(): void {
-        this.userInfoSubscription.unsubscribe();
+        this.userInfoSubscription?.unsubscribe();
     }
 }
