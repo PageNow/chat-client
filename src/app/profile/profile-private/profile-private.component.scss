@@ -1,0 +1,18 @@
+.info-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.info-label {
+    flex: 0 0 75px;
+}
+
+.privacy-select {
+    flex: 0 0 100px;
+}
+
+.info-input {
+    flex-grow: 1;
+}

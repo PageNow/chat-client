@@ -30,6 +30,10 @@ fa-icon {
     text-align: center;
 }
 
+fa-icon:hover {
+    cursor: pointer;
+}
+
 .selected-tab-div {
     background-color: white;
 }

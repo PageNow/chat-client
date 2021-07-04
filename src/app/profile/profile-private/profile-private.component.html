@@ -40,32 +40,61 @@
     </div>
 
     <div class='additional-info-header-div'>
-        Additional information
+        <span class='additional-info-header-span'>
+            Additional information
+        </span>
+        <span class='additional-info-save-span' (click)="saveAdditionalInfo()">
+            Save
+        </span>
     </div>
 
     <div class='additional-info-div'>
         <div class='info-div'>
             <div class='info-label'>Email</div>
-            <input />
-            <select class="form-select form-select-sm dob-select"
-                    aria-label=".form-select-sm example">
+            <input [(ngModel)]="emailInput" class='info-input'
+                   disabled placeholder="Enter email" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="emailOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
             </select>
         </div>
         <div class='info-div'>
             <div class='info-label'>Gender</div>
-            <input />
+            <input [(ngModel)]="genderInput" class='info-input'
+                   placeholder="Enter gender" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="genderOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
         </div>
-        <div class='school-div'>
-            <div class='school-label'>School</div>
-            <input />
+        <div class='info-div'>
+            <div class='info-label'>School</div>
+            <input class='info-input' placeholder="Enter school" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="schoolOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
         </div>
-        <div class='work-div'>
-            <div class='work-label'>Work</div>
-            <input />
+        <div class='info-div'>
+            <div class='info-label'>Work</div>
+            <input class='info-input' placeholder="Enter work" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="workOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
         </div>
-        <div class='location-div'>
-            <div class='location-label'>Location</div>
-            <input />
+        <div class='info-div'>
+            <div class='info-label'>Location</div>
+            <input class='info-input' placeholder="Enter location" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="locationOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
         </div>
     </div>
 

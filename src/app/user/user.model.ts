@@ -10,11 +10,11 @@ export interface UserInfoBase {
     first_name: string;
     middle_name: string;
     last_name: string;
-    dob: string | null;
-    gender: string | null;
-    school: string | null;
-    work: string | null;
-    location: string | null;
+    dob: string;
+    gender: string;
+    school: string;
+    work: string;
+    location: string;
 }
 
 export interface UserInfoPublic extends UserInfoBase {
@@ -24,6 +24,7 @@ export interface UserInfoPublic extends UserInfoBase {
 export interface UserInfoPrivate extends UserInfoPublic {
     user_id: string;
     email: string;
+    email_public: boolean;
     dob_public: boolean;
     gender_public: boolean;
     school_pubblic: boolean;
