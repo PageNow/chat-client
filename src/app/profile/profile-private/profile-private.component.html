@@ -1,7 +1,5 @@
-<div>
-    <app-tabs [currTab]="'profile'"></app-tabs>
-    Profile Page of {{ userInfo ? userInfo.user_uuid : '' }}
-
+<app-tabs [currTab]="'profile'"></app-tabs>
+<div class='main-div'>
     <div *ngIf="userInfo !== null">
         {{ userInfo.first_name }} {{ userInfo.last_name }}
     </div>
@@ -41,7 +39,7 @@
 
     <div class='additional-info-header-div'>
         <span class='additional-info-header-span'>
-            Additional information
+            <strong>Additional information</strong>
         </span>
         <span class='additional-info-save-span' (click)="saveAdditionalInfo()">
             Save
@@ -71,7 +69,8 @@
         </div>
         <div class='info-div'>
             <div class='info-label'>School</div>
-            <input class='info-input' placeholder="Enter school" />
+            <input [(ngModel)]="schoolInput" class='info-input'
+                   placeholder="Enter school" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="schoolOption" aria-label=".form-select-sm">
                 <option value="private">Private</option>
@@ -80,7 +79,8 @@
         </div>
         <div class='info-div'>
             <div class='info-label'>Work</div>
-            <input class='info-input' placeholder="Enter work" />
+            <input [(ngModel)]="workInput" class='info-input'
+                   placeholder="Enter work" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="workOption" aria-label=".form-select-sm">
                 <option value="private">Private</option>
@@ -89,17 +89,13 @@
         </div>
         <div class='info-div'>
             <div class='info-label'>Location</div>
-            <input class='info-input' placeholder="Enter location" />
+            <input [(ngModel)]="locationInput" class='info-input'
+                   placeholder="Enter location" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="locationOption" aria-label=".form-select-sm">
                 <option value="private">Private</option>
                 <option value="public">Public</option>
             </select>
         </div>
-    </div>
-
-    <div class='additional-info-search-div'>
-        <input class="form-check-input" type="checkbox" value=""/>
-        <span>Allow users to search me with additional information</span>
     </div>
 </div>

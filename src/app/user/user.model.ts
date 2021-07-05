@@ -27,10 +27,23 @@ export interface UserInfoPrivate extends UserInfoPublic {
     email_public: boolean;
     dob_public: boolean;
     gender_public: boolean;
-    school_pubblic: boolean;
+    school_public: boolean;
     work_public: boolean;
     location_public: boolean;
 
     domain_allow_array: Array<string>;
     domain_deny_array: Array<string>;
+}
+
+export interface UserInfoUpdate {
+    gender: string;
+    school: string;
+    work: string;
+    location: string;
+
+    email_public: boolean;
+    gender_public: boolean;
+    school_public: boolean;
+    work_public: boolean;
+    location_public: boolean;
 }

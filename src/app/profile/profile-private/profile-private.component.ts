@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from "rxjs";
-import { UserInfoPrivate } from "src/app/user/user.model";
+import { UserInfoPrivate, UserInfoUpdate } from "src/app/user/user.model";
 
 import { UserService } from "../../user/user.service";
 
@@ -29,6 +29,8 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     workOption = '';
     locationOption = '';
 
+    errorMsg = '';
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -44,7 +46,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.spinner.show();
         this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
             res => {
-                console.log(res);
                 this.spinner.hide();
                 this.userInfo = res;
 
@@ -56,7 +57,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
                 this.emailOption = res.email_public ? 'public' : 'private';
                 this.genderOption = res.gender_public ? 'public' : 'private';
-                this.schoolOption = res.school_pubblic ? 'public' : 'private';
+                this.schoolOption = res.school_public ? 'public' : 'private';
                 this.workOption = res.work_public ? 'public' : 'private';
                 this.locationOption = res.location_public ? 'public' : 'private';
             },
@@ -72,6 +73,29 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     saveAdditionalInfo(): void {
-        console.log('saving additional info');
+        if (!this.userInfo) return;
+
+        const updatedUserInfo: UserInfoUpdate = {
+            gender: this.genderInput,
+            school: this.schoolInput,
+            work: this.workInput,
+            location: this.locationInput,
+
+            email_public: this.emailOption === 'public' ? true : false,
+            gender_public: this.genderOption === 'public' ? true : false,
+            school_public: this.schoolOption === 'public' ? true : false,
+            work_public: this.workOption === 'public' ? true : false,
+            location_public: this.locationOption === 'public' ? true : false
+        };
+
+        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
+            res => {
+                this.userInfo = res;
+            },
+            err => {
+                console.log(err);
+                this.errorMsg = err.error.detail;
+            }
+        )
     }
 }
