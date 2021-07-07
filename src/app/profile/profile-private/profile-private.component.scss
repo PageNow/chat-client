@@ -1,27 +1,101 @@
 @import '../../../stylings/variables';
 
 .main-div {
-    margin: 0 10px 0 10px;
+    margin: 0 12px 0 12px;
 }
 
-.additional-info-header-div {
+.section-header-div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
 
-.additional-info-header-span {
+.save-span {
     font-size: 17px;
 }
 
-.additional-info-save-span {
+.section-header-save-span {
     color: $link-color
 }
 
-.additional-info-save-span:hover {
+.section-header-save-span:hover {
     cursor: pointer;
     color: $link-hover-color;
+}
+
+.description-textarea {
+    resize: none;
+    width: 100%;
+}
+
+.activity-settings-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-settings-header-div {
+    font-size: 17px;
+}
+
+.activity-settings-select-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.activity-settings-select {
+    margin-right: 10px;
+    width: 95px;
+}
+
+.domain-list-div {
+    height: 200px;
+    overflow: auto;
+    border: 1px solid $tabs-color;
+    padding: 5px 15px 5px 10px;
+}
+
+.domain-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.minus-icon:hover {
+    cursor: pointer;
+}
+
+.domain-helper-div {
+    color: $tabs-color;
+    font-size: 14px;
+}
+
+.domain-input-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.domain-input {
+    flex-grow: 1;
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+.domain-add-span {
+    width: 45px;
+    text-align: center;
+}
+
+.domain-add-icon:hover {
+    cursor: pointer;
 }
 
 .info-div {

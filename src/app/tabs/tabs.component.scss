@@ -1,10 +1,10 @@
-$default-color: #485063;
+@import '../../stylings/variables';
 
 .tabs-main-div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    background-color: $default-color;
+    background-color: $tabs-color;
     align-items: center;
     height: 32px;
     position: sticky;
@@ -41,7 +41,7 @@ fa-icon:hover {
 }
 
 .selected-fa-icon {
-    color: $default-color;
+    color: $tabs-color;
 }
 
 .default-fa-icon {

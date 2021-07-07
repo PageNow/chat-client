@@ -14,34 +14,83 @@
         </div>
     </div>
 
-    <div class='description-div'>
-        <div class='description-header-div'>Description</div>
-        <div>
-            <textarea></textarea>
-        </div>
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Description</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveDescription()">
+            Save
+        </span>
     </div>
 
-    <div class='activity-settings-div'>
-
+    <div class='description-textarea-div'>
+        <textarea class='description-textarea description-textarea'
+                  [(ngModel)]="descriptionInput">
+        </textarea>
     </div>
 
-    <div class='domain-input-div'>
-        <input class='domain-input' />
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Activity privacy settings</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveActivitySettings()">
+            Save
+        </span>
+    </div>
+
+    <div class='activity-settings-select-div'>
+        <select class="form-select form-select-sm activity-settings-select"
+                [(ngModel)]="activitySettings" aria-label=".form-select-sm">
+            <option value="share">Share</option>
+            <option value="hide">Hide</option>
+        </select>
+        <span>all pages except the following</span>
     </div>
 
     <div class='domain-list-div'>
-
+        <div *ngIf="activitySettings === 'share'">
+            <div *ngFor="let domain of domainDenyArr; let domainIdx=index"
+                 class='domain-div'>
+                <span>{{ domain }}</span>
+                <fa-icon [icon]="faMinus" class='minus-icon'
+                         (click)="removeDomain(domainIdx)">
+                </fa-icon>
+            </div>
+        </div>
+        <div *ngIf="activitySettings === 'hide'">
+            <div *ngFor="let domain of domainAllowArr; let domainIdx=index" class='domain-div'>
+                <span>{{ domain }}</span>
+                <fa-icon [icon]="faMinus" class='minus-icon'
+                         (click)="removeDomain(domainIdx)">
+                </fa-icon>
+            </div>
+        </div>
     </div>
 
-    <div class='domain-list-save-div'>
-        <span class='domain-list-save-span'>Save</span>
+    <div class='domain-input-div'>
+        <input [(ngModel)]="domainInput" class='domain-input'
+               placeholder="Enter website address (ex. facebook.com)"/>
+        <span class='domain-add-span'>
+            <fa-icon class='domain-add-icon' [icon]="faPlus"
+                 (click)="addDomain()">
+            </fa-icon>
+        </span>
     </div>
 
-    <div class='additional-info-header-div'>
-        <span class='additional-info-header-span'>
+    <div class='domain-helper-div'>
+        <span *ngIf="activitySettings === 'hide'">
+            * You will be sharing only the pages listed above.
+        </span>
+        <span *ngIf="activitySettings === 'share'">
+            * You will be sharing all pages except the ones above.
+        </span>
+    </div>
+
+    <div class='section-header-div'>
+        <span class='section-header-span'>
             <strong>Additional information</strong>
         </span>
-        <span class='additional-info-save-span' (click)="saveAdditionalInfo()">
+        <span class='section-header-save-span' (click)="saveAdditionalInfo()">
             Save
         </span>
     </div>

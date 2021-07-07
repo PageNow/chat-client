@@ -11,6 +11,9 @@ export interface UserInfoBase {
     middle_name: string;
     last_name: string;
     dob: string;
+
+    description: string;
+
     gender: string;
     school: string;
     work: string;
@@ -31,11 +34,17 @@ export interface UserInfoPrivate extends UserInfoPublic {
     work_public: boolean;
     location_public: boolean;
 
+    share_mode: string;
     domain_allow_array: Array<string>;
     domain_deny_array: Array<string>;
 }
 
 export interface UserInfoUpdate {
+    description: string;
+    share_mode: string;
+    domain_allow_array: Array<string>;
+    domain_deny_array: Array<string>;
+
     gender: string;
     school: string;
     work: string;
