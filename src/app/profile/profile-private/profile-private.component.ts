@@ -1,13 +1,13 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription } from "rxjs";
-import { UserInfoPrivate, UserInfoUpdate } from "src/app/user/user.model";
+import { Subscription } from 'rxjs';
 import {
     faPlus, faMinus
 } from '@fortawesome/free-solid-svg-icons';
 
-import { UserService } from "../../user/user.service";
+import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
+import { UserService } from '../../user/user.service';
 
 @Component({
     selector: 'app-profile-private',
@@ -19,7 +19,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     userInfo: UserInfoPrivate | null = null;
     userInfoSubscription: Subscription;
     faPlus = faPlus;
-    faMinus= faMinus;
+    faMinus = faMinus;
 
     descriptionInput = '';
     activitySettings = '';
@@ -51,7 +51,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        console.log('profile private oninit')
+        console.log('profile private oninit');
         this.userUuid = this.route.snapshot.paramMap.get('uuid');
         this.spinner.show();
         this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
@@ -83,13 +83,13 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             }
         );
     }
-    
+
     ngOnDestroy(): void {
         this.userInfoSubscription?.unsubscribe();
     }
 
     saveDescription(): void {
-        if (!this.userInfo) return;
+        if (!this.userInfo) { return; }
 
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
@@ -121,7 +121,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             return;
         }
     }
-    
+
     addDomain(): void {
         if (this.activitySettings === 'share') {
             this.domainDenyArr.push(this.domainInput);
@@ -136,7 +136,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     saveActivitySettings(): void {
-        if (!this.userInfo) return;
+        if (!this.userInfo) { return; }
 
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
@@ -162,11 +162,11 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.errorMsg = err.error.detail;
                 this.spinner.hide();
             }
-        )
+        );
     }
 
     saveAdditionalInfo(): void {
-        if (!this.userInfo) return;
+        if (!this.userInfo) { return; }
 
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {

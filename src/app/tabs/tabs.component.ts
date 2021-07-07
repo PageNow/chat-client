@@ -39,20 +39,20 @@ export class TabsComponent implements OnDestroy {
     ) {
         console.log('tabs.component constructor');
 
-        window.addEventListener("message",
+        window.addEventListener('message',
             this.messageEventListener.bind(this));
 
         this.authState = this.authService.auth;
 
         this.authService.auth$.subscribe((authState: AuthState) => {
-            this.spinner.show();            
+            this.spinner.show();
             if (!authState.isAuthenticated) {
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl: true });
             } else {
                 this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
                     res => {
-                        this.userUuid = res['user_uuid']
+                        this.userUuid = res.user_uuid;
                         this.spinner.hide();
                     },
                     err => {
@@ -67,8 +67,8 @@ export class TabsComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.userInfoSubscription?.unsubscribe();
-        
-        window.removeEventListener("message",
+
+        window.removeEventListener('message',
             this.messageEventListener.bind(this));
     }
 
@@ -86,7 +86,7 @@ export class TabsComponent implements OnDestroy {
     //     this.authService.publishSignOut();
     //     Auth.signOut();
     //     // TODO: signal chrome extension to close chatbox
-    // } 
+    // }
 }
 
 /* Notes

@@ -17,7 +17,7 @@ export class UserService {
         private http: HttpClient,
         private authService: AuthService
     ) {
-        console.log('user service constructor')
+        console.log('user service constructor');
         this.authService.auth$.subscribe((authState: AuthState) => {
             this.authState = authState;
         });
@@ -27,7 +27,7 @@ export class UserService {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.authState.jwt}`
+                Authorization: `Bearer ${this.authState.jwt}`
             })
         };
         return this.http.get<UserInfoPrivate>(`${USER_API_URL}/users/me`, httpOptions);
@@ -37,7 +37,7 @@ export class UserService {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.authState.jwt}`
+                Authorization: `Bearer ${this.authState.jwt}`
             })
         };
         return this.http.post(
@@ -51,7 +51,7 @@ export class UserService {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.authState.jwt}`
+                Authorization: `Bearer ${this.authState.jwt}`
             })
         };
         return this.http.put(
