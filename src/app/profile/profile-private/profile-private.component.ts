@@ -171,7 +171,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.nameErrorMsg = err.error.detail;
                 this.spinner.hide();
             }
-        )
+        );
     }
 
     saveDescription(): void {
@@ -309,12 +309,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             }
             this.imageToUpload = event.target.files[0];
 
-            //Show image preview
+            // Show image preview
             const reader = new FileReader();
             reader.readAsDataURL(this.imageToUpload);
-            reader.onload = (event_load: any) => {
-                this.imageSelectUrl = event_load.target.result;
-            }
+            reader.onload = (eventLoad: any) => {
+                this.imageSelectUrl = eventLoad.target.result;
+            };
         }
     }
 
@@ -336,7 +336,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     deleteProfileImage(): void {

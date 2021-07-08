@@ -12,6 +12,7 @@ import { AuthState } from '../auth/auth.model';
 })
 export class UserService {
     authState: AuthState;
+    httpOptions: any;
 
     constructor(
         private http: HttpClient,
@@ -20,83 +21,53 @@ export class UserService {
         console.log('user service constructor');
         this.authService.auth$.subscribe((authState: AuthState) => {
             this.authState = authState;
+            this.httpOptions = {
+                headers: new HttpHeaders({
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${authState.jwt}`
+                })
+            }
         });
     }
 
-    public getCurrentUserInfo(): Observable<UserInfoPrivate> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
-        return this.http.get<UserInfoPrivate>(`${USER_API_URL}/users/me`, httpOptions);
+    public getCurrentUserInfo(): Observable<any> {
+        return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions);
     }
 
     public submitCurrentUserInfo(userInfo: UserCreate): Observable<any> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
         return this.http.post(
             `${USER_API_URL}/users/me`,
             JSON.stringify(userInfo),
-            httpOptions
+            this.httpOptions
         );
     }
 
     public updateCurrentUserInfo(userInfo: UserInfoUpdate): Observable<any> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
         return this.http.put(
             `${USER_API_URL}/users/me`,
             JSON.stringify(userInfo),
-            httpOptions
+            this.httpOptions
         );
     }
 
     public getProfileImageUploadUrl(): Observable<any> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
         return this.http.get(
             `${USER_API_URL}/users/me/profile-image-upload-url`,
-            httpOptions
+            this.httpOptions
         );
     }
 
-    public getProfileImageGetUrl(user_uuid: string): Observable<any> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
+    public getProfileImageGetUrl(userUuid: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/${user_uuid}/profile-image-url`,
-            httpOptions
+            `${USER_API_URL}/users/${userUuid}/profile-image-url`,
+            this.httpOptions
         );
     }
 
     public deleteProfileIamge(): Observable<any> {
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.authState.jwt}`
-            })
-        };
         return this.http.delete(
             `${USER_API_URL}/users/me/profile-image`,
-            httpOptions
+            this.httpOptions
         );
     }
 }
