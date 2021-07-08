@@ -109,7 +109,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
                 this.userService.getProfileImageGetUrl(res.user_uuid).toPromise()
                     .then(resp => {
-                        console.log(resp);
                         this.profileImageUrl = resp.data;
                     })
                     .catch(err => {

@@ -26,7 +26,7 @@ export class UserService {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${authState.jwt}`
                 })
-            }
+            };
         });
     }
 
