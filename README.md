@@ -1,5 +1,16 @@
 # chat-client
 
+## TODO
+
+### Profile
+
+[] Validate or convert domain input by user
+
+### License
+
+[] Link to simpleicon.com
+[] Link to fontawesome
+
 ## References
 
 ### Amplify Authentication

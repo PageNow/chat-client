@@ -1,8 +1,199 @@
-<div>
-    <app-tabs [currTab]="'profile'"></app-tabs>
-    Profile Page of {{ userInfo ? userInfo.user_uuid : '' }}
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>{{ spinnerMsg }}</strong>
+    </p>
+</ngx-spinner>
+<app-tabs [currTab]="'profile'"></app-tabs>
+<div class='main-div'>
+    <div class='profile-image-div'>
+        <img [src]='profileImageUrl'
+             (click)="toggleProfileImageUploader()"
+             class='profile-img' onerror="this.src='/assets/user.png'"/>
+    </div>
 
-    <div *ngIf="userInfo !== null">
-        {{ userInfo.first_name }} {{ userInfo.last_name }}
+    <div *ngIf="profileImageUploaderOn" class='profile-image-upload-div'>
+        <div class="profile-image-upload-header">
+            <input class='file-input' type="file" (change)="onSelectFile($event)"/>
+            <span *ngIf="imageSelectUrl !== ''" class='profile-image-action-span'
+                  (click)="uploadProfileImage()">
+                Upload
+            </span>
+            <span *ngIf="imageSelectUrl === ''" class='profile-image-action-span'
+                  (click)="deleteProfileImage()">
+                Delete
+            </span>
+        </div>
+        <div *ngIf='imageUploadErrorMsg !== ""' class='error-div'>
+            <span>* {{ imageUploadErrorMsg }}</span>
+        </div>
+    </div>
+
+    <div class='preview-img-div' *ngIf="imageSelectUrl && profileImageUploaderOn">
+        <img [src]="imageSelectUrl" class='preview-img'/>
+    </div>
+
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Name</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveName()">
+            Save
+        </span>
+    </div>
+
+    <div class='name-div'>
+        <input [(ngModel)]='firstNameInput' placeholder="First Name" class='name-input' />
+        <input [(ngModel)]='middleNameInput' placeholder="Middle Name" class='name-input' />
+        <input [(ngModel)]='lastNameInput' placeholder="Last Name" class='name-input' />
+    </div>
+
+    <div *ngIf='nameErrorMsg !== ""' class='error-div'>
+        <span>* {{ nameErrorMsg }}</span>
+    </div>
+
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Description</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveDescription()">
+            Save
+        </span>
+    </div>
+
+    <div class='description-textarea-div'>
+        <textarea class='description-textarea description-textarea'
+                  [(ngModel)]="descriptionInput">
+        </textarea>
+    </div>
+
+    <div *ngIf='descriptionErrorMsg !== ""' class='error-div'>
+        <span>* {{ descriptionErrorMsg }}</span>
+    </div>
+
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Activity privacy settings</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveActivitySettings()">
+            Save
+        </span>
+    </div>
+
+    <div class='activity-settings-select-div'>
+        <select class="form-select form-select-sm activity-settings-select"
+                [(ngModel)]="activitySettings" aria-label=".form-select-sm">
+            <option value="share">Share</option>
+            <option value="hide">Hide</option>
+        </select>
+        <span>all pages except the following</span>
+    </div>
+
+    <div class='domain-list-div'>
+        <div *ngIf="activitySettings === 'share'">
+            <div *ngFor="let domain of domainDenyArr; let domainIdx=index"
+                 class='domain-div'>
+                <span>{{ domain }}</span>
+                <fa-icon [icon]="faMinus" class='minus-icon'
+                         (click)="removeDomain(domainIdx)">
+                </fa-icon>
+            </div>
+        </div>
+        <div *ngIf="activitySettings === 'hide'">
+            <div *ngFor="let domain of domainAllowArr; let domainIdx=index" class='domain-div'>
+                <span>{{ domain }}</span>
+                <fa-icon [icon]="faMinus" class='minus-icon'
+                         (click)="removeDomain(domainIdx)">
+                </fa-icon>
+            </div>
+        </div>
+    </div>
+
+    <div class='domain-input-div'>
+        <input [(ngModel)]="domainInput" class='domain-input'
+               placeholder="Enter website address (ex. facebook.com)"/>
+        <span class='domain-add-span'>
+            <fa-icon class='domain-add-icon' [icon]="faPlus"
+                 (click)="addDomain()">
+            </fa-icon>
+        </span>
+    </div>
+
+    <div class='domain-helper-div'>
+        <span *ngIf="activitySettings === 'hide'">
+            * You will be sharing only the pages listed above.
+        </span>
+        <span *ngIf="activitySettings === 'share'">
+            * You will be sharing all pages except the ones above.
+        </span>
+    </div>
+
+    <div *ngIf='activitySettingsErrorMsg !== ""' class='error-div'>
+        <span>* {{ activitySettingsErrorMsg }}</span>
+    </div>
+
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Additional information</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveAdditionalInfo()">
+            Save
+        </span>
+    </div>
+
+    <div class='additional-info-div'>
+        <div class='info-div'>
+            <div class='info-label'>Email</div>
+            <input [(ngModel)]="emailInput" class='info-input'
+                   disabled placeholder="Enter email" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="emailOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+        <div class='info-div'>
+            <div class='info-label'>Gender</div>
+            <input [(ngModel)]="genderInput" class='info-input'
+                   placeholder="Enter gender" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="genderOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+        <div class='info-div'>
+            <div class='info-label'>School</div>
+            <input [(ngModel)]="schoolInput" class='info-input'
+                   placeholder="Enter school" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="schoolOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+        <div class='info-div'>
+            <div class='info-label'>Work</div>
+            <input [(ngModel)]="workInput" class='info-input'
+                   placeholder="Enter work" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="workOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+        <div class='info-div'>
+            <div class='info-label'>Location</div>
+            <input [(ngModel)]="locationInput" class='info-input'
+                   placeholder="Enter location" />
+            <select class="form-select form-select-sm privacy-select"
+                    [(ngModel)]="locationOption" aria-label=".form-select-sm">
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+    </div>
+
+    <div *ngIf='additionalInfoErrorMsg !== ""' class='error-div'>
+        <span>* {{ additionalInfoErrorMsg }}</span>
     </div>
 </div>
