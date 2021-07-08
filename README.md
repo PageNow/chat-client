@@ -1,5 +1,11 @@
 # chat-client
 
+## TODO
+
+### Profile
+
+[] Validate or convert domain input by user
+
 ## References
 
 ### Amplify Authentication

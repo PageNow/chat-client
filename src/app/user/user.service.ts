@@ -60,4 +60,30 @@ export class UserService {
             httpOptions
         );
     }
+
+    public getProfileImageUploadUrl(): Observable<any> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.authState.jwt}`
+            })
+        };
+        return this.http.get(
+            `${USER_API_URL}/users/me/profile-image-upload-url`,
+            httpOptions
+        );
+    }
+
+    public getProfileImageGetUrl(user_uuid: string): Observable<any> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.authState.jwt}`
+            })
+        };
+        return this.http.get(
+            `${USER_API_URL}/users/${user_uuid}/profile-image-url`,
+            httpOptions
+        );
+    }
 }

@@ -40,6 +40,10 @@ export interface UserInfoPrivate extends UserInfoPublic {
 }
 
 export interface UserInfoUpdate {
+    first_name: string;
+    middle_name: string;
+    last_name: string;
+
     description: string;
     share_mode: string;
     domain_allow_array: Array<string>;

@@ -1,17 +1,34 @@
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>{{ spinnerMsg }}</strong>
+    </p>
+</ngx-spinner>
 <app-tabs [currTab]="'profile'"></app-tabs>
 <div class='main-div'>
-    <div *ngIf="userInfo !== null">
-        {{ userInfo.first_name }} {{ userInfo.last_name }}
+    <div class='header-div'>
+        <div class='profile-image-div'>
+            <img #profileImg [src]='profileImageUrl' (error)="profileImg.style.display='none'"/>
+            <fa-icon [icon]="faUserAlt" [hidden]="profileImg.style.display !== 'none'" class="profile-fa-icon"></fa-icon>
+        </div>
     </div>
 
-    <div class='header-div'>
-        <div class='image-div'>Profile Image</div>
-        <div class='name-div'>
-            Name
-            <input placeholder="First Name" />
-            <input placeholder="Middle Name" />
-            <input placeholder="Last Name" />
-        </div>
+    <div class='section-header-div'>
+        <span class='section-header-span'>
+            <strong>Name</strong>
+        </span>
+        <span class='section-header-save-span' (click)="saveName()">
+            Save
+        </span>
+    </div>
+
+    <div class='name-div'>
+        <input [(ngModel)]='firstNameInput' placeholder="First Name" class='name-input' />
+        <input [(ngModel)]='middleNameInput' placeholder="Middle Name" class='name-input' />
+        <input [(ngModel)]='lastNameInput' placeholder="Last Name" class='name-input' />
+    </div>
+
+    <div *ngIf='nameErrorMsg !== ""' class='error-div'>
+        <span>* {{ nameErrorMsg }}</span>
     </div>
 
     <div class='section-header-div'>
@@ -27,6 +44,10 @@
         <textarea class='description-textarea description-textarea'
                   [(ngModel)]="descriptionInput">
         </textarea>
+    </div>
+
+    <div *ngIf='descriptionErrorMsg !== ""' class='error-div'>
+        <span>* {{ descriptionErrorMsg }}</span>
     </div>
 
     <div class='section-header-div'>
@@ -84,6 +105,10 @@
         <span *ngIf="activitySettings === 'share'">
             * You will be sharing all pages except the ones above.
         </span>
+    </div>
+
+    <div *ngIf='activitySettingsErrorMsg !== ""' class='error-div'>
+        <span>* {{ activitySettingsErrorMsg }}</span>
     </div>
 
     <div class='section-header-div'>
@@ -146,5 +171,9 @@
                 <option value="public">Public</option>
             </select>
         </div>
+    </div>
+
+    <div *ngIf='additionalInfoErrorMsg !== ""' class='error-div'>
+        <span>* {{ additionalInfoErrorMsg }}</span>
     </div>
 </div>

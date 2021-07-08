@@ -4,6 +4,26 @@
     margin: 0 12px 0 12px;
 }
 
+.error-div {
+    color: $error-color;
+    font-size: 14px;
+}
+
+.profile-fa-icon {
+    font-size: 50px;
+}
+
+.name-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.name-input {
+    width: 33%;    
+}
+
 .section-header-div {
     display: flex;
     flex-direction: row;

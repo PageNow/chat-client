@@ -3,11 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import {
-    faPlus, faMinus
+    faPlus, faMinus, faUserAlt
 } from '@fortawesome/free-solid-svg-icons';
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
+
+const SPINNER_FETCH_MSG = 'Fetching user data...';
+const SPINNER_UPLOAD_MSG = 'Uploading user data...';
 
 @Component({
     selector: 'app-profile-private',
@@ -20,26 +23,36 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     userInfoSubscription: Subscription;
     faPlus = faPlus;
     faMinus = faMinus;
+    faUserAlt = faUserAlt;
+
+    profileImageUrl = '';
+    firstNameInput = '';
+    middleNameInput = '';
+    lastNameInput = '';
+    nameErrorMsg = '';
 
     descriptionInput = '';
+    descriptionErrorMsg = '';
+
     activitySettings = '';
     domainAllowArr: string[] = [];
     domainDenyArr: string[] = [];
     domainInput = '';
+    activitySettingsErrorMsg = '';
 
     emailInput = '';
     genderInput = '';
     schoolInput = '';
     workInput = '';
     locationInput = '';
-
     emailOption = '';
     genderOption = '';
     schoolOption = '';
     workOption = '';
     locationOption = '';
+    additionalInfoErrorMsg = '';
 
-    errorMsg = '';
+    spinnerMsg = '';
 
     constructor(
         private route: ActivatedRoute,
@@ -53,12 +66,17 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         console.log('profile private oninit');
         this.userUuid = this.route.snapshot.paramMap.get('uuid');
+        this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();
         this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
             res => {
                 console.log(res);
                 this.spinner.hide();
                 this.userInfo = res;
+
+                this.firstNameInput = res.first_name;
+                this.middleNameInput = res.middle_name;
+                this.lastNameInput = res.last_name;
 
                 this.descriptionInput = res.description;
                 this.activitySettings = res.share_mode === 'default_all' ? 'share' : 'hide';
@@ -76,6 +94,16 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.schoolOption = res.school_public ? 'public' : 'private';
                 this.workOption = res.work_public ? 'public' : 'private';
                 this.locationOption = res.location_public ? 'public' : 'private';
+
+                this.userService.getProfileImageGetUrl(res.user_uuid).subscribe(
+                    resp => {
+                        console.log(resp);
+                        this.profileImageUrl = resp.data;
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                );
             },
             err => {
                 this.spinner.hide();
@@ -88,9 +116,48 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.userInfoSubscription?.unsubscribe();
     }
 
+    saveName(): void {
+        if (!this.userInfo) { return; }
+        if (this.firstNameInput === '') {
+            this.nameErrorMsg = 'First name must not be empty';
+            return;
+        }
+        if (this.lastNameInput === '') {
+            this.nameErrorMsg = 'Last name must not be empty';
+            return;
+        }
+
+        this.spinnerMsg = SPINNER_UPLOAD_MSG;
+        this.spinner.show();
+        const updatedUserInfo: UserInfoUpdate = {
+            ...this.userInfo,
+
+            first_name: this.firstNameInput,
+            middle_name: this.middleNameInput,
+            last_name: this.lastNameInput
+        } as UserInfoUpdate;
+
+        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
+            (res: UserInfoPrivate) => {
+                this.userInfo = res;
+                this.firstNameInput = res.first_name;
+                this.middleNameInput = res.middle_name;
+                this.lastNameInput = res.last_name;
+                this.nameErrorMsg = '';
+                this.spinner.hide();
+            },
+            err => {
+                console.log(err);
+                this.nameErrorMsg = err.error.detail;
+                this.spinner.hide();
+            }
+        )
+    }
+
     saveDescription(): void {
         if (!this.userInfo) { return; }
 
+        this.spinnerMsg = SPINNER_UPLOAD_MSG;
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
             ...this.userInfo,
@@ -102,11 +169,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             (res: UserInfoPrivate) => {
                 this.userInfo = res;
                 this.descriptionInput = res.description;
+                this.descriptionErrorMsg = '';
                 this.spinner.hide();
             },
             err => {
                 console.log(err);
-                this.errorMsg = err.error.detail;
+                this.descriptionErrorMsg = err.error.detail;
                 this.spinner.hide();
             }
         );
@@ -138,6 +206,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     saveActivitySettings(): void {
         if (!this.userInfo) { return; }
 
+        this.spinnerMsg = SPINNER_UPLOAD_MSG;
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
             ...this.userInfo,
@@ -155,11 +224,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.domainDenyArr = res.domain_deny_array;
                 this.domainAllowArr.sort();
                 this.domainDenyArr.sort();
+                this.activitySettingsErrorMsg = '';
                 this.spinner.hide();
             },
             err => {
                 console.log(err);
-                this.errorMsg = err.error.detail;
+                this.activitySettingsErrorMsg = err.error.detail;
                 this.spinner.hide();
             }
         );
@@ -168,6 +238,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     saveAdditionalInfo(): void {
         if (!this.userInfo) { return; }
 
+        this.spinnerMsg = SPINNER_UPLOAD_MSG;
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
             ...this.userInfo,
@@ -199,11 +270,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.workOption = res.work_public ? 'public' : 'private';
                 this.locationOption = res.location_public ? 'public' : 'private';
 
+                this.additionalInfoErrorMsg = '';
                 this.spinner.hide();
             },
             err => {
                 console.log(err);
-                this.errorMsg = err.error.detail;
+                this.additionalInfoErrorMsg = err.error.detail;
                 this.spinner.hide();
             }
         );
