@@ -28,9 +28,9 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     // Profile Image
     imageToUpload: any;
-    imageUrl: string;
+    imageSelectUrl = ''; // for uploading
     imageUploadErrorMsg = '';
-    profileImageUrl = '';
+    profileImageUrl = '/assets/user.png'; // for profile image display
     profileImageUploadUrl = '';
     profileImageUploaderOn = false;
 
@@ -114,7 +114,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     })
                     .catch(err => {
                         console.log(err);
-                        this.profileImageUrl = '';
+                        this.profileImageUrl = '/assets/user.png';
                     });
 
                 this.userService.getProfileImageUploadUrl().toPromise()
@@ -313,7 +313,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             const reader = new FileReader();
             reader.readAsDataURL(this.imageToUpload);
             reader.onload = (event_load: any) => {
-                this.imageUrl = event_load.target.result;
+                this.imageSelectUrl = event_load.target.result;
             }
         }
     }
@@ -327,12 +327,27 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         };
         console.log(httpOptions);
         this.http.put(this.profileImageUploadUrl, this.imageToUpload, httpOptions).toPromise()
-            .then((res: any) => {
+            .then(res => {
                 console.log(res);
+                this.profileImageUrl = this.imageSelectUrl;
+                this.imageSelectUrl = '';
+                this.imageToUpload = null;
+                this.toggleProfileImageUploader();
             })
-            .catch((err: any) => {
+            .catch(err => {
                 console.log(err);
             })
+    }
+
+    deleteProfileImage(): void {
+        this.userService.deleteProfileIamge().toPromise()
+            .then(res => {
+                console.log(res);
+                this.profileImageUrl = '/assets/user.png';
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     toggleProfileImageUploader(): void {

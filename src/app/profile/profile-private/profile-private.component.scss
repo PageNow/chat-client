@@ -28,12 +28,12 @@
     align-items: center;
 }
 
-.profile-image-upload-span {
+.profile-image-action-span {
     color: $link-color;
-    font-size: 17px;
+    font-size: 15px;
 }
 
-.profile-image-upload-span:hover {
+.profile-image-action-span:hover {
     cursor: pointer;
     color: $link-hover-color;
 }
@@ -46,20 +46,24 @@
     cursor: pointer;
 }
 
+.profile-img {
+    object-fit: cover;
+    width: 90px;
+    height: 90px;
+    border-radius: 100%;
+}
+
+.profile-img:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
 .preview-img-div {
     text-align: center;
 }
 
 .preview-img {
     width: 300px;
-}
-
-// .visible-profile {
-//     display: block;
-// }
-
-.invisible-profile {
-    display: none;
 }
 
 .error-div {
@@ -79,7 +83,7 @@
 }
 
 .name-input {
-    width: 33%;    
+    width: 33%;
 }
 
 .section-header-div {
@@ -89,12 +93,9 @@
     align-items: center;
 }
 
-.save-span {
-    font-size: 17px;
-}
-
 .section-header-save-span {
-    color: $link-color
+    color: $link-color;
+    font-size: 15px;
 }
 
 .section-header-save-span:hover {

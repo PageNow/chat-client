@@ -86,4 +86,17 @@ export class UserService {
             httpOptions
         );
     }
+
+    public deleteProfileIamge(): Observable<any> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.authState.jwt}`
+            })
+        };
+        return this.http.delete(
+            `${USER_API_URL}/users/me/profile-image`,
+            httpOptions
+        );
+    }
 }
