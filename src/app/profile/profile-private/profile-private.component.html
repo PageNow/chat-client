@@ -5,11 +5,26 @@
 </ngx-spinner>
 <app-tabs [currTab]="'profile'"></app-tabs>
 <div class='main-div'>
-    <div class='header-div'>
-        <div class='profile-image-div'>
-            <img #profileImg [src]='profileImageUrl' (error)="profileImg.style.display='none'"/>
-            <fa-icon [icon]="faUserAlt" [hidden]="profileImg.style.display !== 'none'" class="profile-fa-icon"></fa-icon>
+    <div class='profile-image-div'>
+        <img [ngClass]="{'visible-profile':  profileImageUrl !== '', 'invisible-profile': profileImageUrl === ''}" 
+             [src]='profileImageUrl' (click)="toggleProfileImageUploader()"/>
+        <fa-icon [icon]="faUserAlt" [ngClass]="{'visible-profile': profileImageUrl === '', 'invisible-profile': profileImageUrl !== ''}"
+                 class="profile-fa-icon" (click)="toggleProfileImageUploader()">
+        </fa-icon>
+    </div>
+
+    <div *ngIf="profileImageUploaderOn" class='profile-image-upload-div'>
+        <div class="profile-image-upload-header">
+            <input class='file-input' type="file" (change)="onSelectFile($event)"/>
+            <span class='profile-image-upload-span' (click)="uploadProfileImage()">Upload</span>
         </div>
+        <div *ngIf='imageUploadErrorMsg !== ""' class='error-div'>
+            <span>* {{ imageUploadErrorMsg }}</span>
+        </div>
+    </div>
+
+    <div class='preview-img-div'>
+        <img *ngIf="imageUrl" [src]="imageUrl" class='preview-img'/>
     </div>
 
     <div class='section-header-div'>

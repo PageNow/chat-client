@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { NgxSpinnerService } from 'ngx-spinner';
 import {
     faPlus, faMinus, faUserAlt
 } from '@fortawesome/free-solid-svg-icons';
@@ -25,21 +26,32 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     faMinus = faMinus;
     faUserAlt = faUserAlt;
 
+    // Profile Image
+    imageToUpload: any;
+    imageUrl: string;
+    imageUploadErrorMsg = '';
     profileImageUrl = '';
+    profileImageUploadUrl = '';
+    profileImageUploaderOn = false;
+
+    // Name
     firstNameInput = '';
     middleNameInput = '';
     lastNameInput = '';
     nameErrorMsg = '';
 
+    // Description
     descriptionInput = '';
     descriptionErrorMsg = '';
 
+    // Acitivity privacy settings
     activitySettings = '';
     domainAllowArr: string[] = [];
     domainDenyArr: string[] = [];
     domainInput = '';
     activitySettingsErrorMsg = '';
 
+    // Additional information
     emailInput = '';
     genderInput = '';
     schoolInput = '';
@@ -57,6 +69,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        private http: HttpClient,
         private spinner: NgxSpinnerService,
         private userService: UserService
     ) {
@@ -70,7 +83,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.spinner.show();
         this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
             res => {
-                console.log(res);
                 this.spinner.hide();
                 this.userInfo = res;
 
@@ -95,15 +107,23 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.workOption = res.work_public ? 'public' : 'private';
                 this.locationOption = res.location_public ? 'public' : 'private';
 
-                this.userService.getProfileImageGetUrl(res.user_uuid).subscribe(
-                    resp => {
+                this.userService.getProfileImageGetUrl(res.user_uuid).toPromise()
+                    .then(resp => {
                         console.log(resp);
                         this.profileImageUrl = resp.data;
-                    },
-                    err => {
+                    })
+                    .catch(err => {
                         console.log(err);
-                    }
-                );
+                        this.profileImageUrl = '';
+                    });
+
+                this.userService.getProfileImageUploadUrl().toPromise()
+                    .then(resp => {
+                        this.profileImageUploadUrl = resp.data;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             },
             err => {
                 this.spinner.hide();
@@ -279,5 +299,43 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.spinner.hide();
             }
         );
+    }
+
+    onSelectFile(event: any): void {
+        if (event.target.files && event.target.files[0]) {
+            if (event.target.files[0].size > 2000000) {
+                this.imageUploadErrorMsg = 'The file size cannot exceed 2Mb';
+                return;
+            }
+            this.imageToUpload = event.target.files[0];
+
+            //Show image preview
+            const reader = new FileReader();
+            reader.readAsDataURL(this.imageToUpload);
+            reader.onload = (event_load: any) => {
+                this.imageUrl = event_load.target.result;
+            }
+        }
+    }
+
+    uploadProfileImage(): void {
+        const httpOptions = {
+            headers: {
+                'x-amz-acl': 'private',
+                'Content-Type': this.imageToUpload.type
+            }
+        };
+        console.log(httpOptions);
+        this.http.put(this.profileImageUploadUrl, this.imageToUpload, httpOptions).toPromise()
+            .then((res: any) => {
+                console.log(res);
+            })
+            .catch((err: any) => {
+                console.log(err);
+            })
+    }
+
+    toggleProfileImageUploader(): void {
+        this.profileImageUploaderOn = !this.profileImageUploaderOn;
     }
 }

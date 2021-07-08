@@ -1,3 +1,4 @@
+/// <reference types="chrome" />
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -8,7 +9,7 @@ import {
 
 import { AuthService } from '../auth/auth.service';
 import { AuthState } from '../auth/auth.model';
-import { DEFAULT_AUTH_STATE } from '../shared/constants';
+import { DEFAULT_AUTH_STATE, EXTENSION_ID } from '../shared/constants';
 import { UserService } from '../user/user.service';
 
 @Component({
@@ -79,7 +80,10 @@ export class TabsComponent implements OnDestroy {
     }
 
     onCloseChatbox(): void {
-        alert('chatbox closed');
+        const message = {
+            type: 'window-chatbox-close'
+        };
+        chrome.runtime.sendMessage(EXTENSION_ID, message);
     }
 
     // onSignOut(): void {
