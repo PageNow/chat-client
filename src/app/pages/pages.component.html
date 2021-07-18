@@ -1,4 +1,24 @@
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>Fetching user data...</strong>
+    </p>
+</ngx-spinner>
 <div>
     <app-tabs [currTab]="'pages'"></app-tabs>
     Pages for user
+
+    <div>
+        Status: {{ status }}
+    </div>
+    <div>
+        <button (click)="onConnect()">
+            Connect
+        </button>
+        <button (click)="onSendHeartbeat()">
+            Send Heartbeat
+        </button>
+        <button (click)="onDisconnect()">
+            Disconnect
+        </button>
+    </div>
 </div>
