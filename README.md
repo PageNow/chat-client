@@ -13,6 +13,10 @@
 
 ## References
 
+### AppSync
+
+* https://github.com/arjunsk/amplify-appsync-app
+
 ### Amplify Authentication
 
 * https://stackoverflow.com/questions/60244048/login-to-chrome-extension-via-website-with-aws-amplify

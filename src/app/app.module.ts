@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UserRegistrationComponent } from './user-registration/user-registration.component';
+import { httpInterceptorProviders } from './interceptors/interceptor-provider';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { UserRegistrationComponent } from './user-registration/user-registration
     ],
     schemas: [],
     providers: [
+        httpInterceptorProviders
     ],
     bootstrap: [AppComponent]
 })
