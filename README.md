@@ -2,6 +2,10 @@
 
 ## TODO
 
+### Auth
+
+[] Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
+
 ### Profile
 
 [] Validate or convert domain input by user

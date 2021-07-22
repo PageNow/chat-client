@@ -15,6 +15,8 @@ import { PagesService } from './pages.service';
 export class PagesComponent implements OnInit, OnDestroy {
     userInfo: UserInfoPrivate | null = null;
     status = ''; // Result of subscription to AppSync
+    url = '';
+    title = '';
     statusSubscription: Subscription;
 
     constructor(
@@ -46,15 +48,18 @@ export class PagesComponent implements OnInit, OnDestroy {
     }
 
     async getInitialStatus(): Promise<void> {
+        console.log('getting initial status');
         if (!this.userInfo) { return; }
-        const result = await this.pagesService.getStatus(this.userInfo.user_uuid);
+        const result = await this.pagesService.getStatus(this.userInfo.user_id);
         console.log(result);
         this.status = result.data.status.status;
+        // this.url = result.data.status.url;
+        // this.title = result.data.status.title;
     }
 
     async statusSubscribe(): Promise<void> {
         if (!this.userInfo) { return; }
-        this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_uuid).subscribe({
+        this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_id).subscribe({
             next: (event: any) => {
                 console.log(event);
                 this.status = event.value.data.onStatus.status;
@@ -64,16 +69,16 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     onConnect(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.connect(this.userInfo.user_uuid);
+        this.pagesService.connect('test_url', 'test_title');
     }
 
     onSendHeartbeat(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.sendHearteat(this.userInfo.user_uuid);
+        this.pagesService.sendHearteat('test_url', 'test_title');
     }
 
     onDisconnect(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.disconnect(this.userInfo.user_uuid);
+        this.pagesService.disconnect();
     }
 }

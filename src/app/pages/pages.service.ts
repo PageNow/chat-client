@@ -8,41 +8,42 @@ import operations from './graphql/operations';
     providedIn: 'root'
 })
 export class PagesService {
-    public getStatus(id: string): any {
+    public getStatus(userId: string): any {
+        console.log(userId);
         return API.graphql({
             query: operations.getStatus,
-            variables: {id: id}
+            variables: { userId }
         });
     }
 
-    public async connect(id: string): Promise<void> {
+    public async connect(url: string, title: string): Promise<void> {
         const response = await API.graphql({
             query: operations.connect,
-            variables: {id: id}
+            variables: { url, title }
         });
         console.log(response);
     }
     
-    public async sendHearteat(id: string): Promise<void> {
+    public async sendHearteat(url: string, title: string): Promise<void> {
         const response = await API.graphql({
             query: operations.sendHeartbeat,
-            variables: {id: id}
+            variables: { url, title }
         });
         console.log(response);
     }
 
-    public async disconnect(id: string): Promise<void> {
+    public async disconnect(): Promise<void> {
         const response = await API.graphql({
             query: operations.disconnect,
-            variables: {id: id}
+            variables: { }
         });
         console.log(response);
     }
 
-    public subscribeToStatus(id: string): any {
+    public subscribeToStatus(userId: string): any {
         return API.graphql({
             query: operations.onStatus,
-            variables: {id: id}
+            variables: { userId }
         });
     }
 }

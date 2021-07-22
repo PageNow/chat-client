@@ -1,34 +1,36 @@
 import gql from 'graphql-tag';
 
 const presenceResult = `{
-    id
+    userId
     status
+    url
+    title
 }`;
 
 export default {
     getStatus: gql`
-        query getStatus($id: ID!) {
-            status(id: $id) ${presenceResult}
+        query getStatus($userId: ID!) {
+            status(userId: $userId) ${presenceResult}
         }
     `,
     sendHeartbeat: gql`
-        query heartbeat($id: ID!) {
-            heartbeat(id: $id) ${presenceResult}
+        query heartbeat($url: String!, $title: String!) {
+            heartbeat(url: $url, title: $title) ${presenceResult}
         }
     `,
     connect: gql`
-        mutation connectPlayer($id: ID!) {
-            connect(id: $id) ${presenceResult}
+        mutation connect($url: String!, $title: String!) {
+            connect(url: $url, title: $title) ${presenceResult}
         }
     `,
     disconnect: gql`
-        mutation disconnectPlayer($id: ID!) {
-            disconnect(id: $id) ${presenceResult}
+        mutation disconnect {
+            disconnect ${presenceResult}
         }
     `,
     onStatus: gql`
-        subscription statusChanged($id: ID!) {
-            onStatus(id: $id) ${presenceResult}
+        subscription statusChanged($userId: ID!) {
+            onStatus(userId: $userId) ${presenceResult}
         }
     `
 }
