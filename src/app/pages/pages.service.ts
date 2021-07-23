@@ -27,7 +27,7 @@ export class PagesService {
     public async sendHearteat(url: string, title: string): Promise<void> {
         const response = await API.graphql({
             query: operations.sendHeartbeat,
-            variables: { url, title }
+            variables: { }
         });
         console.log(response);
     }

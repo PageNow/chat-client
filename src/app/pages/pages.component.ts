@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
+import { TabsComponent } from '../tabs/tabs.component';
 import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { PagesService } from './pages.service';
@@ -18,6 +19,9 @@ export class PagesComponent implements OnInit, OnDestroy {
     url = '';
     title = '';
     statusSubscription: Subscription;
+
+    @ViewChild(TabsComponent)
+    private tabsComponent: TabsComponent;
 
     constructor(
         private router: Router,
@@ -48,13 +52,12 @@ export class PagesComponent implements OnInit, OnDestroy {
     }
 
     async getInitialStatus(): Promise<void> {
-        console.log('getting initial status');
         if (!this.userInfo) { return; }
         const result = await this.pagesService.getStatus(this.userInfo.user_id);
         console.log(result);
         this.status = result.data.status.status;
-        // this.url = result.data.status.url;
-        // this.title = result.data.status.title;
+        this.url = result.data.status.url;
+        this.title = result.data.status.title;
     }
 
     async statusSubscribe(): Promise<void> {
@@ -63,18 +66,20 @@ export class PagesComponent implements OnInit, OnDestroy {
             next: (event: any) => {
                 console.log(event);
                 this.status = event.value.data.onStatus.status;
+                this.url = event.value.data.onStatus.url;
+                this.title = event.value.data.onStatus.title;
             }
         })
     }
 
     onConnect(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.connect('test_url', 'test_title');
+        this.pagesService.connect(this.tabsComponent.currUrl, this.tabsComponent.currTitle);
     }
 
     onSendHeartbeat(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.sendHearteat('test_url', 'test_title');
+        this.pagesService.sendHearteat(this.tabsComponent.currUrl, this.tabsComponent.currTitle);
     }
 
     onDisconnect(): void {
