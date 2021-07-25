@@ -6,10 +6,9 @@ import { interval, Subscription } from 'rxjs';
 import {
     faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
 } from '@fortawesome/free-solid-svg-icons';
+import { Auth } from 'aws-amplify';
 
-import { AuthService } from '../auth/auth.service';
-import { AuthState } from '../auth/auth.model';
-import { DEFAULT_AUTH_STATE, EXTENSION_ID } from '../shared/constants';
+import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { PagesService } from '../pages/pages.service';
 
@@ -23,7 +22,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     currTitle = '';
     redisUrl = ''; // my url stored in redis
 
-    authState: AuthState = DEFAULT_AUTH_STATE;
     userUuid: string | null;
     userId: string | null;
     userInfoSubscription: Subscription;
@@ -43,7 +41,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
-        private authService: AuthService,
         private userService: UserService,
         private pagesService: PagesService
     ) {
@@ -52,14 +49,8 @@ export class TabsComponent implements OnInit, OnDestroy {
         window.addEventListener('message',
             this.messageEventListener.bind(this));
 
-        this.authState = this.authService.auth;
-
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            this.spinner.show();
-            if (!authState.isAuthenticated) {
-                this.spinner.hide();
-                this.router.navigate(['/auth/gate'], { replaceUrl: true });
-            } else {
+        Auth.currentAuthenticatedUser()
+            .then(() => {
                 this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
                     res => {
                         this.userUuid = res.user_uuid;
@@ -74,15 +65,24 @@ export class TabsComponent implements OnInit, OnDestroy {
                             this.router.navigate(['/user-registration'], { replaceUrl: true});
                         }
                     });
-            }
-        });
+            })
+            .catch((err) => {
+                this.spinner.hide();
+                if (err.status === 404) {
+                    this.router.navigate(['/user-registration'], { replaceUrl: true});
+                } else {
+                    this.router.navigate(['/auth/gate'], { replaceUrl: true });
+                }
+            })
     }
 
     ngOnInit(): void {
-        const source = interval(5000);
+        console.log('tabs ngOnInit');
+        const source = interval(HEARTBEAT_PERIOD);
         this.timerSubscription = source.subscribe(() => {
             if (this.currUrl === this.redisUrl) {
-                console.log('heartbeat');
+                console.log('Sending heartbeat');
+                this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
             }
         });
     }
@@ -100,7 +100,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     async getInitialStatus(): Promise<void> {
         if (!this.userId) { return; }
         const result = await this.pagesService.getStatus(this.userId);
-        console.log(result);
         this.redisUrl = result.data.status.url;
     }
 
@@ -108,7 +107,6 @@ export class TabsComponent implements OnInit, OnDestroy {
         if (!this.userId) { return; }
         this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId).subscribe({
             next: (event: any) => {
-                console.log(event);
                 this.redisUrl = event.value.data.onStatus.url;
             }
         })
@@ -118,6 +116,7 @@ export class TabsComponent implements OnInit, OnDestroy {
         if (event.data.type === 'update-url') {
             this.currUrl = event.data.data?.url;
             this.currTitle = event.data.data?.title;
+            this.pagesService.connect(this.currUrl, this.currTitle);
         }
     }
 

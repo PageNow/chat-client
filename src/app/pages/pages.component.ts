@@ -79,7 +79,7 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     onSendHeartbeat(): void {
         if (!this.userInfo) { return; }
-        this.pagesService.sendHearteat(this.tabsComponent.currUrl, this.tabsComponent.currTitle);
+        this.pagesService.sendHeartbeat('test_url', 'test_title');
     }
 
     onDisconnect(): void {

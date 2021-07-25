@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UserRegistrationComponent } from './user-registration/user-registration.component';
 import { httpInterceptorProviders } from './interceptors/interceptor-provider';
+import { TabsModule } from './tabs/tabs.module';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { httpInterceptorProviders } from './interceptors/interceptor-provider';
         BrowserAnimationsModule,
         NgxSpinnerModule,
         AppRoutingModule,
+        TabsModule
     ],
     schemas: [],
     providers: [

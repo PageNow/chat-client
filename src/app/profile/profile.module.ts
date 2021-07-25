@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { ProfileRoutingModule } from './profile-routing.module';
-import { TabsModule } from '../tabs/tabs.module';
 import { ProfilePrivateComponent } from './profile-private/profile-private.component';
 import { ProfilePublicComponent } from './profile-public/profile-public.component';
 
@@ -18,9 +17,8 @@ import { ProfilePublicComponent } from './profile-public/profile-public.componen
         CommonModule,
         FormsModule,
         FontAwesomeModule,
+        NgxSpinnerModule,
         ProfileRoutingModule,
-        TabsModule,
-        NgxSpinnerModule
     ]
 })
 export class ProfileModule { }

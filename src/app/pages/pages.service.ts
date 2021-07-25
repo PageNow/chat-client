@@ -21,15 +21,15 @@ export class PagesService {
             query: operations.connect,
             variables: { url, title }
         });
-        console.log(response);
+        // console.log(response);
     }
     
-    public async sendHearteat(url: string, title: string): Promise<void> {
+    public async sendHeartbeat(url: string, title: string): Promise<void> {
         const response = await API.graphql({
             query: operations.sendHeartbeat,
-            variables: { }
+            variables: { url, title }
         });
-        console.log(response);
+        // console.log(response);
     }
 
     public async disconnect(): Promise<void> {
@@ -37,7 +37,7 @@ export class PagesService {
             query: operations.disconnect,
             variables: { }
         });
-        console.log(response);
+        // console.log(response);
     }
 
     public subscribeToStatus(userId: string): any {
