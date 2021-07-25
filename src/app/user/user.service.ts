@@ -24,7 +24,7 @@ export class UserService {
             this.httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authState.jwt}`
+                    // Authorization: `Bearer ${authState.jwt}`
                 })
             };
         });

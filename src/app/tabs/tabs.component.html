@@ -29,10 +29,10 @@
                             'default-fa-icon': currTab !== 'notifications'}">
             </fa-icon>
         </div>
-        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'profile'}">
+        <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'profile-me'}">
             <fa-icon [icon]="faUserCircle" [routerLink]="['/profile', 'me']"
-                [ngClass]="{'selected-fa-icon': currTab === 'profile',
-                            'default-fa-icon': currTab !== 'profile'}">
+                [ngClass]="{'selected-fa-icon': currTab === 'profile-me',
+                            'default-fa-icon': currTab !== 'profile-me'}">
             </fa-icon>
         </div>
     </div>
