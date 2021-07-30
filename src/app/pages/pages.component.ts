@@ -64,7 +64,6 @@ export class PagesComponent implements OnInit, OnDestroy {
         if (!this.userInfo) { return; }
         this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_id).subscribe({
             next: (event: any) => {
-                console.log(event);
                 this.status = event.value.data.onStatus.status;
                 this.url = event.value.data.onStatus.url;
                 this.title = event.value.data.onStatus.title;

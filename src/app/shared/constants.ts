@@ -10,7 +10,7 @@ export const DEFAULT_AUTH_STATE: AuthState = {
 
 export const INITIAL_TAB = 'pages';
 
-export const HEARTBEAT_PERIOD = 20000; // send heartbeat every 20 seconds
+export const HEARTBEAT_PERIOD = 30000; // send heartbeat every 30 seconds
 
 export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';
 
