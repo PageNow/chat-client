@@ -22,6 +22,9 @@ export interface UserInfoBase {
 
 export interface UserInfoPublic extends UserInfoBase {
     user_uuid: string;
+
+    profile_image_uploaded_at: Date;
+    profile_image_extension: string;
 }
 
 export interface UserInfoPrivate extends UserInfoPublic {

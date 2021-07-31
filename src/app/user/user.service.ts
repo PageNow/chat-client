@@ -49,16 +49,16 @@ export class UserService {
         );
     }
 
-    public getProfileImageUploadUrl(): Observable<any> {
+    public getProfileImageUploadUrl(imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/me/profile-image-upload-url`,
+            `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`,
             this.httpOptions
         );
     }
 
-    public getProfileImageGetUrl(userUuid: string): Observable<any> {
+    public getProfileImageGetUrl(userUuid: string, imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/${userUuid}/profile-image-url`,
+            `${USER_API_URL}/users/${userUuid}/profile-image-url?image_ext=${imgExt}`,
             this.httpOptions
         );
     }

@@ -8,6 +8,8 @@ export const DEFAULT_AUTH_STATE: AuthState = {
     jwt: null
 };
 
+export const VALID_PROFILE_IMG_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+
 export const INITIAL_TAB = 'pages';
 
 export const HEARTBEAT_PERIOD = 30000; // send heartbeat every 30 seconds

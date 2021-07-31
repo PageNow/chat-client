@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
@@ -19,12 +18,12 @@ export class PagesComponent implements OnInit, OnDestroy {
     url = '';
     title = '';
     statusSubscription: Subscription;
+    currUserInfoSubscription: Subscription;
 
     @ViewChild(TabsComponent)
     private tabsComponent: TabsComponent;
 
     constructor(
-        private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private pagesService: PagesService
@@ -34,31 +33,27 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.spinner.show();
-        this.userService.currUserInfo.subscribe(
+        this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
             res => {
                 console.log(res);
-                this.spinner.hide();
+                if (res) {
+                    this.userInfo = res;
+                    this.spinner.hide();
+                    // remove these after testing
+                    this.getInitialStatus();
+                    this.statusSubscribe();
+                }
             },
             err => {
                 console.log(err);
                 this.spinner.hide();
             }
         )
-        // this.userService.getCurrentUserInfo().toPromise()
-        //     .then(res => {
-        //         this.userInfo = res;
-        //         this.statusSubscribe();
-        //         this.getInitialStatus();
-        //         this.spinner.hide();
-        //     })
-        //     .catch(() => {
-        //         this.spinner.hide();
-        //         this.router.navigate(['/auth/gate'], { replaceUrl:  true });
-        //     });
     }
     
     ngOnDestroy(): void {
         this.statusSubscription?.unsubscribe();
+        this.currUserInfoSubscription?.unsubscribe();
     }
 
     async getInitialStatus(): Promise<void> {
