@@ -33,7 +33,7 @@ export class UserService {
         this.currUserInfo.next(userInfo);
     }
 
-    public submitCurrentUserInfo(userInfo: UserCreate): Observable<any> {
+    public createCurrentUserInfo(userInfo: UserCreate): Observable<any> {
         return this.http.post(
             `${USER_API_URL}/users/me`,
             JSON.stringify(userInfo),

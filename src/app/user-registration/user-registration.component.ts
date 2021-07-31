@@ -75,16 +75,17 @@ export class UserRegistrationComponent implements OnInit {
             gender: this.gender === 'other' && this.otherGender !== '' ?
                     this.otherGender : this.gender,
         };
-        this.userService.submitCurrentUserInfo(userInfo).subscribe(
-            res => {
+        this.userService.createCurrentUserInfo(userInfo).toPromise()
+            .then(res => {
+                this.userService.publishCurrentUserInfo(res);
                 this.spinner.hide();
-                this.router.navigate(['/pages'], { replaceUrl: true});
-            },
-            err => {
+                this.router.navigate(['/pages'], { replaceUrl: true });
+            })
+            .catch(err => {
+                console.log(err);
                 this.spinner.hide();
                 this.errorMsg = 'Sorry, there is an error. Please try again after refreshing.';
-            }
-        );
+            });
     }
 }
 
