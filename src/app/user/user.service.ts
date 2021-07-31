@@ -1,37 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { USER_API_URL } from '../shared/constants';
 import { UserCreate, UserInfoPrivate, UserInfoUpdate } from './user.model';
-import { AuthService } from '../auth/auth.service';
-import { AuthState } from '../auth/auth.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-    authState: AuthState;
     httpOptions: any;
+    currUserInfo = new BehaviorSubject<UserInfoPrivate | null>(null);
 
     constructor(
-        private http: HttpClient,
-        private authService: AuthService
+        private http: HttpClient
     ) {
         console.log('user service constructor');
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            this.authState = authState;
-            this.httpOptions = {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    // Authorization: `Bearer ${authState.jwt}`
-                })
-            };
-        });
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+            })
+        };
     }
 
     public getCurrentUserInfo(): Observable<any> {
+        console.log('authService: calling /users/me');
         return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions);
+    }
+
+    public publishCurrentUserInfo(userInfo: UserInfoPrivate): void {
+        console.log(userInfo);
+        this.currUserInfo.next(userInfo);
     }
 
     public submitCurrentUserInfo(userInfo: UserCreate): Observable<any> {

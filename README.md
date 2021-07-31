@@ -1,19 +1,30 @@
 # chat-client
 
+## Work Flow
+
+* Tabs
+- Call http endpoint to get current user info
+- If current user info is null, navigate to /user-registration
+- Publish current user info
+
+* Ohter components
+- Subscribe to userService behaviorsubject
+- Show content only when they receive 
+
 ## TODO
 
 ### Auth
 
-[] Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
+* Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
 
 ### Profile
 
-[] Validate or convert domain input by user
+* Validate or convert domain input by user
 
 ### License
 
-[] Link to simpleicon.com
-[] Link to fontawesome
+* Link to simpleicon.com
+* Link to fontawesome
 
 ## References
 
