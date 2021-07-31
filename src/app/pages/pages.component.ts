@@ -34,21 +34,31 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.spinner.show();
-        this.userService.getCurrentUserInfo().toPromise()
-            .then(res => {
-                this.userInfo = res;
-                this.statusSubscribe();
-                this.getInitialStatus();
+        this.userService.currUserInfo.subscribe(
+            res => {
+                console.log(res);
                 this.spinner.hide();
-            })
-            .catch(() => {
+            },
+            err => {
+                console.log(err);
                 this.spinner.hide();
-                this.router.navigate(['/auth/gate'], { replaceUrl:  true });
-            });
+            }
+        )
+        // this.userService.getCurrentUserInfo().toPromise()
+        //     .then(res => {
+        //         this.userInfo = res;
+        //         this.statusSubscribe();
+        //         this.getInitialStatus();
+        //         this.spinner.hide();
+        //     })
+        //     .catch(() => {
+        //         this.spinner.hide();
+        //         this.router.navigate(['/auth/gate'], { replaceUrl:  true });
+        //     });
     }
     
     ngOnDestroy(): void {
-        this.statusSubscription.unsubscribe();
+        this.statusSubscription?.unsubscribe();
     }
 
     async getInitialStatus(): Promise<void> {
@@ -64,7 +74,6 @@ export class PagesComponent implements OnInit, OnDestroy {
         if (!this.userInfo) { return; }
         this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_id).subscribe({
             next: (event: any) => {
-                console.log(event);
                 this.status = event.value.data.onStatus.status;
                 this.url = event.value.data.onStatus.url;
                 this.title = event.value.data.onStatus.title;

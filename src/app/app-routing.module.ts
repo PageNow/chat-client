@@ -23,6 +23,11 @@ const routes: Routes = [
         loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule),
         canActivate: [ AuthGuard ]
     },
+    {
+        path: 'search',
+        loadChildren: () => import('./search/search.module').then(m => m.SearchModule),
+        canActivate: [ AuthGuard ]
+    },
     { path: '', redirectTo: 'pages', pathMatch: 'full' },
     { path: '**', redirectTo: 'pages' },
 ];

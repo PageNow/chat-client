@@ -1,0 +1,40 @@
+.main-div {
+    padding-top: 10px;
+}
+
+.search-input-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.search-select {
+    width: 90px;
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-input {
+    padding: 0 25px 0 25px;
+    width: 180px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: grey;
+}
+
+.cancel-icon {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: grey;
+}

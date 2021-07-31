@@ -19,6 +19,9 @@ export class AppComponent {
                 case '/profile/me':
                     this.currTab = 'profile-me';
                     break;
+                case '/search':
+                    this.currTab = 'search';
+                    break;
                 default:
                     break;
             }

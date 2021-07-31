@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { Auth } from 'aws-amplify';
-import { catchError, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 /**
  * Appends jwt token for http requests
@@ -18,16 +18,13 @@ export class JwtInterceptor implements HttpInterceptor {
             .pipe(
                 switchMap((auth: any) => {
                     const jwt = auth.getIdToken().getJwtToken();
+                    console.log(request);
                     const withAuthRequest = request.clone({
                         setHeaders: {
                             Authorization: `Bearer ${jwt}`
                         }
                     });
                     return next.handle(withAuthRequest);
-                }),
-                catchError(err => {
-                    console.log(err);
-                    return next.handle(request);
                 })
             );
     }

@@ -51,23 +51,21 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         Auth.currentAuthenticatedUser()
             .then(() => {
-                this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
-                    res => {
-                        this.userUuid = res.user_uuid;
-                        this.userId = res.user_id;
-                        this.statusSubscribe();
-                        this.getInitialStatus();        
-                        this.spinner.hide();
-                    },
-                    err => {
-                        this.spinner.hide();
-                        if (err.status === 404) {
-                            this.router.navigate(['/user-registration'], { replaceUrl: true});
-                        }
-                    });
+                console.log('calling /users/me');
+                return this.userService.getCurrentUserInfo().toPromise()
             })
-            .catch((err) => {
+            .then(res => {
+                console.log(res);
+                this.userService.publishCurrentUserInfo(res);
+                this.userUuid = res.user_uuid;
+                this.userId = res.user_id;
+                this.statusSubscribe();
+                this.getInitialStatus();        
                 this.spinner.hide();
+            })
+            .catch(err => {
+                this.spinner.hide();
+                console.log(err);
                 if (err.status === 404) {
                     this.router.navigate(['/user-registration'], { replaceUrl: true});
                 } else {

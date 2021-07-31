@@ -1,0 +1,20 @@
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>Fetching user data...</strong>
+    </p>
+</ngx-spinner>
+<div class='main-div'>
+    <div class='search-input-div'>
+        <select class="form-select form-select-sm search-select"
+                [(ngModel)]="searchOption">
+            <option value="email">Email</option>
+            <option value="name">Name</option>
+        </select>
+        <div class='search-input-group'>
+            <fa-icon [icon]="faSearch" class='search-icon'></fa-icon>
+            <input (input)="onSearchInputChange($event)"
+                   class='search-input' placeholder="Search" />
+            <fa-icon [icon]="faTimesCircle" class='cancel-icon'></fa-icon>
+        </div>
+    </div>
+</div>

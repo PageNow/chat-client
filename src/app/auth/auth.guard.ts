@@ -14,10 +14,11 @@ export class AuthGuard implements CanActivate {
 
     canActivate(
         next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+        state: RouterStateSnapshot
+    ): Observable<boolean> | Promise<boolean> | boolean {
 
         return Auth.currentAuthenticatedUser()
-            .then(() => {
+            .then(res => {
                 return true;
             })
             .catch(() => {

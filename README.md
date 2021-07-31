@@ -1,5 +1,16 @@
 # chat-client
 
+## Work Flow
+
+* Tabs
+- Call http endpoint to get current user info
+- If current user info is null, navigate to /user-registration
+- Publish current user info
+
+* Ohter components
+- Subscribe to userService behaviorsubject
+- Show content only when they receive 
+
 ## TODO
 
 ### Auth
