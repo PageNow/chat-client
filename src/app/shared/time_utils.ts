@@ -11,11 +11,11 @@ export const CURR_DATE = currentTime.getDate();
 export const isDateValid = (dateStr: string): boolean => {
     const date = moment(dateStr);
     return date.isValid();
-}
+};
 
 export const MONTHS_NUM_TO_STR = Object.assign({}, MONTHS);
 const monthsStrNumMap: {[key: string]: number} = {};
 Object.keys(MONTHS_NUM_TO_STR).forEach(key => {
-    monthsStrNumMap[MONTHS_NUM_TO_STR[parseInt(key)]] = parseInt(key);
+    monthsStrNumMap[MONTHS_NUM_TO_STR[parseInt(key, 10)]] = parseInt(key, 10);
 });
 export const MONTHS_STR_TO_NUM = monthsStrNumMap;

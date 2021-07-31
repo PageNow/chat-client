@@ -1,16 +1,16 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { AuthState } from "../auth/auth.model";
-import { AuthService } from "../auth/auth.service";
-import { DEFAULT_AUTH_STATE } from "../shared/constants";
+import { AuthState } from '../auth/auth.model';
+import { AuthService } from '../auth/auth.service';
+import { DEFAULT_AUTH_STATE } from '../shared/constants';
 import {
     YEARS, MONTHS, DATES, CURR_YEAR, CURR_MONTH, CURR_DATE,
     isDateValid, MONTHS_STR_TO_NUM
-} from "../shared/time_utils";
-import { UserService } from "../user/user.service";
-import { UserCreate } from "../user/user.model";
+} from '../shared/time_utils';
+import { UserService } from '../user/user.service';
+import { UserCreate } from '../user/user.model';
 
 @Component({
     selector: 'app-user-registration',
@@ -45,7 +45,7 @@ export class UserRegistrationComponent {
         console.log('user-registration.component constructor');
 
         this.authService.auth$.subscribe((authState: AuthState) => {
-            this.spinner.show();            
+            this.spinner.show();
             if (!authState.isAuthenticated) {
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl: true });
@@ -62,10 +62,10 @@ export class UserRegistrationComponent {
         });
     }
 
-    onSubmitUserInfo():void {
+    onSubmitUserInfo(): void {
         // TODO: disable account if the user is under 13
         this.spinner.show();
-        const dobMonthNum = (MONTHS_STR_TO_NUM[this.dobMonth] + 1) + ''
+        const dobMonthNum = (MONTHS_STR_TO_NUM[this.dobMonth] + 1) + '';
         const dob = this.dobYear + '-' + dobMonthNum.padStart(2, '0')
                     + '-' + this.dobDate;
         if (!isDateValid(dob)) {
@@ -73,18 +73,15 @@ export class UserRegistrationComponent {
             this.spinner.hide();
             return;
         }
-        let gender = this.gender;
-        if (this.gender === 'other' && this.otherGender !== '') {
-            gender = this.otherGender;
-        }
-        
+
         const userInfo: UserCreate = {
             first_name: this.firstName,
-            middle_name: "",
+            middle_name: '',
             last_name: this.lastName,
             dob: dob,
-            gender: gender
-        }
+            gender: this.gender === 'other' && this.otherGender !== '' ?
+                    this.otherGender : this.gender,
+        };
         this.userService.submitCurrentUserInfo(userInfo).subscribe(
             res => {
                 this.spinner.hide();

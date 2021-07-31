@@ -53,7 +53,7 @@ export class AuthService implements OnDestroy  {
 
     // TODO: test if we need this storage event listener
     private storageEventListener(event: StorageEvent): void {
-        if (event.storageArea == localStorage) {
+        if (event.storageArea === localStorage) {
             if (event.key === AUTH_STATE_KEY && event.newValue) {
                 const newAuthState = JSON.parse(event.newValue);
                 this._authState.next(newAuthState);
@@ -98,7 +98,7 @@ export class AuthService implements OnDestroy  {
             cognitoUser.setSignInUserSession(userSession);
             // Check to make sure it works
             cognitoUser.getSession((err: any , session: any) => {
-                if(session) {
+                if (session) {
                     this.setAuthState({
                         isAuthenticated: true,
                         userId: session.getIdToken().payload['cognito:username'],

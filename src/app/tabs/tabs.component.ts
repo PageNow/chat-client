@@ -1,25 +1,29 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+/// <reference types="chrome" />
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import {
     faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
 } from '@fortawesome/free-solid-svg-icons';
+import { Auth } from 'aws-amplify';
 
-import { AuthService } from '../auth/auth.service';
-import { AuthState } from '../auth/auth.model';
-import { DEFAULT_AUTH_STATE } from '../shared/constants';
+import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
 import { UserService } from '../user/user.service';
+import { PagesService } from '../pages/pages.service';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss']
 })
-export class TabsComponent implements OnDestroy {
-    url: string;
-    authState: AuthState = DEFAULT_AUTH_STATE;
+export class TabsComponent implements OnInit, OnDestroy {
+    currUrl = '';
+    currTitle = '';
+    redisUrl = ''; // my url stored in redis
+
     userUuid: string | null;
+    userId: string | null;
     userInfoSubscription: Subscription;
     @Input() currTab: string;
 
@@ -31,28 +35,28 @@ export class TabsComponent implements OnDestroy {
     faFileAlt = faFileAlt;
     faTimes = faTimes;
 
+    redisUrlSubscription: Subscription;
+    timerSubscription: Subscription;
+
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
-        private authService: AuthService,
-        private userService: UserService
+        private userService: UserService,
+        private pagesService: PagesService
     ) {
         console.log('tabs.component constructor');
 
-        window.addEventListener("message",
+        window.addEventListener('message',
             this.messageEventListener.bind(this));
 
-        this.authState = this.authService.auth;
-
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            this.spinner.show();            
-            if (!authState.isAuthenticated) {
-                this.spinner.hide();
-                this.router.navigate(['/auth/gate'], { replaceUrl: true });
-            } else {
+        Auth.currentAuthenticatedUser()
+            .then(() => {
                 this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
                     res => {
-                        this.userUuid = res['user_uuid']
+                        this.userUuid = res.user_uuid;
+                        this.userId = res.user_id;
+                        this.statusSubscribe();
+                        this.getInitialStatus();        
                         this.spinner.hide();
                     },
                     err => {
@@ -61,32 +65,73 @@ export class TabsComponent implements OnDestroy {
                             this.router.navigate(['/user-registration'], { replaceUrl: true});
                         }
                     });
+            })
+            .catch((err) => {
+                this.spinner.hide();
+                if (err.status === 404) {
+                    this.router.navigate(['/user-registration'], { replaceUrl: true});
+                } else {
+                    this.router.navigate(['/auth/gate'], { replaceUrl: true });
+                }
+            })
+    }
+
+    ngOnInit(): void {
+        console.log('tabs ngOnInit');
+        const source = interval(HEARTBEAT_PERIOD);
+        this.timerSubscription = source.subscribe(() => {
+            if (this.currUrl === this.redisUrl) {
+                console.log('Sending heartbeat');
+                this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
             }
         });
     }
 
     ngOnDestroy(): void {
         this.userInfoSubscription?.unsubscribe();
-        
-        window.removeEventListener("message",
+
+        window.removeEventListener('message',
             this.messageEventListener.bind(this));
+
+        this.redisUrlSubscription?.unsubscribe();
+        this.timerSubscription?.unsubscribe();
+    }
+
+    async getInitialStatus(): Promise<void> {
+        if (!this.userId) { return; }
+        const result = await this.pagesService.getStatus(this.userId);
+        this.redisUrl = result.data.status.url;
+    }
+
+    async statusSubscribe(): Promise<void> {
+        if (!this.userId) { return; }
+        this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId).subscribe({
+            next: (event: any) => {
+                this.redisUrl = event.value.data.onStatus.url;
+            }
+        })
     }
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'update-url') {
-            this.url = event.data.data?.url;
+            this.currUrl = event.data.data?.url;
+            this.currTitle = event.data.data?.title;
+            this.pagesService.connect(this.currUrl, this.currTitle);
         }
     }
 
     onCloseChatbox(): void {
-        alert('chatbox closed');
+        const message = {
+            type: 'window-chatbox-close'
+        };
+        chrome.runtime.sendMessage(EXTENSION_ID, message);
     }
 
     // onSignOut(): void {
     //     this.authService.publishSignOut();
     //     Auth.signOut();
     //     // TODO: signal chrome extension to close chatbox
-    // } 
+    // }
 }
 
 /* Notes
