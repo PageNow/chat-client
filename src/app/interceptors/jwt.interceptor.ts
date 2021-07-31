@@ -9,7 +9,6 @@ import { switchMap } from 'rxjs/operators';
  */
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    
     constructor() {
         // do nothing
     }
