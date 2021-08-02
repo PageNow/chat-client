@@ -97,14 +97,12 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     async getInitialStatus(): Promise<void> {
         if (!this.userId) { return; }
-        console.log('getting initial status');
         const result = await this.pagesService.getStatus(this.userId);
         this.redisUrl = result.data.status.url;
     }
 
     async statusSubscribe(): Promise<void> {
         if (!this.userId) { return; }
-        console.log('subscribing to status');
         this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId).subscribe({
             next: (event: any) => {
                 this.redisUrl = event.value.data.onStatus.url;

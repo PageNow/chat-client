@@ -38,3 +38,32 @@
     transform: translateY(-50%);
     color: grey;
 }
+
+.search-output-div {
+    margin-top: 15px;
+}
+
+.search-output-item-div {
+    display: flex;
+    flex-direction: row;
+}
+
+.profile-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.user-info-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-a {
+    text-decoration: none;
+}
+
+.profile-a:hover {
+    cursor: pointer;
+}
