@@ -118,7 +118,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                         res.user_uuid, res.profile_image_extension
                     ).toPromise()
                         .then(resp => {
-                            this.profileImageUrl = resp.data;
+                            this.profileImageUrl = resp;
                         })
                         .catch(err => {
                             console.log(err);

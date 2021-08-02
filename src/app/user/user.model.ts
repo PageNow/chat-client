@@ -6,25 +6,27 @@ export interface UserCreate {
     gender: string;
 }
 
-export interface UserInfoBase {
+export interface UserInfoSummary {
+    user_id: string;
+    user_uuid: string;
+
     first_name: string;
     middle_name: string;
     last_name: string;
-    dob: string;
 
     description: string;
+
+    profile_image_uploaded_at: Date;
+    profile_image_extension: string;
+}
+
+export interface UserInfoPublic extends UserInfoSummary {
+    dob: string;
 
     gender: string;
     school: string;
     work: string;
     location: string;
-}
-
-export interface UserInfoPublic extends UserInfoBase {
-    user_uuid: string;
-
-    profile_image_uploaded_at: Date;
-    profile_image_extension: string;
 }
 
 export interface UserInfoPrivate extends UserInfoPublic {

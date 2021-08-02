@@ -12,9 +12,36 @@
         </select>
         <div class='search-input-group'>
             <fa-icon [icon]="faSearch" class='search-icon'></fa-icon>
-            <input (input)="onSearchInputChange($event)"
-                   class='search-input' placeholder="Search" />
+            <input [(ngModel)]="searchInput"
+                   class='search-input' [placeholder]="searchPlaceholder" />
             <fa-icon [icon]="faTimesCircle" class='cancel-icon'></fa-icon>
         </div>
+        <button type="button" class="search-btn"
+                [disabled]="searchInput === ''" (click)="onSearch()">
+            Search
+        </button>
     </div>
+    <div class='search-output-div'>
+        <div *ngFor="let user of searchedFriendArr; let idx = index">
+            <div class='user-profile-image-div'>
+                <img [src]="friendProfileImgUrlArr[idx]"
+                     class="profile-image" onerror="this.src='/assets/user.png'">
+            </div>
+            <div class='user-info-div'>
+                <div>{{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}</div>
+                <div>{{ user.description }}</div>
+            </div>
+        </div>
+        <div *ngFor="let user of searchedUserArr; let idx = index">
+            <div class='user-profile-image-div'>
+                <img [src]="userProfileImgUrlArr[idx]"
+                     class="profile-image" onerror="this.src='/assets/user.png'">
+            </div>
+            <div class='user-info-div'>
+                <div>{{ user.first_name}} {{ user.middle_name }} {{ user.last_name }}</div>
+                <div>{{ user.description }} </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
