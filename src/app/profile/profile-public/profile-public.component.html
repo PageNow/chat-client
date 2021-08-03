@@ -1,3 +1,42 @@
-<div>
-    Public profile
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>Fetching profile...</strong>
+    </p>
+</ngx-spinner>
+<div class='main-div'>
+    <div class='profile-image-div'>
+        <img [src]="userProfileImgUrl"
+             class='profile-img' onerror="this.src='/assets/user.png'"
+        />
+    </div>
+    <div class='name-div'>
+        <strong>{{ userInfo?.first_name }} {{ userInfo?.middle_name }} {{ userInfo?.last_name }}</strong>
+    </div>
+    <div *ngIf="currUserUuid && userUuid !== currUserUuid" class='profile-btn-div'>
+        <button>Add Friend</button>
+    </div>
+    <div *ngIf="currUserUuid && userUuid === currUserUuid" class='profile-btn-div'>
+        <button (click)="navigateToMyProfile()">Edit Profile</button>
+    </div>
+    <div class='description-div'>
+        {{ userInfo?.description }}
+    </div>
+    <div class='additional-info-div'>
+        <div *ngIf="userInfo?.school" class='additional-info-item-div'>
+            <div class='additional-info-label-div'>School</div>
+            <div class='additional-info-content-div'>{{ userInfo?.school }}</div>
+        </div>
+        <div *ngIf="userInfo?.work" class='additional-info-item-div'>
+            <div class='additional-info-label-div'>Work</div>
+            <div class='additional-info-content-div'>{{ userInfo?.work }}</div>
+        </div>
+        <div *ngIf="userInfo?.location" class='additional-info-item-div'>
+            <div class='additional-info-label-div'>Location</div>
+            <div class='additional-info-content-div'>{{ userInfo?.location }}</div>
+        </div>
+        <div *ngIf="userInfo?.gender" class='additional-info-item-div'>
+            <div class='additional-info-label-div'>Gender</div>
+            <div class='additional-info-content-div'>{{ userInfo?.gender }}</div>
+        </div>
+    </div>
 </div>

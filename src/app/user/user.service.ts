@@ -49,6 +49,13 @@ export class UserService {
         );
     }
 
+    public getUserPublicInfo(userUuid: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/${userUuid}`,
+            this.httpOptions
+        );
+    }
+
     public getProfileImageUploadUrl(imgExt: string): Observable<any> {
         return this.http.get(
             `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`,
