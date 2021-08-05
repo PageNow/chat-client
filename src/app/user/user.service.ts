@@ -76,4 +76,20 @@ export class UserService {
             this.httpOptions
         );
     }
+
+    public checkFriendship(userId: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/friendship/request/${userId}`,
+            this.httpOptions
+        );
+    }
+
+    public addFriend(userId: string): Observable<any> {
+        const friendshipRequest = { user_id2: userId }
+        return this.http.post(
+            `${USER_API_URL}/friendship/request`,
+            friendshipRequest,
+            this.httpOptions
+        );
+    }
 }

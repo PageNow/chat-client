@@ -14,7 +14,7 @@
             <fa-icon [icon]="faSearch" class='search-icon'></fa-icon>
             <input [(ngModel)]="searchInput"
                    class='search-input' [placeholder]="searchPlaceholder" />
-            <fa-icon [icon]="faTimesCircle" class='cancel-icon'></fa-icon>
+            <fa-icon [icon]="faTimesCircle" class='cancel-icon' (click)="removeSearchInput()"></fa-icon>
         </div>
         <button type="button" class="search-btn"
                 [disabled]="searchInput === ''" (click)="onSearch()">

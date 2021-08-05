@@ -38,11 +38,10 @@ export class PagesComponent implements OnInit, OnDestroy {
                 console.log(res);
                 if (res) {
                     this.userInfo = res;
-                    this.spinner.hide();
-                    // remove these after testing
                     this.getInitialStatus();
                     this.statusSubscribe();
                 }
+                this.spinner.hide();
             },
             err => {
                 console.log(err);

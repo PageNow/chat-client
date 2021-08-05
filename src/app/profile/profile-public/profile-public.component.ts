@@ -18,6 +18,9 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
 
+    isFriend: boolean;
+    isFriendRequestPending: boolean;
+
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
@@ -47,6 +50,16 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             })
             .then(res => {
                 this.userProfileImgUrl = res;
+                return this.userService.checkFriendship(this.userInfo.user_id).toPromise();
+            })
+            .then(res => {
+                console.log(res);
+                if (res) {
+                    this.isFriend = true;
+                    this.isFriendRequestPending = false;
+                } else {
+                    this.isFriend = false;
+                }
                 this.spinner.hide();
             })
             .catch(err => {
@@ -57,6 +70,25 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
+    }
+
+    addFriend(): void {
+        if (!this.userInfo) { return; }
+        this.userService.addFriend(this.userInfo.user_id).toPromise()
+            .then(res => {
+                console.log(res);
+                if (res.success) {
+                    this.isFriendRequestPending = true;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    deleteFriend(): void {
+        if (!this.userInfo) { return; }
+
     }
 
     navigateToMyProfile(): void {

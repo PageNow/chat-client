@@ -38,6 +38,9 @@ export class TabsComponent implements OnInit, OnDestroy {
     redisUrlSubscription: Subscription;
     timerSubscription: Subscription;
 
+    // if user is not registered, set to false
+    tabsHidden = false;
+
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
@@ -67,9 +70,10 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.spinner.hide();
                 console.log(err);
                 if (err.status === 404) {
+                    this.tabsHidden = true;
                     this.router.navigate(['/user-registration'], { replaceUrl: true});
                 } else {
-                    this.router.navigate(['/auth/gate'], { replaceUrl: true });
+                    // this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
             })
     }

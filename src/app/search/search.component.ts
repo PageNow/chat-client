@@ -22,6 +22,8 @@ export class SearchComponent {
 
     searchedFriendArr: UserInfoSummary[] = [];
     searchedUserArr: UserInfoSummary[] = [];
+    searchedFriendIdSet: Set<string> = new Set();
+    searchedUserIdSet: Set<string> = new Set();
     friendProfileImgUrlArr: string[] = [];
     userProfileImgUrlArr: string[] = [];
 
@@ -33,7 +35,7 @@ export class SearchComponent {
         private userService: UserService
     ) { }
 
-    // TODO: make one endpoint
+    // TODO: separate search and search more (search - always fresh search, search more - additional search)
     onSearch(): void {
         if (this.endOfFriendsSearch || this.endOfUsersSearch) { return; }
         if (this.searchOption === 'email') {
@@ -44,6 +46,7 @@ export class SearchComponent {
                         if (res.length >= 0 && res.length < SEARCH_RESULT_LIMIT) {
                             this.endOfFriendsSearch = true;
                         }
+                        res.map(x => this.searchedFriendIdSet.add(x.user_id));
                         this.searchedFriendArr = [...this.searchedFriendArr, ...res];
                         if (res.length > 0) {
                             this.updateProfileImgArr(res, true);
@@ -55,7 +58,8 @@ export class SearchComponent {
                         if (this.endOfFriendsSearch && res.length == 0) {
                             this.endOfUsersSearch = true;
                         }
-                        this.searchedUserArr = [...this.searchedUserArr, ...res];
+                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
                         if (res.length > 0) {
                             this.updateProfileImgArr(res, false);
                         }
@@ -123,6 +127,10 @@ export class SearchComponent {
                     });
             }
         }
+    }
+
+    removeSearchInput(): void {
+        this.searchInput = '';
     }
 
     onSearchOptionChange(event: any): void {

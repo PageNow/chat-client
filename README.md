@@ -16,6 +16,12 @@
 ### Auth
 
 * Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
+* In first sign in - fetch user spinner is displayed forever
+
+### Cache
+
+* Use cache for profile images
+* Use cache for friend requests
 
 ### Profile
 
