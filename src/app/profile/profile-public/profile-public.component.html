@@ -1,6 +1,6 @@
 <ngx-spinner>
     <p style="color: white;">
-        <strong>Fetching profile...</strong>
+        <strong>{{ spinnerMsg }}</strong>
     </p>
 </ngx-spinner>
 <div class='main-div'>
@@ -22,7 +22,7 @@
     </div>
     <div *ngIf="currUserUuid && userUuid !== currUserUuid && isFriend === false && isFriendRequestPending === true"
          class='profile-btn-div'>
-        <button (click)="deleteFriend()">Unfriend</button>
+        <button (click)="deleteFriend()">Cancel Friend Request</button>
     </div>
     <!-- <div><button>Pending Friend Request</button></div> -->
     <div *ngIf="currUserUuid && userUuid === currUserUuid" class='profile-btn-div'>
