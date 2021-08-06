@@ -1,10 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Auth } from 'aws-amplify';
 
-import { AuthState } from '../auth/auth.model';
-import { AuthService } from '../auth/auth.service';
-import { DEFAULT_AUTH_STATE } from '../shared/constants';
 import {
     YEARS, MONTHS, DATES, CURR_YEAR, CURR_MONTH, CURR_DATE,
     isDateValid, MONTHS_STR_TO_NUM
@@ -17,9 +15,7 @@ import { UserCreate } from '../user/user.model';
     templateUrl: './user-registration.component.html',
     styleUrls: ['./user-registration.component.scss']
 })
-export class UserRegistrationComponent {
-    private authState: AuthState = DEFAULT_AUTH_STATE;
-
+export class UserRegistrationComponent implements OnInit {
     // used in template dob
     years = YEARS;
     months = MONTHS;
@@ -39,27 +35,25 @@ export class UserRegistrationComponent {
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
-        private authService: AuthService,
         private userService: UserService
-    ) {
-        console.log('user-registration.component constructor');
+    ) { }
 
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            this.spinner.show();
-            if (!authState.isAuthenticated) {
-                this.spinner.hide();
-                this.router.navigate(['/auth/gate'], { replaceUrl: true });
-            } else {
-                this.userService.getCurrentUserInfo().subscribe(
-                    res => {
-                        this.spinner.hide();
-                        this.router.navigate([`/profile/${res.user_uuid}`]);
-                    },
-                    () => {
-                        this.spinner.hide();
-                    });
-            }
-        });
+    ngOnInit(): void {
+        console.log('user-registration onInit')
+        Auth.currentAuthenticatedUser()
+            .then(() => {
+                return this.userService.getCurrentUserInfo().toPromise();
+            })
+            .then(res => {
+                this.router.navigate([`/profile/${res.user_uuid}`])
+                window.location.reload();
+            })
+            .catch(err => {
+                console.log(err);
+                if (err.status !== 404) {
+                    this.router.navigate(['/auth/gate'], { replaceUrl: true });
+                }
+            });
     }
 
     onSubmitUserInfo(): void {
@@ -82,16 +76,17 @@ export class UserRegistrationComponent {
             gender: this.gender === 'other' && this.otherGender !== '' ?
                     this.otherGender : this.gender,
         };
-        this.userService.submitCurrentUserInfo(userInfo).subscribe(
-            res => {
+        this.userService.createCurrentUserInfo(userInfo).toPromise()
+            .then(res => {
+                this.userService.publishCurrentUserInfo(res);
                 this.spinner.hide();
-                this.router.navigate(['/pages'], { replaceUrl: true});
-            },
-            err => {
+                this.router.navigate(['/pages'], { replaceUrl: true });
+            })
+            .catch(err => {
+                console.log(err);
                 this.spinner.hide();
                 this.errorMsg = 'Sorry, there is an error. Please try again after refreshing.';
-            }
-        );
+            });
     }
 }
 

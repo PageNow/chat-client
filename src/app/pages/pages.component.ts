@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
@@ -19,12 +18,12 @@ export class PagesComponent implements OnInit, OnDestroy {
     url = '';
     title = '';
     statusSubscription: Subscription;
+    currUserInfoSubscription: Subscription;
 
     @ViewChild(TabsComponent)
     private tabsComponent: TabsComponent;
 
     constructor(
-        private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private pagesService: PagesService
@@ -34,21 +33,26 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.spinner.show();
-        this.userService.getCurrentUserInfo().toPromise()
-            .then(res => {
-                this.userInfo = res;
-                this.statusSubscribe();
-                this.getInitialStatus();
+        this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
+            res => {
+                console.log(res);
+                if (res) {
+                    this.userInfo = res;
+                    this.getInitialStatus();
+                    this.statusSubscribe();
+                }
                 this.spinner.hide();
-            })
-            .catch(() => {
+            },
+            err => {
+                console.log(err);
                 this.spinner.hide();
-                this.router.navigate(['/auth/gate'], { replaceUrl:  true });
-            });
+            }
+        )
     }
     
     ngOnDestroy(): void {
-        this.statusSubscription.unsubscribe();
+        this.statusSubscription?.unsubscribe();
+        this.currUserInfoSubscription?.unsubscribe();
     }
 
     async getInitialStatus(): Promise<void> {

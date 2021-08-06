@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
@@ -9,9 +9,11 @@ import {
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
+import { VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
 const SPINNER_FETCH_MSG = 'Fetching user data...';
 const SPINNER_UPLOAD_MSG = 'Uploading user data...';
+const SPINNER_IMAGE_UPLOAD_MSG = 'Uploading profile image...'
 
 @Component({
     selector: 'app-profile-private',
@@ -21,7 +23,7 @@ const SPINNER_UPLOAD_MSG = 'Uploading user data...';
 export class ProfilePrivateComponent implements OnInit, OnDestroy {
     userUuid: string | null;
     userInfo: UserInfoPrivate | null = null;
-    userInfoSubscription: Subscription;
+    currUserInfoSubscription: Subscription;
     faPlus = faPlus;
     faMinus = faMinus;
     faUserAlt = faUserAlt;
@@ -66,14 +68,18 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     spinnerMsg = '';
 
+    private s3Http: HttpClient;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private http: HttpClient,
+        private handler: HttpBackend,
         private spinner: NgxSpinnerService,
         private userService: UserService
     ) {
         console.log('profile private constructor');
+        this.s3Http = new HttpClient(handler);
     }
 
     ngOnInit(): void {
@@ -81,58 +87,55 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.userUuid = this.route.snapshot.paramMap.get('uuid');
         this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();
-        this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
+        this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
             res => {
-                this.spinner.hide();
-                this.userInfo = res;
+                if (res) {
+                    this.spinner.hide();
+                    this.userInfo = res;
 
-                this.firstNameInput = res.first_name;
-                this.middleNameInput = res.middle_name;
-                this.lastNameInput = res.last_name;
+                    this.firstNameInput = res.first_name;
+                    this.middleNameInput = res.middle_name;
+                    this.lastNameInput = res.last_name;
 
-                this.descriptionInput = res.description;
-                this.activitySettings = res.share_mode === 'default_all' ? 'share' : 'hide';
-                this.domainAllowArr = res.domain_allow_array.sort();
-                this.domainDenyArr = res.domain_deny_array.sort();
+                    this.descriptionInput = res.description;
+                    this.activitySettings = res.share_mode === 'default_all' ? 'share' : 'hide';
+                    this.domainAllowArr = res.domain_allow_array.sort();
+                    this.domainDenyArr = res.domain_deny_array.sort();
 
-                this.emailInput = res.email;
-                this.genderInput = res.gender;
-                this.schoolInput = res.school;
-                this.workInput = res.work;
-                this.locationInput = res.location;
+                    this.emailInput = res.email;
+                    this.genderInput = res.gender;
+                    this.schoolInput = res.school;
+                    this.workInput = res.work;
+                    this.locationInput = res.location;
 
-                this.emailOption = res.email_public ? 'public' : 'private';
-                this.genderOption = res.gender_public ? 'public' : 'private';
-                this.schoolOption = res.school_public ? 'public' : 'private';
-                this.workOption = res.work_public ? 'public' : 'private';
-                this.locationOption = res.location_public ? 'public' : 'private';
+                    this.emailOption = res.email_public ? 'public' : 'private';
+                    this.genderOption = res.gender_public ? 'public' : 'private';
+                    this.schoolOption = res.school_public ? 'public' : 'private';
+                    this.workOption = res.work_public ? 'public' : 'private';
+                    this.locationOption = res.location_public ? 'public' : 'private';
 
-                this.userService.getProfileImageGetUrl(res.user_uuid).toPromise()
-                    .then(resp => {
-                        this.profileImageUrl = resp.data;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.profileImageUrl = '/assets/user.png';
-                    });
-
-                this.userService.getProfileImageUploadUrl().toPromise()
-                    .then(resp => {
-                        this.profileImageUploadUrl = resp.data;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                    this.userService.getProfileImageGetUrl(
+                        res.user_uuid, res.profile_image_extension
+                    ).toPromise()
+                        .then(resp => {
+                            this.profileImageUrl = resp;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            this.profileImageUrl = '/assets/user.png';
+                        });
+                }
             },
             err => {
+                console.log(err);
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl:  true });
             }
-        );
+        )
     }
 
     ngOnDestroy(): void {
-        this.userInfoSubscription?.unsubscribe();
+        this.currUserInfoSubscription?.unsubscribe();
     }
 
     saveName(): void {
@@ -301,9 +304,14 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     onSelectFile(event: any): void {
+        this.imageUploadErrorMsg = '';
         if (event.target.files && event.target.files[0]) {
             if (event.target.files[0].size > 2000000) {
                 this.imageUploadErrorMsg = 'The file size cannot exceed 2Mb';
+                return;
+            }
+            if (!VALID_PROFILE_IMG_TYPES.includes(event.target.files[0].type)) {
+                this.imageUploadErrorMsg = 'File type must be one of .png, .jpeg, and .jpg'
                 return;
             }
             this.imageToUpload = event.target.files[0];
@@ -318,23 +326,31 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     uploadProfileImage(): void {
-        const httpOptions = {
-            headers: {
-                'x-amz-acl': 'private',
-                'Content-Type': this.imageToUpload.type
-            }
-        };
-        console.log(httpOptions);
-        this.http.put(this.profileImageUploadUrl, this.imageToUpload, httpOptions).toPromise()
+        this.spinnerMsg = SPINNER_IMAGE_UPLOAD_MSG;
+        const imageExt = this.imageToUpload.type.split('/')[1];
+        this.userService.getProfileImageUploadUrl(imageExt).toPromise()
             .then(res => {
-                console.log(res);
+                console.log(this.imageToUpload);
+                const uploadUrl = res.data;
+                console.log(uploadUrl);
+                const httpOptions = {
+                    headers: {
+                        'x-amz-acl': 'private',
+                        'Content-Type': this.imageToUpload.type
+                    }
+                };
+                return this.s3Http.put(uploadUrl, this.imageToUpload, httpOptions).toPromise()
+            })
+            .then(() => {
                 this.profileImageUrl = this.imageSelectUrl;
                 this.imageSelectUrl = '';
                 this.imageToUpload = null;
+                this.imageUploadErrorMsg = '';
                 this.toggleProfileImageUploader();
             })
             .catch(err => {
                 console.log(err);
+                this.imageUploadErrorMsg = 'Sorry, something went wrong';
             });
     }
 

@@ -38,6 +38,9 @@ export class TabsComponent implements OnInit, OnDestroy {
     redisUrlSubscription: Subscription;
     timerSubscription: Subscription;
 
+    // if user is not registered, set to false
+    tabsHidden = false;
+
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
@@ -51,27 +54,26 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         Auth.currentAuthenticatedUser()
             .then(() => {
-                this.userInfoSubscription = this.userService.getCurrentUserInfo().subscribe(
-                    res => {
-                        this.userUuid = res.user_uuid;
-                        this.userId = res.user_id;
-                        this.statusSubscribe();
-                        this.getInitialStatus();        
-                        this.spinner.hide();
-                    },
-                    err => {
-                        this.spinner.hide();
-                        if (err.status === 404) {
-                            this.router.navigate(['/user-registration'], { replaceUrl: true});
-                        }
-                    });
+                console.log('calling /users/me');
+                return this.userService.getCurrentUserInfo().toPromise()
             })
-            .catch((err) => {
+            .then(res => {
+                console.log(res);
+                this.userService.publishCurrentUserInfo(res);
+                this.userUuid = res.user_uuid;
+                this.userId = res.user_id;
+                this.statusSubscribe();
+                this.getInitialStatus();        
                 this.spinner.hide();
+            })
+            .catch(err => {
+                this.spinner.hide();
+                console.log(err);
                 if (err.status === 404) {
+                    this.tabsHidden = true;
                     this.router.navigate(['/user-registration'], { replaceUrl: true});
                 } else {
-                    this.router.navigate(['/auth/gate'], { replaceUrl: true });
+                    // this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
             })
     }
@@ -81,7 +83,7 @@ export class TabsComponent implements OnInit, OnDestroy {
         const source = interval(HEARTBEAT_PERIOD);
         this.timerSubscription = source.subscribe(() => {
             if (this.currUrl === this.redisUrl) {
-                console.log('Sending heartbeat');
+                console.log(`Sending heartbeat with ${this.currTitle}`);
                 this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
             }
         });

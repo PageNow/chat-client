@@ -1,40 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { USER_API_URL } from '../shared/constants';
 import { UserCreate, UserInfoPrivate, UserInfoUpdate } from './user.model';
-import { AuthService } from '../auth/auth.service';
-import { AuthState } from '../auth/auth.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-    authState: AuthState;
     httpOptions: any;
+    currUserInfo = new BehaviorSubject<UserInfoPrivate | null>(null);
 
     constructor(
-        private http: HttpClient,
-        private authService: AuthService
+        private http: HttpClient
     ) {
         console.log('user service constructor');
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            this.authState = authState;
-            this.httpOptions = {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    // Authorization: `Bearer ${authState.jwt}`
-                })
-            };
-        });
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+            })
+        };
     }
 
     public getCurrentUserInfo(): Observable<any> {
+        console.log('authService: calling /users/me');
         return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions);
     }
 
-    public submitCurrentUserInfo(userInfo: UserCreate): Observable<any> {
+    public publishCurrentUserInfo(userInfo: UserInfoPrivate): void {
+        console.log(userInfo);
+        this.currUserInfo.next(userInfo);
+    }
+
+    public createCurrentUserInfo(userInfo: UserCreate): Observable<any> {
         return this.http.post(
             `${USER_API_URL}/users/me`,
             JSON.stringify(userInfo),
@@ -50,16 +49,23 @@ export class UserService {
         );
     }
 
-    public getProfileImageUploadUrl(): Observable<any> {
+    public getUserPublicInfo(userUuid: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/me/profile-image-upload-url`,
+            `${USER_API_URL}/users/${userUuid}`,
             this.httpOptions
         );
     }
 
-    public getProfileImageGetUrl(userUuid: string): Observable<any> {
+    public getProfileImageUploadUrl(imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/${userUuid}/profile-image-url`,
+            `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`,
+            this.httpOptions
+        );
+    }
+
+    public getProfileImageGetUrl(userUuid: string, imgExt: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/${userUuid}/profile-image-url?image_ext=${imgExt}`,
             this.httpOptions
         );
     }
@@ -67,6 +73,34 @@ export class UserService {
     public deleteProfileIamge(): Observable<any> {
         return this.http.delete(
             `${USER_API_URL}/users/me/profile-image`,
+            this.httpOptions
+        );
+    }
+
+    public checkFriendship(userId: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/friendship/request/${userId}`,
+            this.httpOptions
+        );
+    }
+
+    public addFriend(userId: string): Observable<any> {
+        const friendshipRequest = { user_id2: userId };
+        return this.http.post(
+            `${USER_API_URL}/friendship/request`,
+            friendshipRequest,
+            this.httpOptions
+        );
+    }
+
+    public deleteFriend(userId1: string, userId2: string): Observable<any> {
+        const friendshipDeleteRequest = {
+            user_id1: userId1,
+            user_id2: userId2,
+        };
+        return this.http.post(
+            `${USER_API_URL}/friendship/delete`,
+            friendshipDeleteRequest,
             this.httpOptions
         );
     }
