@@ -49,6 +49,13 @@ export class UserService {
         );
     }
 
+    public getUserPublicInfo(userUuid: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/${userUuid}`,
+            this.httpOptions
+        );
+    }
+
     public getProfileImageUploadUrl(imgExt: string): Observable<any> {
         return this.http.get(
             `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`,
@@ -66,6 +73,34 @@ export class UserService {
     public deleteProfileIamge(): Observable<any> {
         return this.http.delete(
             `${USER_API_URL}/users/me/profile-image`,
+            this.httpOptions
+        );
+    }
+
+    public checkFriendship(userId: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/friendship/request/${userId}`,
+            this.httpOptions
+        );
+    }
+
+    public addFriend(userId: string): Observable<any> {
+        const friendshipRequest = { user_id2: userId };
+        return this.http.post(
+            `${USER_API_URL}/friendship/request`,
+            friendshipRequest,
+            this.httpOptions
+        );
+    }
+
+    public deleteFriend(userId1: string, userId2: string): Observable<any> {
+        const friendshipDeleteRequest = {
+            user_id1: userId1,
+            user_id2: userId2,
+        };
+        return this.http.post(
+            `${USER_API_URL}/friendship/delete`,
+            friendshipDeleteRequest,
             this.httpOptions
         );
     }

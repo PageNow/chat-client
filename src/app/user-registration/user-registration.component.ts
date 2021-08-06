@@ -46,6 +46,7 @@ export class UserRegistrationComponent implements OnInit {
             })
             .then(res => {
                 this.router.navigate([`/profile/${res.user_uuid}`])
+                window.location.reload();
             })
             .catch(err => {
                 console.log(err);
