@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable } from 'rxjs';
 
 import { USER_API_URL } from "../shared/constants";
 
@@ -20,38 +21,53 @@ export class FriendshipService {
         };
     }
 
-    public getFriendshipRequests(): Promise<any> {
-        return this.http.get(`${USER_API_URL}/friendship/request`, this.httpOptions).toPromise();
+    public getFriendshipRequests(): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/friendship/requests`,
+            this.httpOptions
+        );
     }
 
-    public createFriendshipRequest(userId: string): Promise<any> {
+    public checkFriendship(userId: string): Observable<any> {
+        return this.http.get(
+            `${USER_API_URL}/friendship/request/${userId}`,
+            this.httpOptions
+        );
+    }
+
+    public addFriend(userId: string): Observable<any> {
+        const friendshipRequest = { user_id2: userId };
         return this.http.post(
             `${USER_API_URL}/friendship/request`,
-            { user_id2: userId },
+            friendshipRequest,
             this.httpOptions
-        ).toPromise();
+        );
     }
 
-    public acceptFriendshipRequest(userId: string): Promise<any> {
+    public deleteFriend(userId1: string, userId2: string): Observable<any> {
+        const friendshipDeleteRequest = {
+            user_id1: userId1,
+            user_id2: userId2,
+        };
+        return this.http.post(
+            `${USER_API_URL}/friendship/delete`,
+            friendshipDeleteRequest,
+            this.httpOptions
+        );
+    }
+
+    public deleteFriendRequest(userId: string): Observable<any> {
+        return this.http.delete(
+            `${USER_API_URL}/friendship/request/${userId}`,
+            this.httpOptions
+        );
+    }
+
+    public acceptFriendRequest(userId: string): Observable<any> {
         return this.http.post(
             `${USER_API_URL}/friendship/accept`,
             { user_id1: userId },
             this.httpOptions
-        ).toPromise();
-    }
-
-    /**
-     * Delete friendship endpoint
-     * @param userId the user cognito id
-     * @param isAccepting is accepting friendship (if true, you are user_id2)
-     * @returns promise
-     */
-    public deleteFriendshipRequest(userId: string, isAccepting: boolean): Promise<any> {
-        const requestBody = isAccepting ? { user_id1: userId } : { user_id2: userId };
-        return this.http.post(
-            `${USER_API_URL}/friendship/delete`,
-            requestBody,
-            this.httpOptions
-        ).toPromise();
+        );
     }
 }

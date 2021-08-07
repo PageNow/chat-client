@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { NotificationsComponent } from './notifications.component';
 import { NotificationsRoutingModule } from './notifications-routing.module';
@@ -10,6 +11,7 @@ import { NotificationsRoutingModule } from './notifications-routing.module';
     ],
     imports: [
         CommonModule,
+        NgxSpinnerModule,
         NotificationsRoutingModule
     ]
 })

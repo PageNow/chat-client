@@ -1,0 +1,30 @@
+$button-font-size: 15px;
+
+.notification-item-div {
+    display: flex;
+    flex-direction: row;
+}
+
+.profile-image-div {
+    margin-right: 10px;
+}
+
+.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.detail-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.accept-button {
+    font-size: $button-font-size;
+}
+
+.decline-button {
+    font-size: $button-font-size;
+}

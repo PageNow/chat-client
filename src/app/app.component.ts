@@ -23,6 +23,9 @@ export class AppComponent implements OnDestroy {
                 case '/search':
                     this.currTab = 'search';
                     break;
+                case '/notifications':
+                    this.currTab = 'notifications';
+                    break;
                 default:
                     break;
             }
