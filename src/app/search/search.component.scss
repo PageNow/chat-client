@@ -75,3 +75,24 @@
     cursor: pointer;
     color: $link-hover-color;
 }
+
+.search-more-div {
+    margin-top: 15px;
+    text-align:center;
+}
+
+.search-more-span {
+    font-size: 14px;
+    color: $link-color;
+}
+
+.search-more-span:hover {
+    color: $link-hover-color;
+    cursor: pointer;
+}
+
+.end-of-search-div {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 15px;
+}

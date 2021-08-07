@@ -1,12 +1,12 @@
 <ngx-spinner>
     <p style="color: white;">
-        <strong>Fetching user data...</strong>
+        <strong>{{ spinnerMsg }}</strong>
     </p>
 </ngx-spinner>
 <div class='main-div' *ngIf="!showProfile">
     <div class='search-input-div'>
         <select class="form-select form-select-sm search-select"
-                [(ngModel)]="searchOption">
+                (change)="onSearchOptionChange($event)">
             <option value="email">Email</option>
             <option value="name">Name</option>
         </select>
@@ -54,6 +54,12 @@
                 <div>{{ user.description }} </div>
             </div>
         </div>
+    </div>
+    <div *ngIf="searched && (!endOfFriendsSearch || !endOfUsersSearch)" class='search-more-div'>
+        <span (click)="onSearchMore()" class='search-more-span'>See More</span>
+    </div>
+    <div *ngIf="endOfFriendsSearch && endOfUsersSearch" class='end-of-search-div'>
+        End of Search
     </div>
 </div>
 <app-profile-public *ngIf="showProfile" [userUuid]="profileUuid" (backEvent)="onClickBack()">
