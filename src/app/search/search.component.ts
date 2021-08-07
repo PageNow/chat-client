@@ -6,6 +6,9 @@ import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
 import { SEARCH_RESULT_LIMIT } from '../shared/constants';
 import { UserService } from '../user/user.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+
+const SPINNER_SEARCH_MSG = 'Searching users...';
 
 @Component({
     selector: 'app-search',
@@ -20,10 +23,10 @@ export class SearchComponent {
     searchInput = '';
     searchPlaceholder = 'Enter email...';
 
+    searched = false;
     searchedFriendArr: UserInfoSummary[] = [];
     searchedUserArr: UserInfoSummary[] = [];
     searchedFriendIdSet: Set<string> = new Set();
-    searchedUserIdSet: Set<string> = new Set();
     friendProfileImgUrlArr: string[] = [];
     userProfileImgUrlArr: string[] = [];
 
@@ -34,20 +37,93 @@ export class SearchComponent {
     showProfile = false;
     profileUuid: string;
 
+    spinnerMsg = '';
+
     constructor(
+        private spinner: NgxSpinnerService,
         private searchService: SearchService,
         private userService: UserService
     ) { }
 
-    // TODO: separate search and search more (search - always fresh search, search more - additional search)
     onSearch(): void {
-        if (this.endOfFriendsSearch || this.endOfUsersSearch) { return; }
+        this.searched = true;
+        this.searchedFriendIdSet = new Set();
+        this.friendProfileImgUrlArr = [];
+        this.userProfileImgUrlArr = [];
+        this.endOfFriendsSearch = false;
+        this.endOfUsersSearch = false;
+        this.spinnerMsg = SPINNER_SEARCH_MSG;
+        this.spinner.show();
         if (this.searchOption === 'email') {
-            if (this.searchedUserArr.length === 0) { // there are still friends that must be included in the search result
+            this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
+                .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
+                    if (res.length >= 0 && res.length < SEARCH_RESULT_LIMIT) {
+                        this.endOfFriendsSearch = true;
+                    }
+                    res.map(x => this.searchedFriendIdSet.add(x.user_id));
+                    this.searchedFriendArr = res;
+                    if (res.length > 0) {
+                        this.updateProfileImgArr(res, true);
+                    }
+                    return this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
+                })
+                .then(res => {
+                    if (this.endOfFriendsSearch && res.length === 0) {
+                        this.endOfUsersSearch = true;
+                    }
+                    const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                    this.searchedUserArr = resUserArr;
+                    if (resUserArr.length > 0) {
+                        this.updateProfileImgArr(resUserArr, false);
+                    }
+                    this.spinner.hide();
+                })
+                .catch(err => {
+                    this.spinner.hide();
+                    console.log(err);
+                });
+        } else if (this.searchOption === 'name') {
+            this.searchService.searchFriendsByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
+                .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
+                    if (res.length < SEARCH_RESULT_LIMIT) {
+                        this.endOfFriendsSearch = true;
+                    }
+                    res.map(x => this.searchedFriendIdSet.add(x.user_id));
+                    this.searchedFriendArr = res;
+                    if (res.length > 0) {
+                        this.updateProfileImgArr(res, true);
+                    }
+                    return this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
+                })
+                .then(res => {
+                    if (this.endOfFriendsSearch && res.length === 0) {
+                        this.endOfUsersSearch = true;
+                    }
+                    const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                    this.searchedUserArr = resUserArr;
+                    if (resUserArr.length > 0) {
+                        this.updateProfileImgArr(resUserArr, false);
+                    }
+                    this.spinner.hide();
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.spinner.hide();
+                });
+        }
+    }
+
+    onSearchMore(): void {
+        console.log(this.endOfFriendsSearch);
+        console.log(this.endOfUsersSearch);
+        if (this.endOfFriendsSearch && this.endOfUsersSearch) { return; }
+        this.spinnerMsg = SPINNER_SEARCH_MSG;
+        this.spinner.show();
+        if (this.searchOption === 'email') {
+            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) { // there are still friends that must be included in the search result
                 this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
                     .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
-                        console.log(res);
-                        if (res.length >= 0 && res.length < SEARCH_RESULT_LIMIT) {
+                        if (res.length < SEARCH_RESULT_LIMIT) {
                             this.endOfFriendsSearch = true;
                         }
                         res.map(x => this.searchedFriendIdSet.add(x.user_id));
@@ -58,43 +134,47 @@ export class SearchComponent {
                         return this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
                     })
                     .then(res => {
-                        console.log(res);
+                        // endOfFriendsSearch means that there is at least one search for users
                         if (this.endOfFriendsSearch && res.length === 0) {
                             this.endOfUsersSearch = true;
                         }
                         const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
                         this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, false);
+                        if (resUserArr.length > 0) {
+                            this.updateProfileImgArr(resUserArr, false);
                         }
+                        this.spinner.hide();
                     })
                     .catch(err => {
                         console.log(err);
+                        this.spinner.hide();
                     });
             } else { // only need to call searchUsers API Endpoint because there are no more friends
                 this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
-                    .then(res => {
-                        console.log(res);
+                    .then((res: UserInfoSummary[]): void => {
                         if (res.length < SEARCH_RESULT_LIMIT) {
                             this.endOfUsersSearch = true;
                         }
-                        this.searchedUserArr = [...this.searchedUserArr, ...res];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, false);
+                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
+                        if (resUserArr.length > 0) {
+                            this.updateProfileImgArr(resUserArr, false);
                         }
+                        this.spinner.hide();
                     })
                     .catch(err => {
                         console.log(err);
+                        this.spinner.hide();
                     });
             }
         } else if (this.searchOption === 'name') {
-            if (this.searchedFriendArr.length === 0) {
+            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) {
                 this.searchService.searchFriendsByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
                     .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
-                        console.log(res);
-                        if (res.length >= 0 && res.length < SEARCH_RESULT_LIMIT) {
+                        if (res.length < SEARCH_RESULT_LIMIT) {
                             this.endOfFriendsSearch = true;
                         }
+                        res.map(x => this.searchedFriendIdSet.add(x.user_id));
                         this.searchedFriendArr = [...this.searchedFriendArr, ...res];
                         if (res.length > 0) {
                             this.updateProfileImgArr(res, true);
@@ -102,32 +182,36 @@ export class SearchComponent {
                         return this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
                     })
                     .then(res => {
-                        console.log(res);
-                        if (this.endOfFriendsSearch && res.length < SEARCH_RESULT_LIMIT) {
+                        if (this.endOfFriendsSearch && res.length === 0) {
                             this.endOfUsersSearch = true;
                         }
-                        this.searchedUserArr = [...this.searchedUserArr, ...res];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, false);
+                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
+                        if (resUserArr.length > 0) {
+                            this.updateProfileImgArr(resUserArr, false);
                         }
+                        this.spinner.hide();
                     })
                     .catch(err => {
                         console.log(err);
+                        this.spinner.hide();
                     });
             } else {
                 this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
-                    .then(res => {
+                    .then((res: UserInfoSummary[]): void => {
                         if (res.length < SEARCH_RESULT_LIMIT) {
                             this.endOfUsersSearch = true;
                         }
-                        console.log(res);
-                        this.searchedUserArr = [...this.searchedUserArr, ...res];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, false);
+                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
+                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
+                        if (resUserArr.length > 0) {
+                            this.updateProfileImgArr(resUserArr, false);
                         }
+                        this.spinner.hide();
                     })
                     .catch(err => {
                         console.log(err);
+                        this.spinner.hide();
                     });
             }
         }
@@ -138,11 +222,9 @@ export class SearchComponent {
     }
 
     onSearchOptionChange(event: any): void {
-        console.log(event.target.value);
-        this.searchedFriendArr = [];
-        this.searchedUserArr = [];
-        this.friendProfileImgUrlArr = [];
-        this.userProfileImgUrlArr = [];
+        this.searched = false;
+        this.endOfFriendsSearch = false;
+        this.endOfUsersSearch = false;
         if (event.target.value === 'email') {
             this.searchPlaceholder = 'Enter email...';
         } else if (event.target.value === 'name') {
