@@ -19,6 +19,9 @@ import { ProfilePublicComponent } from './profile-public/profile-public.componen
         FontAwesomeModule,
         NgxSpinnerModule,
         ProfileRoutingModule,
+    ],
+    exports: [
+        ProfilePublicComponent
     ]
 })
 export class ProfileModule { }

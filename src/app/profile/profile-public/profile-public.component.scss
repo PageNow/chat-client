@@ -1,9 +1,26 @@
+@import '../../../stylings/variables';
+
 .main-div {
     margin: 0 12px 0 12px;
 }
 
+.back-div {
+    margin-top: 5px;
+}
+
+.back-span {
+    font-size: 15px;
+    color: $link-color;
+}
+
+.back-span:hover {
+    cursor: pointer;
+    color: $link-hover-color;
+}
+
 .profile-image-div {
     text-align: center;
+    margin-top: -20px;
 }
 
 .profile-img {

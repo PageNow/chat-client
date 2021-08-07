@@ -4,6 +4,9 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
+    <div class='back-div'>
+        <span class='back-span' (click)="onClickBack()">&lt; Back</span>
+    </div>
     <div class='profile-image-div'>
         <img [src]="userProfileImgUrl"
              class='profile-img' onerror="this.src='/assets/user.png'"

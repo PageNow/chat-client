@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
@@ -9,7 +9,8 @@ import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
-const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friendship...';
+const SPINNER_FRIENDSHIP_ADD_MSG = 'Making friend request...';
+const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friend request...';
 
 @Component({
     selector: 'app-profile-public',
@@ -17,8 +18,10 @@ const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friendship...';
     styleUrls: ['./profile-public.component.scss']
 })
 export class ProfilePublicComponent implements OnInit, OnDestroy {
+    @Input() userUuid: string;
+    @Output() backEvent = new EventEmitter<boolean>();
+
     currUserUuid: string;
-    userUuid: string;
     userInfo: UserInfoPublic;
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
@@ -37,7 +40,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.userUuid = window.location.href.split('/').slice(-1)[0];
+        console.log(this.userUuid);
         this.spinnerMsg = SPINNER_PROFILE_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
@@ -89,8 +92,14 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.currUserInfoSubscription?.unsubscribe();
     }
 
+    onClickBack(): void {
+        this.backEvent.emit(true);
+    }
+
     addFriend(): void {
         if (!this.userInfo) { return; }
+        this.spinnerMsg = SPINNER_FRIENDSHIP_ADD_MSG;
+        this.spinner.show();
         this.friendshipService.addFriend(this.userInfo.user_id).toPromise()
             .then(res => {
                 console.log(res);
@@ -98,9 +107,11 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                     this.isFriend = false;
                     this.isFriendRequestPending = true;
                 }
+                this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinner.hide();
             });
     }
 

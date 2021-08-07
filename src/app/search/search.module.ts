@@ -6,17 +6,19 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { SearchComponent } from './search.component';
 import { SearchRoutingModule } from './search-routing.module';
+import { ProfileModule } from '../profile/profile.module';
 
 @NgModule({
     declarations: [
-        SearchComponent
+        SearchComponent,
     ],
     imports: [
         CommonModule,
         FormsModule,
         NgxSpinnerModule,
         FontAwesomeModule,
-        SearchRoutingModule
+        SearchRoutingModule,
+        ProfileModule
     ]
 })
 export class SearchModule { }

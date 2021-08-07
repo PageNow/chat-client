@@ -2,11 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ProfilePrivateComponent } from './profile-private/profile-private.component';
-import { ProfilePublicComponent } from './profile-public/profile-public.component';
 
 const profileRoutes: Routes = [
-    { path: 'me', component: ProfilePrivateComponent },
-    { path: ':uuid', component: ProfilePublicComponent }
+    { path: 'me', component: ProfilePrivateComponent }
+    // { path: ':uuid', component: ProfilePublicComponent }
 ];
 
 @NgModule({

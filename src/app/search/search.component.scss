@@ -1,3 +1,5 @@
+@import '../../stylings/variables';
+
 .main-div {
     padding-top: 10px;
 }
@@ -64,10 +66,12 @@
     flex-direction: column;
 }
 
-.profile-a {
+.profile-link {
     text-decoration: none;
+    color: $link-color;
 }
 
-.profile-a:hover {
+.profile-link:hover {
     cursor: pointer;
+    color: $link-hover-color;
 }
