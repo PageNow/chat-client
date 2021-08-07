@@ -83,7 +83,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        console.log('profile private oninit');
         this.userUuid = this.route.snapshot.paramMap.get('uuid');
         this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();

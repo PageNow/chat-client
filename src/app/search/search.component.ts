@@ -155,10 +155,8 @@ export class SearchComponent {
                 )
             );
         }
-        console.log(profileImgUrlRequestArr);
         forkJoin(profileImgUrlRequestArr).subscribe(urlArr => {
             urlArr = urlArr.map(x => x !== null ? x : '/assets/usre.png');
-            console.log(urlArr);
             if (isFriend) {
                 this.friendProfileImgUrlArr = [...this.friendProfileImgUrlArr, ...urlArr];
             } else {
