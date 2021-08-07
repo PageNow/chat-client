@@ -3,7 +3,7 @@
         <strong>Fetching user data...</strong>
     </p>
 </ngx-spinner>
-<div class='main-div'>
+<div class='main-div' *ngIf="!showProfile">
     <div class='search-input-div'>
         <select class="form-select form-select-sm search-select"
                 [(ngModel)]="searchOption">
@@ -31,9 +31,9 @@
             </div>
             <div class='user-info-div'>
                 <div>
-                    <a [routerLink]="['/profile', user.user_uuid]" class="profile-a">
-                        {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
-                    </a>
+                    <span class='profile-link' (click)="onClickProfile(user)">
+                        {{ user.first_name}} {{ user.middle_name }} {{ user.last_name }}
+                    </span>
                 </div>
                 <div>{{ user.description }}</div>
             </div>
@@ -47,13 +47,14 @@
             </div>
             <div class='user-info-div'>
                 <div>
-                    <a [routerLink]="['/profile', user.user_uuid]" class="profile-a">
+                    <span class='profile-link' (click)="onClickProfile(user)">
                         {{ user.first_name}} {{ user.middle_name }} {{ user.last_name }}
-                    </a>
+                    </span>
                 </div>
                 <div>{{ user.description }} </div>
             </div>
         </div>
     </div>
-    
 </div>
+<app-profile-public *ngIf="showProfile" [userUuid]="profileUuid" (backEvent)="onClickBack()">
+</app-profile-public>

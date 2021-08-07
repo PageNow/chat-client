@@ -21,6 +21,10 @@ export class NotificationsComponent implements OnInit {
 
     spinnerMsg = '';
 
+    // variables for public profile component
+    showProfile = false;
+    profileUuid: string;
+
     constructor(
         private spinner: NgxSpinnerService,
         private userService: UserService,
@@ -87,5 +91,14 @@ export class NotificationsComponent implements OnInit {
                 console.log(err);
                 this.spinner.hide();
             });
+    }
+
+    onClickProfile(userInfo: UserInfoSummary): void {
+        this.profileUuid = userInfo.user_uuid;
+        this.showProfile = true;
+    }
+
+    onClickBack(): void {
+        this.showProfile = false;
     }
 }

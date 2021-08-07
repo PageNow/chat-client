@@ -30,6 +30,10 @@ export class SearchComponent {
     endOfFriendsSearch = false;
     endOfUsersSearch = false;
 
+    // variables for public profile component
+    showProfile = false;
+    profileUuid: string;
+
     constructor(
         private searchService: SearchService,
         private userService: UserService
@@ -163,5 +167,14 @@ export class SearchComponent {
                 this.userProfileImgUrlArr = [...this.userProfileImgUrlArr, ...urlArr];
             }
         });
+    }
+
+    onClickProfile(userInfo: UserInfoSummary): void {
+        this.profileUuid = userInfo.user_uuid;
+        this.showProfile = true;
+    }
+
+    onClickBack(): void {
+        this.showProfile = false;
     }
 }

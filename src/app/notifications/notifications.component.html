@@ -32,3 +32,5 @@
         </div>
     </div>
 </div>
+<app-profile-public *ngIf="showProfile" [userUuid]="profileUuid" (backEvent)="onClickBack()">
+</app-profile-public>

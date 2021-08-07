@@ -4,6 +4,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { NotificationsComponent } from './notifications.component';
 import { NotificationsRoutingModule } from './notifications-routing.module';
+import { ProfileModule } from '../profile/profile.module';
 
 @NgModule({
     declarations: [
@@ -12,7 +13,8 @@ import { NotificationsRoutingModule } from './notifications-routing.module';
     imports: [
         CommonModule,
         NgxSpinnerModule,
-        NotificationsRoutingModule
+        NotificationsRoutingModule,
+        ProfileModule
     ]
 })
 export class NotificationsModule { }

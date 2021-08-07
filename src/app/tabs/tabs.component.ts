@@ -82,6 +82,7 @@ export class TabsComponent implements OnInit, OnDestroy {
         console.log('tabs ngOnInit');
         const source = interval(HEARTBEAT_PERIOD);
         this.timerSubscription = source.subscribe(() => {
+            console.log('heartbeat');
             if (this.currUrl === this.redisUrl) {
                 console.log(`Sending heartbeat with ${this.currTitle}`);
                 this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
