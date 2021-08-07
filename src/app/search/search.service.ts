@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { USER_API_URL } from "../shared/constants";
+import { USER_API_URL } from '../shared/constants';
 
 @Injectable({
     providedIn: 'root'
@@ -43,7 +43,7 @@ export class SearchService {
     public searchFriendsByName(
         name: string, exact: boolean, limit: number, offset: number
     ): Promise<any> {
-        const exactStr = exact ? 'true': 'false';
+        const exactStr = exact ? 'true' : 'false';
         return this.http.get(
             `${USER_API_URL}/friendship/search/name/${name}?exact=${exactStr}&limit=${limit}&offset=${offset}`,
             this.httpOptions

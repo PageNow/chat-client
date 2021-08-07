@@ -47,9 +47,9 @@ export class PagesComponent implements OnInit, OnDestroy {
                 console.log(err);
                 this.spinner.hide();
             }
-        )
+        );
     }
-    
+
     ngOnDestroy(): void {
         this.statusSubscription?.unsubscribe();
         this.currUserInfoSubscription?.unsubscribe();
@@ -72,7 +72,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.url = event.value.data.onStatus.url;
                 this.title = event.value.data.onStatus.title;
             }
-        })
+        });
     }
 
     onConnect(): void {

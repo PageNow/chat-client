@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { USER_API_URL } from "../shared/constants";
+import { USER_API_URL } from '../shared/constants';
 
 @Injectable({
     providedIn: 'root'

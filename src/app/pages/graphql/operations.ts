@@ -33,4 +33,4 @@ export default {
             onStatus(userId: $userId) ${presenceResult}
         }
     `
-}
+};

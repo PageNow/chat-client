@@ -13,7 +13,7 @@ import { VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
 const SPINNER_FETCH_MSG = 'Fetching user data...';
 const SPINNER_UPLOAD_MSG = 'Uploading user data...';
-const SPINNER_IMAGE_UPLOAD_MSG = 'Uploading profile image...'
+const SPINNER_IMAGE_UPLOAD_MSG = 'Uploading profile image...';
 
 @Component({
     selector: 'app-profile-private',
@@ -130,7 +130,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl:  true });
             }
-        )
+        );
     }
 
     ngOnDestroy(): void {
@@ -310,7 +310,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 return;
             }
             if (!VALID_PROFILE_IMG_TYPES.includes(event.target.files[0].type)) {
-                this.imageUploadErrorMsg = 'File type must be one of .png, .jpeg, and .jpg'
+                this.imageUploadErrorMsg = 'File type must be one of .png, .jpeg, and .jpg';
                 return;
             }
             this.imageToUpload = event.target.files[0];
@@ -338,7 +338,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                         'Content-Type': this.imageToUpload.type
                     }
                 };
-                return this.s3Http.put(uploadUrl, this.imageToUpload, httpOptions).toPromise()
+                return this.s3Http.put(uploadUrl, this.imageToUpload, httpOptions).toPromise();
             })
             .then(() => {
                 this.profileImageUrl = this.imageSelectUrl;

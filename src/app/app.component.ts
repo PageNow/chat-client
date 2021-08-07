@@ -10,10 +10,10 @@ import { Auth } from 'aws-amplify';
 })
 export class AppComponent implements OnDestroy {
     currTab = INITIAL_TAB;
-    
+
     constructor(location: Location) {
         location.onUrlChange((res) => {
-            switch(res) {
+            switch (res) {
                 case '/pages':
                     this.currTab = 'pages';
                     break;

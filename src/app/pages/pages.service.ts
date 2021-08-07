@@ -23,7 +23,7 @@ export class PagesService {
         });
         // console.log(response);
     }
-    
+
     public async sendHeartbeat(url: string, title: string): Promise<void> {
         const response = await API.graphql({
             query: operations.sendHeartbeat,

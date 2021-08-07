@@ -55,7 +55,7 @@ export class TabsComponent implements OnInit, OnDestroy {
         Auth.currentAuthenticatedUser()
             .then(() => {
                 console.log('calling /users/me');
-                return this.userService.getCurrentUserInfo().toPromise()
+                return this.userService.getCurrentUserInfo().toPromise();
             })
             .then(res => {
                 console.log(res);
@@ -63,7 +63,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
                 this.statusSubscribe();
-                this.getInitialStatus();        
+                this.getInitialStatus();
                 this.spinner.hide();
             })
             .catch(err => {
@@ -75,7 +75,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                 } else {
                     // this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
-            })
+            });
     }
 
     ngOnInit(): void {
@@ -111,7 +111,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             next: (event: any) => {
                 this.redisUrl = event.value.data.onStatus.url;
             }
-        })
+        });
     }
 
     private messageEventListener(event: MessageEvent): void {

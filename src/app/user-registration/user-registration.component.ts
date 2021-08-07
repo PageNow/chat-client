@@ -39,13 +39,13 @@ export class UserRegistrationComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log('user-registration onInit')
+        console.log('user-registration onInit');
         Auth.currentAuthenticatedUser()
             .then(() => {
                 return this.userService.getCurrentUserInfo().toPromise();
             })
             .then(res => {
-                this.router.navigate([`/profile/${res.user_uuid}`])
+                this.router.navigate([`/profile/${res.user_uuid}`]);
                 window.location.reload();
             })
             .catch(err => {
@@ -72,9 +72,9 @@ export class UserRegistrationComponent implements OnInit {
             first_name: this.firstName,
             middle_name: '',
             last_name: this.lastName,
-            dob: dob,
             gender: this.gender === 'other' && this.otherGender !== '' ?
                     this.otherGender : this.gender,
+            dob
         };
         this.userService.createCurrentUserInfo(userInfo).toPromise()
             .then(res => {

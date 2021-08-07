@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
-import { Friendship } from 'src/app/friendship/friendship.model';
-import { FriendshipService } from 'src/app/friendship/friendship.service';
-import { UserInfoPublic } from 'src/app/user/user.model';
-import { UserService } from 'src/app/user/user.service';
+import { Friendship } from '../../friendship/friendship.model';
+import { FriendshipService } from '../..//friendship/friendship.service';
+import { UserInfoPublic } from '../../user/user.model';
+import { UserService } from '../../user/user.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
 const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friendship...';
@@ -19,7 +19,7 @@ const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friendship...';
 export class ProfilePublicComponent implements OnInit, OnDestroy {
     currUserUuid: string;
     userUuid: string;
-    userInfo: UserInfoPublic
+    userInfo: UserInfoPublic;
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
 
@@ -49,7 +49,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             err => {
                 console.log(err);
             }
-        )
+        );
         this.userService.getUserPublicInfo(this.userUuid).toPromise()
             .then((res: UserInfoPublic) => {
                 console.log(res);
@@ -120,7 +120,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             .catch(err => {
                 console.log(err);
                 this.spinner.hide();
-            })
+            });
     }
 
     navigateToMyProfile(): void {

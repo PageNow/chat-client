@@ -75,5 +75,5 @@ export class UserService {
             `${USER_API_URL}/users/me/profile-image`,
             this.httpOptions
         );
-    }    
+    }
 }

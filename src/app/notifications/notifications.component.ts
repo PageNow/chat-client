@@ -1,10 +1,10 @@
-import { Component, OnInit } from "@angular/core";
-import { NgxSpinnerService } from "ngx-spinner";
-import { forkJoin } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { forkJoin } from 'rxjs';
 
-import { FriendshipService } from "../friendship/friendship.service";
-import { UserInfoSummary } from "../user/user.model";
-import { UserService } from "../user/user.service";
+import { FriendshipService } from '../friendship/friendship.service';
+import { UserInfoSummary } from '../user/user.model';
+import { UserService } from '../user/user.service';
 
 const SPINNER_NOTIFICATION_FETCH_MSG = 'Fetching notifications...';
 const SPINNER_FRIEND_ACCEPT_MSG = 'Accepting friend request...';
@@ -47,10 +47,10 @@ export class NotificationsComponent implements OnInit {
 
     getProfileImgArr(userInfoArr: UserInfoSummary[]): void {
         const profileImgUrlRequestArr = [];
-        for (let i = 0; i < userInfoArr.length; i++) {
+        for (const userInfo of userInfoArr) {
             profileImgUrlRequestArr.push(
                 this.userService.getProfileImageGetUrl(
-                    userInfoArr[i].user_uuid, userInfoArr[i].profile_image_extension
+                    userInfo.user_uuid, userInfo.profile_image_extension
                 )
             );
         }

@@ -1,11 +1,11 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 import { faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { forkJoin } from 'rxjs';
 
 import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
-import { SEARCH_RESULT_LIMIT } from "../shared/constants";
-import { UserService } from "../user/user.service";
+import { SEARCH_RESULT_LIMIT } from '../shared/constants';
+import { UserService } from '../user/user.service';
 
 @Component({
     selector: 'app-search',
@@ -55,7 +55,7 @@ export class SearchComponent {
                     })
                     .then(res => {
                         console.log(res);
-                        if (this.endOfFriendsSearch && res.length == 0) {
+                        if (this.endOfFriendsSearch && res.length === 0) {
                             this.endOfUsersSearch = true;
                         }
                         const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
@@ -148,10 +148,10 @@ export class SearchComponent {
 
     updateProfileImgArr(userInfoArr: UserInfoSummary[], isFriend: boolean): void {
         const profileImgUrlRequestArr = [];
-        for (let i = 0; i < userInfoArr.length; i++) {
+        for (const userInfo of userInfoArr) {
             profileImgUrlRequestArr.push(
                 this.userService.getProfileImageGetUrl(
-                    userInfoArr[i].user_uuid, userInfoArr[i].profile_image_extension
+                    userInfo.user_uuid, userInfo.profile_image_extension
                 )
             );
         }
