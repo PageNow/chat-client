@@ -120,7 +120,8 @@ export class SearchComponent {
         this.spinnerMsg = SPINNER_SEARCH_MSG;
         this.spinner.show();
         if (this.searchOption === 'email') {
-            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) { // there are still friends that must be included in the search result
+            // there are still friends that must be included in the search result
+            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) {
                 this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
                     .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
                         if (res.length < SEARCH_RESULT_LIMIT) {
