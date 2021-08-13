@@ -11,6 +11,7 @@ import { Auth } from 'aws-amplify';
 import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { PagesService } from '../pages/pages.service';
+import { UserInfoPrivate } from '../user/user.model';
 
 @Component({
   selector: 'app-tabs',
@@ -18,14 +19,19 @@ import { PagesService } from '../pages/pages.service';
   styleUrls: ['./tabs.component.scss']
 })
 export class TabsComponent implements OnInit, OnDestroy {
+    @Input() currTab: string;
+
     currUrl = '';
     currTitle = '';
     redisUrl = ''; // my url stored in redis
 
+    // variables relevant to userInfoPrivate
     userUuid: string | null;
     userId: string | null;
     userInfoSubscription: Subscription;
-    @Input() currTab: string;
+    shareMode: string;
+    domainAllowSet: Set<string>;
+    domainDenySet: Set<string>;    
 
     // fontawesome icons
     faSearch = faSearch;
@@ -57,11 +63,14 @@ export class TabsComponent implements OnInit, OnDestroy {
                 console.log('calling /users/me');
                 return this.userService.getCurrentUserInfo().toPromise();
             })
-            .then(res => {
+            .then((res: UserInfoPrivate): void => {
                 console.log(res);
                 this.userService.publishCurrentUserInfo(res);
                 this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
+                this.shareMode = res.share_mode;
+                this.domainAllowSet = new Set(res.domain_allow_array);
+                this.domainDenySet = new Set(res.domain_deny_array);
                 this.statusSubscribe();
                 this.getInitialStatus();
                 this.spinner.hide();
@@ -85,7 +94,14 @@ export class TabsComponent implements OnInit, OnDestroy {
             console.log('heartbeat');
             if (this.currUrl === this.redisUrl) {
                 console.log(`Sending heartbeat with ${this.currTitle}`);
-                this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
+                const url = new URL(this.currUrl);
+                if (this.shareMode === 'default_none' && this.domainAllowSet.has(url.hostname)) {
+                    this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
+                } else if (this.shareMode === 'default_all' && !this.domainDenySet.has(url.hostname)) {
+                    this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
+                } else { // default_none
+                    this.pagesService.sendHeartbeat('', '');
+                }
             }
         });
     }
@@ -119,7 +135,14 @@ export class TabsComponent implements OnInit, OnDestroy {
         if (event.data.type === 'update-url') {
             this.currUrl = event.data.data?.url;
             this.currTitle = event.data.data?.title;
-            this.pagesService.connect(this.currUrl, this.currTitle);
+            const url = new URL(this.currUrl);
+            if (this.shareMode === 'default_none' && this.domainAllowSet.has(url.hostname)) {
+                this.pagesService.connect(this.currUrl, this.currTitle);
+            } else if (this.shareMode === 'default_all' && !this.domainDenySet.has(url.hostname)) {
+                this.pagesService.connect(this.currUrl, this.currTitle);
+            } else { // default_none
+                this.pagesService.connect('', '');
+            }
         }
     }
 
