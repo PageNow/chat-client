@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import API from '@aws-amplify/api';
-import { Observable } from 'rxjs';
 
 import operations from './graphql/operations';
 
