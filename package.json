@@ -29,6 +29,7 @@
     "@types/chrome": "^0.0.137",
     "@types/filesystem": "^0.0.30",
     "@types/har-format": "^1.2.5",
+    "apollo-angular": "^2.6.0",
     "aws-amplify": "^3.3.27",
     "moment": "^2.29.1",
     "ngx-spinner": "^11.0.1",

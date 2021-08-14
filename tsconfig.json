@@ -24,7 +24,7 @@
     ],
     "strictPropertyInitialization": false,
     "types": ["chrome"],
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
