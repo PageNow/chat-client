@@ -66,13 +66,17 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     async statusSubscribe(): Promise<void> {
         if (!this.userInfo) { return; }
-        this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_id).subscribe({
-            next: (event: any) => {
-                this.status = event.value.data.onStatus.status;
-                this.url = event.value.data.onStatus.url;
-                this.title = event.value.data.onStatus.title;
-            }
-        });
+        this.statusSubscription = this.pagesService.subscribeToStatus(this.userInfo.user_id)
+            .subscribe(
+                ({ data }: any) => {
+                    this.status = data.onStatus.status;
+                    this.url = data.onStatus.url;
+                    this.title = data.onStatus.title;
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            );
     }
 
     onConnect(): void {

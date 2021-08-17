@@ -4,6 +4,8 @@ import { from, Observable } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { switchMap } from 'rxjs/operators';
 
+import { PRESENCE_GQL_HTTPS_URL } from '../shared/config';
+
 /**
  * Appends jwt token for http requests
  */
@@ -19,11 +21,20 @@ export class JwtInterceptor implements HttpInterceptor {
                 switchMap((auth: any) => {
                     const jwt = auth.getIdToken().getJwtToken();
                     console.log(request);
-                    const withAuthRequest = request.clone({
-                        setHeaders: {
-                            Authorization: `Bearer ${jwt}`
-                        }
-                    });
+                    let withAuthRequest;
+                    if (request.url === PRESENCE_GQL_HTTPS_URL) {
+                        withAuthRequest = request.clone({
+                            setHeaders: {
+                                Authorization: jwt,
+                            }
+                        });
+                    } else {
+                        withAuthRequest = request.clone({
+                            setHeaders: {
+                                Authorization: `Bearer ${jwt}`
+                            }
+                        });
+                    }
                     return next.handle(withAuthRequest);
                 })
             );

@@ -33,6 +33,11 @@ const routes: Routes = [
         loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsModule),
         canActivate: [ AuthGuard ]
     },
+    {
+        path: 'chat',
+        loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
+        canActivate: [ AuthGuard ]
+    },
     { path: '', redirectTo: 'pages', pathMatch: 'full' },
     { path: '**', redirectTo: 'pages' },
 ];

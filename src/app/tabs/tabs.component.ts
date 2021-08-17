@@ -64,7 +64,6 @@ export class TabsComponent implements OnInit, OnDestroy {
                 return this.userService.getCurrentUserInfo().toPromise();
             })
             .then((res: UserInfoPrivate): void => {
-                console.log(res);
                 this.userService.publishCurrentUserInfo(res);
                 this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
@@ -124,11 +123,15 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     async statusSubscribe(): Promise<void> {
         if (!this.userId) { return; }
-        this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId).subscribe({
-            next: (event: any) => {
-                this.redisUrl = event.value.data.onStatus.url;
-            }
-        });
+        this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId)
+            .subscribe(
+                ({ data }: any) => {
+                    this.redisUrl = data.onStatus.url;
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            );
     }
 
     private messageEventListener(event: MessageEvent): void {
