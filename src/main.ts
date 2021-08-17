@@ -1,7 +1,6 @@
 /// <reference types="chrome" />
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import { Amplify } from '@aws-amplify/core';
 import awsmobile from './aws-exports';
 

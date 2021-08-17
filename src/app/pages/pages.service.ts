@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import API from '@aws-amplify/api';
+import { Apollo, ApolloBase } from 'apollo-angular';
 
 import operations from './graphql/operations';
 
@@ -7,40 +7,42 @@ import operations from './graphql/operations';
     providedIn: 'root'
 })
 export class PagesService {
-    public getStatus(userId: string): any {
-        console.log(userId);
-        return API.graphql({
+    private apollo: ApolloBase;
+
+    constructor(private apolloProvider: Apollo) {
+        this.apollo = this.apolloProvider.use('presence');
+    }
+
+    public async getStatus(userId: string): Promise<any> {
+        return await this.apollo.query({
             query: operations.getStatus,
             variables: { userId }
-        });
+        }).toPromise();
     }
 
-    public async connect(url: string, title: string): Promise<void> {
-        const response = await API.graphql({
-            query: operations.connect,
+    public async connect(url: string, title: string): Promise<any> {
+        return await this.apollo.mutate({
+            mutation: operations.connect,
             variables: { url, title }
-        });
-        // console.log(response);
+        }).toPromise();
     }
 
-    public async sendHeartbeat(url: string, title: string): Promise<void> {
-        const response = await API.graphql({
+    public async sendHeartbeat(url: string, title: string): Promise<any> {
+        return await this.apollo.query({
             query: operations.sendHeartbeat,
             variables: { url, title }
-        });
-        // console.log(response);
+        }).toPromise();
     }
 
-    public async disconnect(): Promise<void> {
-        const response = await API.graphql({
-            query: operations.disconnect,
+    public async disconnect(): Promise<any> {
+        return await this.apollo.mutate({
+            mutation: operations.disconnect,
             variables: { }
-        });
-        // console.log(response);
+        }).toPromise();
     }
 
     public subscribeToStatus(userId: string): any {
-        return API.graphql({
+        return this.apollo.subscribe({
             query: operations.onStatus,
             variables: { userId }
         });

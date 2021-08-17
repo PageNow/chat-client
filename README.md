@@ -44,3 +44,8 @@
 
 ### Chrome Extension
 * https://stackoverflow.com/questions/47075437/cannot-find-namespace-name-chrome
+
+### ChatQL
+
+* https://aws.amazon.com/blogs/mobile/building-a-serverless-real-time-chat-application-with-aws-appsync/
+* https://github.com/aws-samples/aws-mobile-appsync-chat-starter-angular
