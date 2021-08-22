@@ -4,16 +4,16 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { ChatComponent } from './chat.component';
 import { ChatRoutingModule } from './chat-routing.module';
-import { ChatConversation } from './chat-conversation/chat-conversation.component';
-import { ChatConversationList } from './chat-conversation-list/chat-conversation-list.component';
-import { ChatMessage } from './chat-message/chat-message.component';
+import { ChatConversationComponent } from './chat-conversation/chat-conversation.component';
+import { ChatConversationListComponent } from './chat-conversation-list/chat-conversation-list.component';
+import { ChatMessageComponent } from './chat-message/chat-message.component';
 
 @NgModule({
     declarations: [
         ChatComponent,
-        ChatConversationList,
-        ChatConversation,
-        ChatMessage
+        ChatConversationListComponent,
+        ChatConversationComponent,
+        ChatMessageComponent
     ],
     imports: [
         CommonModule,

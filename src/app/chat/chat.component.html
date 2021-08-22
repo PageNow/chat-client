@@ -1,3 +1,4 @@
 <div>
-    
+    <app-chat-conversation-list *ngIf="chatMode === 'conversation-list'"></app-chat-conversation-list>
+    <app-chat-conversation *ngIf="chatMode === 'conversation'"></app-chat-conversation>
 </div>

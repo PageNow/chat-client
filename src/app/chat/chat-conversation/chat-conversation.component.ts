@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { ChatService } from "../chat.service";
+import { Message } from "../models/message.model";
 
 
 @Component({
@@ -6,6 +8,12 @@ import { Component } from "@angular/core";
     templateUrl: './chat-conversation.component.html',
     styleUrls: ['./chat-conversation.component.scss']
 })
-export class ChatConversation {
+export class ChatConversationComponent {
+    messages: Message[] = [];
+
+    constructor(
+        private chatService: ChatService
+    ) { }
+
 
 }

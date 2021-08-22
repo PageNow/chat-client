@@ -17,6 +17,8 @@
 
 * Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
 * In first sign in - fetch user spinner is displayed forever
+* First sign-in process is not smooth
+* External provider - check if the same email exists
 
 ### Cache
 
