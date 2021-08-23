@@ -16,6 +16,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     userInfo: UserInfoPrivate | null = null;
     currUserInfoSubscription: Subscription;
 
+    chatMode = 'conversation-list';
+
     constructor(
         private spinner: NgxSpinnerService,
         private userService: UserService,

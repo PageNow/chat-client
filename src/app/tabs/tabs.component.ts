@@ -64,6 +64,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                 return this.userService.getCurrentUserInfo().toPromise();
             })
             .then((res: UserInfoPrivate): void => {
+                console.log(res);
                 this.userService.publishCurrentUserInfo(res);
                 this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
@@ -77,6 +78,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             .catch(err => {
                 this.spinner.hide();
                 console.log(err);
+                console.log(err.status);
                 if (err.status === 404) {
                     this.tabsHidden = true;
                     this.router.navigate(['/user-registration'], { replaceUrl: true});

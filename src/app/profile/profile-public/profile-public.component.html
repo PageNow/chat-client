@@ -21,6 +21,10 @@
     </div>
     <div *ngIf="currUserUuid && userUuid !== currUserUuid && isFriend === true"
          class='profile-btn-div'>
+        <button (click)="sendMessage()">Message</button>
+    </div>
+    <div *ngIf="currUserUuid && userUuid !== currUserUuid && isFriend === true"
+         class='profile-btn-div'>
         <button (click)="deleteFriend()">Unfriend</button>
     </div>
     <div *ngIf="currUserUuid && userUuid !== currUserUuid && isFriend === false && isFriendRequestPending === true"

@@ -7,6 +7,7 @@ import { Friendship } from '../../friendship/friendship.model';
 import { FriendshipService } from '../..//friendship/friendship.service';
 import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
+import { ChatService } from 'src/app/chat/chat.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
 const SPINNER_FRIENDSHIP_ADD_MSG = 'Making friend request...';
@@ -22,6 +23,9 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Output() backEvent = new EventEmitter<boolean>();
 
     currUserUuid: string;
+    currUserId: string;
+    currUserName: string;
+    
     userInfo: UserInfoPublic;
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
@@ -36,7 +40,8 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private friendshipService: FriendshipService
+        private friendshipService: FriendshipService,
+        private chatService: ChatService
     ) { }
 
     ngOnInit(): void {
@@ -46,7 +51,9 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
             res => {
                 if (res) {
+                    this.currUserId = res.user_id;
                     this.currUserUuid = res.user_uuid;
+                    this.currUserName = `${res.first_name} ${res.middle_name} ${res.last_name}`.replace('  ', ' ');
                 }
             },
             err => {
@@ -131,6 +138,28 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             .catch(err => {
                 console.log(err);
                 this.spinner.hide();
+            });
+    }
+
+    sendMessage(): void {
+        if (!this.userInfo || !this.isFriend) { return; }
+        const userPairId = this.currUserId < this.userInfo.user_id ?
+            this.currUserId + ' ' + this.userInfo.user_id : this.userInfo.user_id + ' ' + this.currUserId;
+        console.log(userPairId);
+        this.chatService.getDirectMessageConversation(userPairId)
+            .then((res: any): Promise<any> => {
+                if (res.data.directMessageConversation === null) {
+                    const userName = `${this.userInfo.first_name} ${this.userInfo.middle_name} ${this.userInfo.last_name}`.replace('  ', ' ');
+                    return this.chatService.createConversation(this.userInfo.user_id, this.currUserName + ';' + userName);
+                } else {
+                    return Promise.resolve({ data: { createConversation: { conversationId: res.data.directMessageConversation.conversationId }}});
+                }
+            })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
             });
     }
 

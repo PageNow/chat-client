@@ -30,7 +30,7 @@ export class FriendshipService {
 
     public checkFriendship(userId: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/friendship/request/${userId}`,
+            `${USER_API_URL}/friendship/check/${userId}`,
             this.httpOptions
         );
     }
