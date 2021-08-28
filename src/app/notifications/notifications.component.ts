@@ -23,7 +23,7 @@ export class NotificationsComponent implements OnInit {
 
     // variables for public profile component
     showProfile = false;
-    profileUuid: string;
+    profileId: string;
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -54,7 +54,7 @@ export class NotificationsComponent implements OnInit {
         for (const userInfo of userInfoArr) {
             profileImgUrlRequestArr.push(
                 this.userService.getProfileImageGetUrl(
-                    userInfo.user_uuid, userInfo.profile_image_extension
+                    userInfo.user_id, userInfo.profile_image_extension
                 )
             );
         }
@@ -94,7 +94,7 @@ export class NotificationsComponent implements OnInit {
     }
 
     onClickProfile(userInfo: UserInfoSummary): void {
-        this.profileUuid = userInfo.user_uuid;
+        this.profileId = userInfo.user_id;
         this.showProfile = true;
     }
 

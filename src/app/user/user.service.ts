@@ -49,9 +49,9 @@ export class UserService {
         );
     }
 
-    public getUserPublicInfo(userUuid: string): Observable<any> {
+    public getUserPublicInfo(userId: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/${userUuid}`,
+            `${USER_API_URL}/users/${userId}`,
             this.httpOptions
         );
     }
@@ -63,9 +63,9 @@ export class UserService {
         );
     }
 
-    public getProfileImageGetUrl(userUuid: string, imgExt: string): Observable<any> {
+    public getProfileImageGetUrl(userId: string, imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/${userUuid}/profile-image-url?image_ext=${imgExt}`,
+            `${USER_API_URL}/users/${userId}/profile-image-url?image_ext=${imgExt}`,
             this.httpOptions
         );
     }

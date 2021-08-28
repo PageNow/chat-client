@@ -7,7 +7,7 @@
     <div class='subheader-div'>Friend Requests</div>
     <div *ngFor='let user of friendshipRequestUserArr; let idx = index' class='notification-item-div'>
         <div class='profile-image-div'>
-            <a [routerLink]="['/profile', user.user_uuid]" class="profile-a">
+            <a [routerLink]="['/profile', user.user_id]" class="profile-a">
                 <img [src]="profileImgUrlArr[idx]"
                  class="profile-image" onerror="this.src='/assets/user.png'">
             </a>
@@ -15,7 +15,7 @@
         <div class='detail-div'>
             <div class='user-info-div'>
                 <div>
-                    <a [routerLink]="['/profile', user.user_uuid]" class="profile-a">
+                    <a [routerLink]="['/profile', user.user_id]" class="profile-a">
                         {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }}
                     </a>
                 </div>
@@ -32,5 +32,5 @@
         </div>
     </div>
 </div>
-<app-profile-public *ngIf="showProfile" [userUuid]="profileUuid" (backEvent)="onClickBack()">
+<app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">
 </app-profile-public>

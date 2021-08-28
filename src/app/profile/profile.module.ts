@@ -11,7 +11,7 @@ import { ProfilePublicComponent } from './profile-public/profile-public.componen
 @NgModule({
     declarations: [
         ProfilePublicComponent,
-        ProfilePrivateComponent,
+        ProfilePrivateComponent
     ],
     imports: [
         CommonModule,

@@ -12,6 +12,7 @@ import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { PagesService } from '../pages/pages.service';
 import { UserInfoPrivate } from '../user/user.model';
+import { ChatService } from '../chat/chat.service';
 
 @Component({
   selector: 'app-tabs',
@@ -26,7 +27,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     redisUrl = ''; // my url stored in redis
 
     // variables relevant to userInfoPrivate
-    userUuid: string | null;
     userId: string | null;
     userInfoSubscription: Subscription;
     shareMode: string;
@@ -51,7 +51,8 @@ export class TabsComponent implements OnInit, OnDestroy {
         private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private pagesService: PagesService
+        private pagesService: PagesService,
+        private chatService: ChatService
     ) {
         console.log('tabs.component constructor');
 
@@ -66,7 +67,6 @@ export class TabsComponent implements OnInit, OnDestroy {
             .then((res: UserInfoPrivate): void => {
                 console.log(res);
                 this.userService.publishCurrentUserInfo(res);
-                this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
                 this.shareMode = res.share_mode;
                 this.domainAllowSet = new Set(res.domain_allow_array);

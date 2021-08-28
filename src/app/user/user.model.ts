@@ -8,7 +8,6 @@ export interface UserCreate {
 
 export interface UserInfoSummary {
     user_id: string;
-    user_uuid: string;
 
     first_name: string;
     middle_name: string;

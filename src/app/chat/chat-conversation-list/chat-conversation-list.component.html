@@ -1,6 +1,18 @@
+<ngx-spinner>
+    <p style="color: white;">
+        <strong>{{ spinnerMsg }}</strong>
+    </p>
+</ngx-spinner>
 <div class='main-div'>
     Conversation List
-    <div *ngFor="let conversation of conversations">
-
+    <div *ngFor="let conversation of conversationArr">
+        <div>{{ conversation.title }}</div>
+        <div>
+            <div>{{ conversation.content }}</div>
+            <div>{{ conversation.sentAt }}</div>
+        </div>
+        <div>
+            <div *ngIf="conversation.isRead"></div>
+        </div>
     </div>
 </div>

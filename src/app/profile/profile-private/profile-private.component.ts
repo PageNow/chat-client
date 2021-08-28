@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -21,7 +21,6 @@ const SPINNER_IMAGE_UPLOAD_MSG = 'Uploading profile image...';
     styleUrls: ['./profile-private.component.scss']
 })
 export class ProfilePrivateComponent implements OnInit, OnDestroy {
-    userUuid: string | null;
     userInfo: UserInfoPrivate | null = null;
     currUserInfoSubscription: Subscription;
     faPlus = faPlus;
@@ -71,19 +70,15 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     private s3Http: HttpClient;
 
     constructor(
-        private route: ActivatedRoute,
         private router: Router,
-        private http: HttpClient,
         private handler: HttpBackend,
         private spinner: NgxSpinnerService,
         private userService: UserService
     ) {
-        console.log('profile private constructor');
         this.s3Http = new HttpClient(handler);
     }
 
     ngOnInit(): void {
-        this.userUuid = this.route.snapshot.paramMap.get('uuid');
         this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
@@ -114,7 +109,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     this.locationOption = res.location_public ? 'public' : 'private';
 
                     this.userService.getProfileImageGetUrl(
-                        res.user_uuid, res.profile_image_extension
+                        res.user_id, res.profile_image_extension
                     ).toPromise()
                         .then(resp => {
                             this.profileImageUrl = resp;

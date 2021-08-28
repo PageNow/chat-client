@@ -1,4 +1,10 @@
 <div>
+    <div class='back-div'>
+        <a class='back-span' [routerLink]="['/chat', 'conversations']">&lt; Back</a>
+    </div>
     <app-chat-message *ngFor="let message of messages">
     </app-chat-message>
+    <div class='chat-input-div'>
+        <input placeholder='Enter message'>
+    </div>
 </div>
