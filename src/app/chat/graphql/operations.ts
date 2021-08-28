@@ -13,10 +13,11 @@ const directMessageType = `{
 export default {
     // Queries
     getDirectConversation: gql`
-        query getDirectConversation($userPairId: ID!) {
-            getDirectConversation(userPairId: $userPairId) {
+        query getDirectConversation($userPairId: ID, $conversationId: ID) {
+            getDirectConversation(userPairId: $userPairId, conversationId: $conversationId) {
                 userPairId
                 conversationId
+                title
             }
         }
     `,

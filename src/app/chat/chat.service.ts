@@ -14,10 +14,12 @@ export class ChatService {
     }
 
     // ChatService functions for GraphQL queries
-    public async getDirectConversation(userPairId: string): Promise<any> {
+    public async getDirectConversation(
+        userPairId: string | null, conversationId: string | null
+    ): Promise<any> {
         return await this.apollo.query({
             query: operations.getDirectConversation,
-            variables: { userPairId }
+            variables: { userPairId, conversationId }
         }).toPromise();
     }
 

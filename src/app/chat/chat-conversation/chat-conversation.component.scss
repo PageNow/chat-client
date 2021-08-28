@@ -1,0 +1,16 @@
+@import '../../../stylings/variables';
+
+.message-send-button {
+    border: none;
+    background: none;
+}
+
+.message-send-button:hover {
+    background-color: #dedede;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.fa-icon-send {
+    color: $tabs-color;
+}

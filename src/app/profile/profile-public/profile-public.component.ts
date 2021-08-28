@@ -146,7 +146,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.spinner.show();
         const userPairId = this.currUserId < this.userInfo.user_id ?
             this.currUserId + ' ' + this.userInfo.user_id : this.userInfo.user_id + ' ' + this.currUserId;
-        this.chatService.getDirectConversation(userPairId)
+        this.chatService.getDirectConversation(userPairId, null)
             .then((res: any): Promise<any> => {
                 if (res.data.getDirectConversation === null) {
                     const userName = `${this.userInfo.first_name} ${this.userInfo.middle_name} ${this.userInfo.last_name}`.replace('  ', ' ');

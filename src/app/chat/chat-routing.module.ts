@@ -6,7 +6,8 @@ import { ChatConversationComponent } from "./chat-conversation/chat-conversation
 
 const chatRoutes: Routes = [
     { path: 'conversation/:conversationId', component: ChatConversationComponent },
-    { path: 'conversations', component: ChatConversationListComponent }
+    { path: 'conversations', component: ChatConversationListComponent },
+    { path: '', redirectTo: 'conversations' }
 ];
 
 @NgModule({

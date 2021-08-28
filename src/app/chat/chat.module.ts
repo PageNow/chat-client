@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { ChatComponent } from './chat.component';
 import { ChatRoutingModule } from './chat-routing.module';
@@ -17,7 +19,10 @@ import { ChatMessageComponent } from './chat-message/chat-message.component';
     ],
     imports: [
         CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
         NgxSpinnerModule,
+        FontAwesomeModule,
         ChatRoutingModule
     ]
 })
