@@ -3,8 +3,9 @@
         <a class='back-span' [routerLink]="['/chat', 'conversations']">&lt; Back</a>
     </div>
     <div>{{ conversationTitle }}</div>
-    <app-chat-message *ngFor="let message of messageArr">
-    </app-chat-message>
+    <app-chat-message *ngFor="let message of messageArr | reverse"
+        [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
+    ></app-chat-message>
     <div class='chat-input-div'>
         <input [(ngModel)]="messageContent" placeholder='Enter message' />
         <button (click)="sendMessage()" class='message-send-button' [disabled]="messageContent === ''">

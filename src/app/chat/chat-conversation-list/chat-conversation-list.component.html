@@ -6,7 +6,11 @@
 <div class='main-div'>
     Conversation List
     <div *ngFor="let conversation of conversationArr">
-        <div>{{ conversation.title }}</div>
+        <div>
+            <a [routerLink]="['/chat', 'conversation', conversation.conversationId]">
+                {{ conversation.title }}
+            </a>
+        </div>
         <div>
             <div>{{ conversation.content }}</div>
             <div>{{ conversation.sentAt }}</div>

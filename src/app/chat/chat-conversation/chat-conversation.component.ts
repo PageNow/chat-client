@@ -32,6 +32,9 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     // fontawesome icons
     faPaperPlane = faPaperPlane;
+
+    // chat message subscription
+    messageSubscription: Subscription;
     
     constructor(
         private route: ActivatedRoute,
@@ -47,23 +50,24 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 if (resp) {
                     this.currUserId = resp.user_id;
                     this.chatService.getDirectConversation(null, this.conversationId)
-                    .then(res => {
-                        console.log(res);
-                        const userPairIdArr = res.data.getDirectConversation.userPairId.split(' ');
-                        const titleArr = res.data.getDirectConversation.title.split(';');
-                        if (this.currUserId === userPairIdArr[0]) {
-                            this.recipientId = userPairIdArr[1];
-                        } else {
-                            this.recipientId = userPairIdArr[0];
-                        }
-                        this.conversationTitle = this.currUserId < this.recipientId ?
-                            titleArr[1] : titleArr[0];
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-                        }
-                    },
+                        .then(res => {
+                            console.log(res);
+                            const userPairIdArr = res.data.getDirectConversation.userPairId.split(' ');
+                            const titleArr = res.data.getDirectConversation.title.split(';');
+                            if (this.currUserId === userPairIdArr[0]) {
+                                this.recipientId = userPairIdArr[1];
+                            } else {
+                                this.recipientId = userPairIdArr[0];
+                            }
+                            this.conversationTitle = this.currUserId < this.recipientId ?
+                                titleArr[1] : titleArr[0];
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                    }
+                    this.messageSubscribe();
+            },
             err => {
                 console.log(err);
             }
@@ -74,7 +78,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT)
             .then(res => {
                 console.log(res);
-                this.messageArr = res.data.getConversationMessages.reverse();
+                this.messageArr = res.data.getConversationMessages;
                 this.spinner.hide();
             })
             .catch(err => {
@@ -85,8 +89,10 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
+        this.messageSubscription?.unsubscribe();
     }
 
+    // TODO: replace send button with spinner button
     sendMessage(): void {
         if (!this.conversationId || !this.recipientId || !this.messageContent || this.messageContent === '') {
             return;
@@ -94,11 +100,26 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         this.chatService.createDirectMessage(this.conversationId, this.messageContent, this.recipientId)
             .then(res => {
                 console.log(res);
-                this.messageArr.unshift(res.data.createDirectMessage);
+                this.messageArr = [res.data.createDirectMessage, ...this.messageArr];
                 this.messageContent = '';
             })
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    async messageSubscribe(): Promise<void> {
+        if (!this.currUserId) { return; }
+        console.log(this.currUserId);
+        this.messageSubscription = this.chatService.subscribeToNewMessages(this.currUserId)
+            .subscribe(
+                ({ data }: any) => {
+                    console.log(data);
+                    this.messageArr = [data.onCreateDirectMessage, ...this.messageArr];
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            );
     }
 }
