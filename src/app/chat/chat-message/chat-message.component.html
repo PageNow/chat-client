@@ -1,12 +1,12 @@
 <!-- sender -->
 <div *ngIf="currUserId === message.senderId">
     <div> {{ message.content }} </div>
-    <div> {{ message.sentAt }} </div>
+    <div> {{ message.sentAt | dateFormat }} </div>
 </div>
 <!-- recipient -->
 <div *ngIf="currUserId !== message.senderId">
     <div></div>
     <div> {{ conversationTitle }} </div>
     <div> {{ message.content }} </div>
-    <div> {{ message.sentAt }} </div>
+    <div> {{ message.sentAt | dateFormat }} </div>
 </div>
