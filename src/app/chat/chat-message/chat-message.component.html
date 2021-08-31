@@ -1,3 +1,4 @@
+
 <!-- sender -->
 <div *ngIf="currUserId === message.senderId">
     <div> {{ message.content }} </div>
@@ -5,7 +6,10 @@
 </div>
 <!-- recipient -->
 <div *ngIf="currUserId !== message.senderId">
-    <div></div>
+    <div>
+        <img [src]="profileImgSrc" class="profile-img"
+            onerror="this.src='/assets/user.png'">
+    </div>
     <div> {{ conversationTitle }} </div>
     <div> {{ message.content }} </div>
     <div> {{ message.sentAt | dateFormat }} </div>

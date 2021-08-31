@@ -8,6 +8,7 @@ import { FriendshipService } from '../..//friendship/friendship.service';
 import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
+import { getFullName } from '../../shared/user_utils';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
 const SPINNER_FRIENDSHIP_ADD_MSG = 'Making friend request...';
@@ -52,7 +53,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             res => {
                 if (res) {
                     this.currUserId = res.user_id;
-                    this.currUserName = `${res.first_name} ${res.middle_name} ${res.last_name}`.replace('  ', ' ');
+                    this.currUserName = getFullName(res.first_name, res.middle_name, res.last_name);
                 }
             },
             err => {

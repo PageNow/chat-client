@@ -11,6 +11,15 @@
     cursor: pointer;
 }
 
+.message-sending-button {
+    border: none;
+    background: none;
+}
+
 .fa-icon-send {
+    color: $tabs-color;
+}
+
+.spinner-span {
     color: $tabs-color;
 }

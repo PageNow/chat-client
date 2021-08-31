@@ -5,10 +5,11 @@
 </ngx-spinner>
 <div class='main-div'>
     Conversation List
-    <div *ngFor="let conversation of conversationArr">
+    <div *ngFor="let conversation of conversationArr; let i = index">
         <div>
-            <a [routerLink]="['/chat', 'conversation', conversation.conversationId]">
-                {{ conversation.title }}
+            <a [routerLink]="['/chat', 'conversation', conversation.conversationId]"
+               [queryParams]="{ title: userNameArr[i], profileImgExt: imgExtArr[i] }">
+               {{ userNameArr[i] }}
             </a>
         </div>
         <div>

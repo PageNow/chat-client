@@ -10,5 +10,6 @@ import { Message } from "../models/message.model";
 export class ChatMessageComponent {
     @Input() currUserId: string;
     @Input() conversationTitle: string;
-    @Input() message: Message
+    @Input() message: Message;
+    @Input() profileImgSrc: string;
 }

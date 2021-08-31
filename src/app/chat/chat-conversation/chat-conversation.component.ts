@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NgxSpinnerService } from "ngx-spinner";
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from "rxjs";
+import { Auth } from 'aws-amplify';
 
 import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET } from "src/app/shared/constants";
 import { ChatService } from "../chat.service";
@@ -26,7 +27,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     conversationId: string;
     conversationTitle: string;
     recipientId: string;
-    messageContent = '';
+    recipientImgExt: string;
+    recipientImgUrl: string;
+    newMessageContent = '';
+
+    isSending = false;
 
     spinnerMsg = '';
 
@@ -45,40 +50,36 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.conversationId = this.route.snapshot.paramMap.get('conversationId') || '';
-        this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
-            resp => {
-                if (resp) {
-                    this.currUserId = resp.user_id;
-                    this.chatService.getDirectConversation(null, this.conversationId)
-                        .then(res => {
-                            console.log(res);
-                            const userPairIdArr = res.data.getDirectConversation.userPairId.split(' ');
-                            const titleArr = res.data.getDirectConversation.title.split(';');
-                            if (this.currUserId === userPairIdArr[0]) {
-                                this.recipientId = userPairIdArr[1];
-                            } else {
-                                this.recipientId = userPairIdArr[0];
-                            }
-                            this.conversationTitle = this.currUserId < this.recipientId ?
-                                titleArr[1] : titleArr[0];
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                    }
-                    this.messageSubscribe();
-            },
-            err => {
-                console.log(err);
-            }
-        );
-        
+        this.route.queryParams.subscribe(params => {
+            this.conversationTitle = params.title;
+            this.recipientImgExt = params.profileImgExt;
+        });
         this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
         this.spinner.show();
-        this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT)
+        Auth.currentAuthenticatedUser()
+            .then(res => {
+                this.currUserId = res.username;
+                return this.chatService.getDirectConversation(null, this.conversationId);
+            })
+            .then(res => {
+                console.log(res);
+                const userPairIdArr = res.data.getDirectConversation.userPairId.split(' ');
+                if (this.currUserId === userPairIdArr[0]) {
+                    this.recipientId = userPairIdArr[1];
+                } else {
+                    this.recipientId = userPairIdArr[0];
+                }
+                return this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT);
+            })
             .then(res => {
                 console.log(res);
                 this.messageArr = res.data.getConversationMessages;
+                this.messageSubscribe();
+                return this.userService.getProfileImageGetUrl(this.recipientId, this.recipientImgExt).toPromise();
+            })
+            .then(res => {
+                console.log(res);
+                this.recipientImgUrl = res;
                 this.spinner.hide();
             })
             .catch(err => {
@@ -94,17 +95,20 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     // TODO: replace send button with spinner button
     sendMessage(): void {
-        if (!this.conversationId || !this.recipientId || !this.messageContent || this.messageContent === '') {
+        if (!this.conversationId || !this.recipientId || !this.newMessageContent || this.newMessageContent === '') {
             return;
         }
-        this.chatService.createDirectMessage(this.conversationId, this.messageContent, this.recipientId)
+        this.isSending = true;
+        this.chatService.createDirectMessage(this.conversationId, this.newMessageContent, this.recipientId)
             .then(res => {
                 console.log(res);
                 this.messageArr = [res.data.createDirectMessage, ...this.messageArr];
-                this.messageContent = '';
+                this.newMessageContent = '';
+                this.isSending = false;
             })
             .catch(err => {
                 console.log(err);
+                this.isSending = false;
             });
     }
 
