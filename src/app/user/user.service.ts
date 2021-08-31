@@ -79,7 +79,7 @@ export class UserService {
 
     public getProfileImageGetUrlArr(userIdArr: string[], imgExtArr: string[]): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/profile-image-url-arr?user_id_arr=${userIdArr.join(',')}&image_ext_arr=${imgExtArr.join(',')}`,
+            `${USER_API_URL}/users/ids/${userIdArr.join(',')}/profile-image-url?image_ext_arr=${imgExtArr.join(',')}`,
             this.httpOptions
         );
     }

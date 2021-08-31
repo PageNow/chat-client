@@ -22,8 +22,8 @@ export default {
         }
     `,
     getUserConversations: gql`
-        query getUserConversations {
-            getUserConversations {
+        query getUserConversations($isRead: Boolean) {
+            getUserConversations(isRead: $isRead) {
                 conversationId
                 title
                 sentAt
@@ -64,7 +64,7 @@ export default {
         mutation setMessageIsRead($conversationId: ID!, $senderId: ID!, $recipientId: ID!) {
             setMessageIsRead(
                 conversationId: $conversationId, senderId: $senderId, recipientId: $recipientId
-            ) Int
+            )
         }
     `,
 

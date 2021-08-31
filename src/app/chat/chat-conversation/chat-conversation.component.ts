@@ -75,12 +75,18 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 console.log(res);
                 this.messageArr = res.data.getConversationMessages;
                 this.messageSubscribe();
+                this.spinner.hide();
                 return this.userService.getProfileImageGetUrl(this.recipientId, this.recipientImgExt).toPromise();
             })
             .then(res => {
                 console.log(res);
                 this.recipientImgUrl = res;
-                this.spinner.hide();
+                return this.chatService.setMessageIsRead(
+                    this.conversationId, this.recipientId, this.currUserId
+                );
+            })
+            .then(res => {
+                console.log(res);
             })
             .catch(err => {
                 console.log(err);
@@ -115,7 +121,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     async messageSubscribe(): Promise<void> {
         if (!this.currUserId) { return; }
         console.log(this.currUserId);
-        this.messageSubscription = this.chatService.subscribeToNewMessages(this.currUserId)
+        this.messageSubscription = this.chatService.subscribeToNewMessagesInConversation(this.currUserId, this.conversationId)
             .subscribe(
                 ({ data }: any) => {
                     console.log(data);

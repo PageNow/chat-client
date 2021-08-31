@@ -8,7 +8,7 @@
         [profileImgSrc]="recipientImgUrl"
     ></app-chat-message>
     <div class='chat-input-div'>
-        <input [(ngModel)]="newMessageContent" placeholder='Enter message' />
+        <input [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
         <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
             [disabled]="newMessageContent === ''">
             <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>

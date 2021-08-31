@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { NgxSpinnerService } from "ngx-spinner";
 import { Auth } from 'aws-amplify';
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
 
 import { ChatService } from "../chat.service";
 import { Conversation } from "../models/conversation.model";
@@ -20,8 +21,13 @@ export class ChatConversationListComponent implements OnInit {
     conversationArr: Conversation[] = [];
     userNameArr: string[] = [];
     imgExtArr: string[] = [];
+    profileImgUrlArr: string[] = [];
+    profileImgExtArr: string[] = [];
 
     spinnerMsg = '';
+
+    // fontawesome icons
+    faCircle = faCircle;
     
     constructor(
         private spinner: NgxSpinnerService,
@@ -36,7 +42,7 @@ export class ChatConversationListComponent implements OnInit {
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
-                return this.chatService.getUserConversations()
+                return this.chatService.getUserConversations(null)
             })        
             .then(res => {
                 console.log(res);
@@ -47,14 +53,14 @@ export class ChatConversationListComponent implements OnInit {
             })
             .then(res => {
                 console.log(res);
-                const userIdArr = res.map((x: UserInfoPublic) => x.user_id);
                 this.userNameArr = res.map((x: UserInfoPublic) => getFullName(x.first_name, x.middle_name, x.last_name));
-                this.imgExtArr = res.map((x: UserInfoPublic) => x.profile_image_extension);
-                console.log(this.userNameArr);
-                return this.userService.getProfileImageGetUrlArr(userIdArr, this.imgExtArr).toPromise();
+                const userIdArr = res.map((x: UserInfoPublic) => x.user_id);
+                const imgExtArr = res.map((x: UserInfoPublic) => x.profile_image_extension);
+                this.profileImgExtArr = imgExtArr;
+                return this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr).toPromise();
             })
             .then(res => {
-                console.log(res);
+                this.profileImgUrlArr = res;
                 this.spinner.hide();
             })
             .catch(err => {

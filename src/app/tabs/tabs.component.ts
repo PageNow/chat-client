@@ -43,6 +43,8 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     redisUrlSubscription: Subscription;
     timerSubscription: Subscription;
+    messageSubscription: Subscription;
+    unreadConversationSubscription: Subscription;
 
     // if user is not registered, set to false
     tabsHidden = false;
@@ -73,6 +75,8 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.domainDenySet = new Set(res.domain_deny_array);
                 this.statusSubscribe();
                 this.getInitialStatus();
+                this.unreadConversationSubscribe();
+                this.messageSubscribe();
                 this.spinner.hide();
             })
             .catch(err => {
@@ -115,15 +119,17 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         this.redisUrlSubscription?.unsubscribe();
         this.timerSubscription?.unsubscribe();
+        this.messageSubscription?.unsubscribe();
+        this.unreadConversationSubscription?.unsubscribe();
     }
 
-    async getInitialStatus(): Promise<void> {
+    private async getInitialStatus(): Promise<void> {
         if (!this.userId) { return; }
         const result = await this.pagesService.getStatus(this.userId);
         this.redisUrl = result.data.status.url;
     }
 
-    async statusSubscribe(): Promise<void> {
+    private async statusSubscribe(): Promise<void> {
         if (!this.userId) { return; }
         this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId)
             .subscribe(
@@ -134,6 +140,31 @@ export class TabsComponent implements OnInit, OnDestroy {
                     console.log(err);
                 }
             );
+    }
+
+    private async unreadConversationSubscribe(): Promise<void> {
+        if (!this.userId) { return; }
+        this.unreadConversationSubscription = this.chatService.unreadConversationSubject.subscribe(
+            res => {
+                console.log(res);
+            },
+            err => {
+                console.log(err);
+            }
+        )
+    }
+
+    private async messageSubscribe(): Promise<void> {
+        if (!this.userId) { return; }
+        this.messageSubscription = this.chatService.subscribeToNewMessagesAll(this.userId)
+            .subscribe(
+                ({ data }: any) => {
+                    this.chatService.publishNewMessage(data.onCreateDirectMessage);
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            )
     }
 
     private messageEventListener(event: MessageEvent): void {
