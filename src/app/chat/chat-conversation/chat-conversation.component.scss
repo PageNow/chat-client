@@ -1,14 +1,20 @@
 @import '../../../stylings/variables';
 
+$lr-padding: 12px;
 $header-height: 30px;
 $header-margin-bottom: 5px;
 
 .main-div {
-    margin: 0 12px 0 12px;
-    position: absolute;
+    // padding: 0 12px 0 12px;
+    width: 100%;
+    min-height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .header-div {
+    padding: 0 $lr-padding 0 $lr-padding;
     top: 32px;
     height: $header-height;
     position: sticky;
@@ -54,6 +60,12 @@ $header-margin-bottom: 5px;
     color: $link-hover-color;
 }
 
+.chat-div {
+    padding: 0 $lr-padding 35px $lr-padding;
+    width: 100%;
+    z-index: -1;
+}
+
 .profile-img-div {
     margin-right: 5px;
     height: 100%;
@@ -68,10 +80,20 @@ $header-margin-bottom: 5px;
     object-fit: cover;
 }
 
-.chat-div {
+.chat-input-div {
+    padding: 0 $lr-padding 0 $lr-padding;
+    bottom: 0;
     position: absolute;
-    top: 67px;
-    overflow-y: scroll;
+    background-color: white;
+    height: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 5px;
+}
+
+.chat-input {
+    flex-grow: 1;
 }
 
 .message-send-button {

@@ -19,6 +19,7 @@ const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 })
 export class ChatConversationComponent implements OnInit, OnDestroy {
     @ViewChild('conversationContainer') conversationContainer: ElementRef;
+    scrollTop = 0;
 
     currUserId: string;
     currUserInfoSubscription: Subscription
@@ -96,6 +97,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             });
     }
 
+    ngAfterViewChecked(): void {
+        this.scrollToBottom();
+    }	
+
+
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
         this.messageSubscription?.unsubscribe();
@@ -135,12 +141,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             );
     }
 
-    // scrollToBottom(): void {
-    //     try {
-    //         this.conversationContainer.nativeElement.scrollTop = this.conversationContainer.nativeElement.scrollHeight;
-    //         console.log('scroll to bottom');
-    //     } catch (err) {
-    //         /* do nothing */
-    //     }
-    // }
+    scrollToBottom(): void {
+        try {
+            this.conversationContainer.nativeElement.scrollIntoView({
+                behavior: "auto", block: "end", inline: "nearest"
+            });
+        } catch (err) { /* */ }
+    }
 }

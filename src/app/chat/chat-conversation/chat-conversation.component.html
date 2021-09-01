@@ -16,20 +16,20 @@
         </div>
     </div>
     
-    <div class='chat-div' #conversationContainer [scrollTop]="conversationContainer.scrollHeight">
+    <div class='chat-div' #conversationContainer>
         <app-chat-message *ngFor="let message of messageArr | reverse"
             [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
             [profileImgSrc]="recipientImgUrl"
         ></app-chat-message>
-        <div class='chat-input-div'>
-            <input [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
-            <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
-                [disabled]="newMessageContent === ''">
-                <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
-            </button>
-            <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
-                <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
-            </button>
-        </div>
+    </div>
+    <div class='chat-input-div'>
+        <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
+        <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
+            [disabled]="newMessageContent === ''">
+            <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
+        </button>
+        <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
+            <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
+        </button>
     </div>
 </div>
