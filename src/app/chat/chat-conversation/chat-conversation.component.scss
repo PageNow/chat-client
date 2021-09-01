@@ -1,5 +1,79 @@
 @import '../../../stylings/variables';
 
+$header-height: 30px;
+$header-margin-bottom: 5px;
+
+.main-div {
+    margin: 0 12px 0 12px;
+    position: absolute;
+}
+
+.header-div {
+    top: 32px;
+    height: $header-height;
+    position: sticky;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid $tabs-hr-color;
+    margin-bottom: $header-margin-bottom;
+}
+
+.back-div {
+    margin-right: 15px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.back-a {
+    text-decoration: none;
+    color: $link-color;
+    font-size: 15px;
+}
+
+.back-a:hover {
+    cursor: pointer;
+    color: $link-hover-color;
+}
+
+.user-name-div {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.user-name-a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+.user-name-a:hover {
+    color: $link-hover-color;
+}
+
+.profile-img-div {
+    margin-right: 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.profile-img {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.chat-div {
+    position: absolute;
+    top: 67px;
+    overflow-y: scroll;
+}
+
 .message-send-button {
     border: none;
     background: none;

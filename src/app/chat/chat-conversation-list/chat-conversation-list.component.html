@@ -22,7 +22,7 @@
                 <div>{{ conversation.sentAt | dateFormat }}</div>
             </div>
         </div>
-        <div class='conversation-is-read-div' *ngIf="!conversation.isRead">
+        <div class='conversation-is-read-div' *ngIf="!conversation.isRead && conversation.recipientId === currUserId">
             <fa-icon [icon]="faCircle" class='fa-circle-icon'></fa-icon>
         </div>
     </div>

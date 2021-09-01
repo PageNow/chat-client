@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { NgxSpinnerService } from "ngx-spinner";
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +17,9 @@ const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
     templateUrl: './chat-conversation.component.html',
     styleUrls: ['./chat-conversation.component.scss']
 })
-export class ChatConversationComponent implements OnInit, OnDestroy {  
+export class ChatConversationComponent implements OnInit, OnDestroy {
+    @ViewChild('conversationContainer') conversationContainer: ElementRef;
+
     currUserId: string;
     currUserInfoSubscription: Subscription
 
@@ -132,4 +134,13 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 }
             );
     }
+
+    // scrollToBottom(): void {
+    //     try {
+    //         this.conversationContainer.nativeElement.scrollTop = this.conversationContainer.nativeElement.scrollHeight;
+    //         console.log('scroll to bottom');
+    //     } catch (err) {
+    //         /* do nothing */
+    //     }
+    // }
 }

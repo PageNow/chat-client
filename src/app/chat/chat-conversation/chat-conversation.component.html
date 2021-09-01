@@ -1,20 +1,35 @@
-<div>
-    <div class='back-div'>
-        <a class='back-span' [routerLink]="['/chat', 'conversations']">&lt; Back</a>
+<div class='main-div'>
+    <div class='header-div'>
+        <div class='back-div'>
+            <a class='back-a' [routerLink]="['/chat', 'conversations']">
+                &lt; Back
+            </a>           
+        </div>
+        <div class='profile-img-div'>
+            <img [src]="recipientImgUrl" class='profile-img'
+                onerror="this.src='/assets/user.png'">
+        </div>
+        <div class='user-name-div'>
+            <a class='user-name-a' [routerLink]="['/profile', recipientId]">
+                {{ conversationTitle }}
+            </a>
+        </div>
     </div>
-    <div>{{ conversationTitle }}</div>
-    <app-chat-message *ngFor="let message of messageArr | reverse"
-        [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
-        [profileImgSrc]="recipientImgUrl"
-    ></app-chat-message>
-    <div class='chat-input-div'>
-        <input [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
-        <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
-            [disabled]="newMessageContent === ''">
-            <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
-        </button>
-        <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
-            <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
-        </button>
+    
+    <div class='chat-div' #conversationContainer [scrollTop]="conversationContainer.scrollHeight">
+        <app-chat-message *ngFor="let message of messageArr | reverse"
+            [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
+            [profileImgSrc]="recipientImgUrl"
+        ></app-chat-message>
+        <div class='chat-input-div'>
+            <input [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
+            <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
+                [disabled]="newMessageContent === ''">
+                <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
+            </button>
+            <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
+                <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
     </div>
 </div>

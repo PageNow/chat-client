@@ -1,11 +1,11 @@
 
 <!-- sender -->
-<div *ngIf="currUserId === message.senderId">
+<div *ngIf="currUserId === message.senderId" class='sender-message-div'>
     <div> {{ message.content }} </div>
     <div> {{ message.sentAt | dateFormat }} </div>
 </div>
 <!-- recipient -->
-<div *ngIf="currUserId !== message.senderId">
+<div *ngIf="currUserId !== message.senderId" class='recipient-message-div'>
     <div>
         <img [src]="profileImgSrc" class="profile-img"
             onerror="this.src='/assets/user.png'">
