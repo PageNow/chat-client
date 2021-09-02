@@ -34,7 +34,8 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     recipientImgUrl: string;
     newMessageContent = '';
 
-    isSending = false;
+    // TODO: errorMap
+    isSendingMap: {[key: string]: boolean} = {};
 
     spinnerMsg = '';
 
@@ -89,6 +90,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 );
             })
             .then(res => {
+                this.scrollToBottom();
                 console.log(res);
             })
             .catch(err => {
@@ -97,32 +99,46 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             });
     }
 
-    ngAfterViewChecked(): void {
-        this.scrollToBottom();
-    }	
-
-
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
         this.messageSubscription?.unsubscribe();
     }
 
-    // TODO: replace send button with spinner button
     sendMessage(): void {
         if (!this.conversationId || !this.recipientId || !this.newMessageContent || this.newMessageContent === '') {
             return;
         }
-        this.isSending = true;
-        this.chatService.createDirectMessage(this.conversationId, this.newMessageContent, this.recipientId)
+        const sentAt = new Date(Date.now()).toISOString().slice(0, -1); // for date pipe to work
+        const messageContent = this.newMessageContent;
+        const newMessage: Message = {
+            messageId: '',
+            conversationId: this.conversationId,
+            sentAt: sentAt,
+            senderId: this.currUserId,
+            recipientId: this.recipientId,
+            content: messageContent,
+            isRead: false
+        }
+        this.isSendingMap = {
+            ...this.isSendingMap,
+            [sentAt]: true // use sentAt as key since it is unique
+        };        
+        this.messageArr = [newMessage, ...this.messageArr];
+        this.newMessageContent = '';
+        this.chatService.createDirectMessage(this.conversationId, messageContent, this.recipientId)
             .then(res => {
                 console.log(res);
-                this.messageArr = [res.data.createDirectMessage, ...this.messageArr];
-                this.newMessageContent = '';
-                this.isSending = false;
+                this.isSendingMap = {
+                    ...this.isSendingMap,
+                    [sentAt]: false
+                }
             })
             .catch(err => {
                 console.log(err);
-                this.isSending = false;
+                this.isSendingMap = {
+                    ...this.isSendingMap,
+                    [sentAt]: false
+                }
             });
     }
 

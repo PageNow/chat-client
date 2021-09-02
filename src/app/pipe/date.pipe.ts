@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class DateFormatPipe implements PipeTransform {
     transform(value: string): string {
-        const date = new Date(value);
+        const date = new Date(value + 'Z');  // change to ISO string
         if (isNaN(date.getTime())) {
             return value;
         }
@@ -59,6 +59,6 @@ export class DateFormatPipe implements PipeTransform {
         hour = hour > 12 ? hour - 12 : hour;
         const minute = date.getMinutes().toString().padStart(2, '0');
 
-        return `${month} ${day} ${year === currYear ? '' : year} ${hour}:${minute} ${isPM ? 'pm' : 'am'}`;
+        return `${month} ${day}, ${year === currYear ? '' : year} ${hour}:${minute} ${isPM ? 'pm' : 'am'}`;
     }
 }

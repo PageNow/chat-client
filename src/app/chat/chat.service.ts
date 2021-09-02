@@ -75,9 +75,10 @@ export class ChatService {
     public async createDirectMessage(
         conversationId: string, content: string, recipientId: string
     ): Promise<any> {
+        const sentAt = new Date(Date.now()).toISOString();
         return await this.apollo.mutate({
             mutation: operations.createDirectMessage,
-            variables: { conversationId, content, recipientId }
+            variables: { conversationId, content, recipientId, sentAt }
         }).toPromise();
     }
     

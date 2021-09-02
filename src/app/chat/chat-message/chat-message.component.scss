@@ -1,11 +1,77 @@
+@import '../../../stylings/variables';
+
+$date-font-size: 10px;
+$date-color: #878787;
+
 .sender-message-div {
     text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
 
+.user-header-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.user-name-span {
+    font-size: 15px;
+    padding-left: 5px;
+}
 
 .profile-img {
-    width: 30px;
-    height: 30px;
+    width: 17px;
+    height: 17px;
     border-radius: 100%;
     object-fit: cover;
+}
+
+.message-rec-div {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.message-content-div {
+    max-width: 70%;
+    display: inline-block;
+    border-radius: 10px;
+    padding: 2px 7px 2px 7px;
+    margin-bottom: 3px;
+    font-size: 13px;
+    word-wrap: break-word;
+}
+
+.message-content-rec-div {
+    background-color: #dedede;
+}
+
+.message-content-send-div {
+    background-color: #ffdf9e;
+}
+
+.message-date-rec-div {
+    font-size: $date-font-size;
+    color: $date-color;
+    margin-left: 3px;
+    padding-bottom: 1px;
+}
+
+.message-date-send-div {
+    font-size: $date-font-size;
+    color: $date-color;
+    margin-right: 3px;
+    padding-bottom: 1px;
+}
+
+.spinner-div {
+    z-index: -1;
+    margin-right: 3px;
+}
+
+.spinner-span {
+    color: $tabs-color;
 }

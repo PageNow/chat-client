@@ -54,9 +54,9 @@ export default {
         }
     `,
     createDirectMessage: gql`
-        mutation createDirectMessage($conversationId: ID!, $content: String!, $recipientId: ID!) {
+        mutation createDirectMessage($conversationId: ID!, $content: String!, $recipientId: ID!, $sentAt: String!) {
             createDirectMessage(
-                conversationId: $conversationId, content: $content, recipientId: $recipientId
+                conversationId: $conversationId, content: $content, recipientId: $recipientId, sentAt: $sentAt
             ) ${directMessageType}
         }
     `,

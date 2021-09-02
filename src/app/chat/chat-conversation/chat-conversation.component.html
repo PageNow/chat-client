@@ -17,19 +17,20 @@
     </div>
     
     <div class='chat-div' #conversationContainer>
-        <app-chat-message *ngFor="let message of messageArr | reverse"
+        <app-chat-message *ngFor="let message of messageArr | reverse; let i = index;"
             [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
-            [profileImgSrc]="recipientImgUrl"
+            [profileImgSrc]="recipientImgUrl" [prevSenderId]="i === 0 ? null : messageArr[messageArr.length - i].senderId"
+            [idx]="i" [isSendingMap]="isSendingMap"
         ></app-chat-message>
     </div>
     <div class='chat-input-div'>
-        <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' [disabled]="isSending" />
-        <button *ngIf="!isSending" (click)="sendMessage()" class='message-send-button'
+        <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message'/>
+        <button (click)="sendMessage()" class='message-send-button'
             [disabled]="newMessageContent === ''">
             <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
         </button>
-        <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
+        <!-- <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
             <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
-        </button>
+        </button> -->
     </div>
 </div>

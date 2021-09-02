@@ -9,8 +9,6 @@ $header-margin-bottom: 5px;
     width: 100%;
     min-height: 100%;
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
 .header-div {
@@ -53,7 +51,7 @@ $header-margin-bottom: 5px;
 .user-name-a {
     text-decoration: none;
     color: black;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .user-name-a:hover {
@@ -83,7 +81,7 @@ $header-margin-bottom: 5px;
 .chat-input-div {
     padding: 0 $lr-padding 0 $lr-padding;
     bottom: 0;
-    position: absolute;
+    position: fixed;
     background-color: white;
     height: 30px;
     width: 100%;
@@ -113,9 +111,5 @@ $header-margin-bottom: 5px;
 }
 
 .fa-icon-send {
-    color: $tabs-color;
-}
-
-.spinner-span {
     color: $tabs-color;
 }
