@@ -8,10 +8,12 @@ import { FriendshipService } from '../..//friendship/friendship.service';
 import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
+import { getFullName } from '../../shared/user_utils';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
 const SPINNER_FRIENDSHIP_ADD_MSG = 'Making friend request...';
 const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friend request...';
+const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 
 @Component({
     selector: 'app-profile-public',
@@ -19,10 +21,9 @@ const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friend request...';
     styleUrls: ['./profile-public.component.scss']
 })
 export class ProfilePublicComponent implements OnInit, OnDestroy {
-    @Input() userUuid: string;
+    @Input() userId: string;
     @Output() backEvent = new EventEmitter<boolean>();
 
-    currUserUuid: string;
     currUserId: string;
     currUserName: string;
     
@@ -45,27 +46,26 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.userUuid);
+        console.log(this.userId);
         this.spinnerMsg = SPINNER_PROFILE_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
             res => {
                 if (res) {
                     this.currUserId = res.user_id;
-                    this.currUserUuid = res.user_uuid;
-                    this.currUserName = `${res.first_name} ${res.middle_name} ${res.last_name}`.replace('  ', ' ');
+                    this.currUserName = getFullName(res.first_name, res.middle_name, res.last_name);
                 }
             },
             err => {
                 console.log(err);
             }
         );
-        this.userService.getUserPublicInfo(this.userUuid).toPromise()
+        this.userService.getUserPublicInfo(this.userId).toPromise()
             .then((res: UserInfoPublic) => {
                 console.log(res);
                 this.userInfo = res;
                 return this.userService.getProfileImageGetUrl(
-                    res.user_uuid, res.profile_image_extension
+                    res.user_id, res.profile_image_extension
                 ).toPromise();
             })
             .then(res => {
@@ -143,23 +143,26 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
 
     sendMessage(): void {
         if (!this.userInfo || !this.isFriend) { return; }
+        this.spinnerMsg = SPINNER_SEND_MESSAGE_MSG;
+        this.spinner.show();
         const userPairId = this.currUserId < this.userInfo.user_id ?
             this.currUserId + ' ' + this.userInfo.user_id : this.userInfo.user_id + ' ' + this.currUserId;
-        console.log(userPairId);
-        this.chatService.getDirectMessageConversation(userPairId)
+        this.chatService.getDirectConversation(userPairId, null)
             .then((res: any): Promise<any> => {
-                if (res.data.directMessageConversation === null) {
+                if (res.data.getDirectConversation === null) {
                     const userName = `${this.userInfo.first_name} ${this.userInfo.middle_name} ${this.userInfo.last_name}`.replace('  ', ' ');
-                    return this.chatService.createConversation(this.userInfo.user_id, this.currUserName + ';' + userName);
+                    return this.chatService.createConversation(this.userInfo.user_id, this.currUserName, userName);
                 } else {
-                    return Promise.resolve({ data: { createConversation: { conversationId: res.data.directMessageConversation.conversationId }}});
+                    return Promise.resolve({ data: { createConversation: { conversationId: res.data.getDirectConversation.conversationId }}});
                 }
             })
             .then(res => {
-                console.log(res);
+                this.spinner.hide();
+                this.router.navigate([`/chat/conversation/${res.data.createConversation.conversationId}`]);
             })
             .catch(err => {
                 console.log(err);
+                this.spinner.hide();
             });
     }
 

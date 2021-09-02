@@ -1,5 +1,9 @@
 export interface Conversation {
-    id: string; // Unique identifier of a conversation
-    name: string; // Name of a conversation
-    createdAt?: string; // Timestamp of a conversation
+    conversationId: string;
+    title: string;
+    sentAt: string;
+    content: string;
+    senderId: string;
+    recipientId: string;
+    isRead: boolean;
 }

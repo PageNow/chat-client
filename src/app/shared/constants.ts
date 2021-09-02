@@ -19,3 +19,7 @@ export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';
 export const USER_API_URL = 'http://localhost:8007';
 
 export const SEARCH_RESULT_LIMIT = 10;
+
+export const INITIAL_MESSAGE_OFFSET = 0;
+
+export const INITIAL_MESSAGE_LIMIT = 15;

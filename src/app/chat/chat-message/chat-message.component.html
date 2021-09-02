@@ -1,0 +1,27 @@
+
+<!-- curr user is sender -->
+<div *ngIf="currUserId === message.senderId" class='sender-message-div'>
+    <div *ngIf="!isSendingMap[message.sentAt]" class='message-date-send-div'>
+        {{ message.sentAt | dateFormat }}
+    </div>
+    <div *ngIf="isSendingMap[message.sentAt]" class='spinner-div'>
+        <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
+    </div>
+    <div class='message-content-div message-content-send-div'> {{ message.content }} </div>
+</div>
+<!-- curr user is recipient -->
+<div *ngIf="currUserId !== message.senderId" class='recipient-message-div'>
+    <div *ngIf="!prevSenderId || prevSenderId === currUserId" class='user-header-div'>
+        <img [src]="profileImgSrc" class="profile-img"
+            onerror="this.src='/assets/user.png'">
+        <span class='user-name-span'>{{ conversationTitle }}</span>
+    </div>
+    <div class='message-rec-div'>
+        <div class='message-content-div message-content-rec-div'>
+            {{ message.content }}
+        </div>
+        <div class='message-date-rec-div'>
+            {{ message.sentAt | dateFormat }}
+        </div>
+    </div>
+</div>

@@ -35,7 +35,7 @@ export class SearchComponent {
 
     // variables for public profile component
     showProfile = false;
-    profileUuid: string;
+    profileId: string;
 
     spinnerMsg = '';
 
@@ -238,7 +238,7 @@ export class SearchComponent {
         for (const userInfo of userInfoArr) {
             profileImgUrlRequestArr.push(
                 this.userService.getProfileImageGetUrl(
-                    userInfo.user_uuid, userInfo.profile_image_extension
+                    userInfo.user_id, userInfo.profile_image_extension
                 )
             );
         }
@@ -253,7 +253,7 @@ export class SearchComponent {
     }
 
     onClickProfile(userInfo: UserInfoSummary): void {
-        this.profileUuid = userInfo.user_uuid;
+        this.profileId = userInfo.user_id;
         this.showProfile = true;
     }
 

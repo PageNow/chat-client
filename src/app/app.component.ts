@@ -13,20 +13,20 @@ export class AppComponent implements OnDestroy {
 
     constructor(location: Location) {
         location.onUrlChange((res) => {
-            switch (res) {
-                case '/pages':
+            switch (res.split('/')[1]) {
+                case 'pages':
                     this.currTab = 'pages';
                     break;
-                case '/profile/me':
+                case 'profile':
                     this.currTab = 'profile-me';
                     break;
-                case '/search':
+                case 'search':
                     this.currTab = 'search';
                     break;
-                case '/notifications':
+                case 'notifications':
                     this.currTab = 'notifications';
                     break;
-                case '/chat':
+                case 'chat':
                     this.currTab = 'chat';
                     break;
                 default:

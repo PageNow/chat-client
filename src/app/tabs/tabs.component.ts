@@ -12,6 +12,7 @@ import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { PagesService } from '../pages/pages.service';
 import { UserInfoPrivate } from '../user/user.model';
+import { ChatService } from '../chat/chat.service';
 
 @Component({
   selector: 'app-tabs',
@@ -26,7 +27,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     redisUrl = ''; // my url stored in redis
 
     // variables relevant to userInfoPrivate
-    userUuid: string | null;
     userId: string | null;
     userInfoSubscription: Subscription;
     shareMode: string;
@@ -43,6 +43,8 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     redisUrlSubscription: Subscription;
     timerSubscription: Subscription;
+    messageSubscription: Subscription;
+    unreadConversationSubscription: Subscription;
 
     // if user is not registered, set to false
     tabsHidden = false;
@@ -51,7 +53,8 @@ export class TabsComponent implements OnInit, OnDestroy {
         private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private pagesService: PagesService
+        private pagesService: PagesService,
+        private chatService: ChatService
     ) {
         console.log('tabs.component constructor');
 
@@ -66,13 +69,14 @@ export class TabsComponent implements OnInit, OnDestroy {
             .then((res: UserInfoPrivate): void => {
                 console.log(res);
                 this.userService.publishCurrentUserInfo(res);
-                this.userUuid = res.user_uuid;
                 this.userId = res.user_id;
                 this.shareMode = res.share_mode;
                 this.domainAllowSet = new Set(res.domain_allow_array);
                 this.domainDenySet = new Set(res.domain_deny_array);
                 this.statusSubscribe();
                 this.getInitialStatus();
+                this.unreadConversationSubscribe();
+                this.messageSubscribe();
                 this.spinner.hide();
             })
             .catch(err => {
@@ -115,15 +119,17 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         this.redisUrlSubscription?.unsubscribe();
         this.timerSubscription?.unsubscribe();
+        this.messageSubscription?.unsubscribe();
+        this.unreadConversationSubscription?.unsubscribe();
     }
 
-    async getInitialStatus(): Promise<void> {
+    private async getInitialStatus(): Promise<void> {
         if (!this.userId) { return; }
         const result = await this.pagesService.getStatus(this.userId);
         this.redisUrl = result.data.status.url;
     }
 
-    async statusSubscribe(): Promise<void> {
+    private async statusSubscribe(): Promise<void> {
         if (!this.userId) { return; }
         this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId)
             .subscribe(
@@ -134,6 +140,31 @@ export class TabsComponent implements OnInit, OnDestroy {
                     console.log(err);
                 }
             );
+    }
+
+    private async unreadConversationSubscribe(): Promise<void> {
+        if (!this.userId) { return; }
+        this.unreadConversationSubscription = this.chatService.unreadConversationSubject.subscribe(
+            res => {
+                console.log(res);
+            },
+            err => {
+                console.log(err);
+            }
+        )
+    }
+
+    private async messageSubscribe(): Promise<void> {
+        if (!this.userId) { return; }
+        this.messageSubscription = this.chatService.subscribeToNewMessagesAll(this.userId)
+            .subscribe(
+                ({ data }: any) => {
+                    this.chatService.publishNewMessage(data.onCreateDirectMessage);
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            )
     }
 
     private messageEventListener(event: MessageEvent): void {

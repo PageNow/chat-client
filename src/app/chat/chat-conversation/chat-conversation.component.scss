@@ -1,0 +1,115 @@
+@import '../../../stylings/variables';
+
+$lr-padding: 12px;
+$header-height: 30px;
+$header-margin-bottom: 5px;
+
+.main-div {
+    // padding: 0 12px 0 12px;
+    width: 100%;
+    min-height: 100%;
+    position: relative;
+}
+
+.header-div {
+    padding: 0 $lr-padding 0 $lr-padding;
+    top: 32px;
+    height: $header-height;
+    position: sticky;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid $tabs-hr-color;
+    margin-bottom: $header-margin-bottom;
+}
+
+.back-div {
+    margin-right: 15px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.back-a {
+    text-decoration: none;
+    color: $link-color;
+    font-size: 15px;
+}
+
+.back-a:hover {
+    cursor: pointer;
+    color: $link-hover-color;
+}
+
+.user-name-div {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.user-name-a {
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+}
+
+.user-name-a:hover {
+    color: $link-hover-color;
+}
+
+.chat-div {
+    padding: 0 $lr-padding 35px $lr-padding;
+    width: 100%;
+    z-index: -1;
+}
+
+.profile-img-div {
+    margin-right: 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.profile-img {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.chat-input-div {
+    padding: 0 $lr-padding 0 $lr-padding;
+    bottom: 0;
+    position: fixed;
+    background-color: white;
+    height: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 5px;
+}
+
+.chat-input {
+    flex-grow: 1;
+}
+
+.message-send-button {
+    border: none;
+    background: none;
+}
+
+.message-send-button:hover {
+    background-color: #dedede;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.message-sending-button {
+    border: none;
+    background: none;
+}
+
+.fa-icon-send {
+    color: $tabs-color;
+}

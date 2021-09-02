@@ -45,7 +45,7 @@ export class UserRegistrationComponent implements OnInit {
                 return this.userService.getCurrentUserInfo().toPromise();
             })
             .then(res => {
-                this.router.navigate([`/profile/${res.user_uuid}`]);
+                this.router.navigate([`/profile/${res.user_id}`]);
                 window.location.reload();
             })
             .catch(err => {
@@ -89,9 +89,3 @@ export class UserRegistrationComponent implements OnInit {
             });
     }
 }
-
-
-/* Notes
- * - We can assume that the user is already authenticated when they reach
- * this page. Thus, only need to check for UUID.
- */
