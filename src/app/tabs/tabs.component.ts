@@ -73,10 +73,6 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.shareMode = res.share_mode;
                 this.domainAllowSet = new Set(res.domain_allow_array);
                 this.domainDenySet = new Set(res.domain_deny_array);
-                this.statusSubscribe();
-                this.getInitialStatus();
-                this.unreadConversationSubscribe();
-                this.messageSubscribe();
                 this.spinner.hide();
             })
             .catch(err => {
@@ -93,22 +89,7 @@ export class TabsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        console.log('tabs ngOnInit');
-        const source = interval(HEARTBEAT_PERIOD);
-        this.timerSubscription = source.subscribe(() => {
-            console.log('heartbeat');
-            if (this.currUrl === this.redisUrl) {
-                console.log(`Sending heartbeat with ${this.currTitle}`);
-                const url = new URL(this.currUrl);
-                if (this.shareMode === 'default_none' && this.domainAllowSet.has(url.hostname)) {
-                    this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
-                } else if (this.shareMode === 'default_all' && !this.domainDenySet.has(url.hostname)) {
-                    this.pagesService.sendHeartbeat(this.currUrl, this.currTitle);
-                } else { // default_none
-                    this.pagesService.sendHeartbeat('', '');
-                }
-            }
-        });
+        // do nothing
     }
 
     ngOnDestroy(): void {
@@ -123,63 +104,8 @@ export class TabsComponent implements OnInit, OnDestroy {
         this.unreadConversationSubscription?.unsubscribe();
     }
 
-    private async getInitialStatus(): Promise<void> {
-        if (!this.userId) { return; }
-        const result = await this.pagesService.getStatus(this.userId);
-        this.redisUrl = result.data.status.url;
-    }
-
-    private async statusSubscribe(): Promise<void> {
-        if (!this.userId) { return; }
-        this.redisUrlSubscription = this.pagesService.subscribeToStatus(this.userId)
-            .subscribe(
-                ({ data }: any) => {
-                    this.redisUrl = data.onStatus.url;
-                },
-                (err: any) => {
-                    console.log(err);
-                }
-            );
-    }
-
-    private async unreadConversationSubscribe(): Promise<void> {
-        if (!this.userId) { return; }
-        this.unreadConversationSubscription = this.chatService.unreadConversationSubject.subscribe(
-            res => {
-                console.log(res);
-            },
-            err => {
-                console.log(err);
-            }
-        )
-    }
-
-    private async messageSubscribe(): Promise<void> {
-        if (!this.userId) { return; }
-        this.messageSubscription = this.chatService.subscribeToNewMessagesAll(this.userId)
-            .subscribe(
-                ({ data }: any) => {
-                    this.chatService.publishNewMessage(data.onCreateDirectMessage);
-                },
-                (err: any) => {
-                    console.log(err);
-                }
-            )
-    }
-
     private messageEventListener(event: MessageEvent): void {
-        if (event.data.type === 'update-url') {
-            this.currUrl = event.data.data?.url;
-            this.currTitle = event.data.data?.title;
-            const url = new URL(this.currUrl);
-            if (this.shareMode === 'default_none' && this.domainAllowSet.has(url.hostname)) {
-                this.pagesService.connect(this.currUrl, this.currTitle);
-            } else if (this.shareMode === 'default_all' && !this.domainDenySet.has(url.hostname)) {
-                this.pagesService.connect(this.currUrl, this.currTitle);
-            } else { // default_none
-                this.pagesService.connect('', '');
-            }
-        }
+        // for chat messages
     }
 
     onCloseChatbox(): void {
@@ -188,16 +114,4 @@ export class TabsComponent implements OnInit, OnDestroy {
         };
         chrome.runtime.sendMessage(EXTENSION_ID, message);
     }
-
-    // onSignOut(): void {
-    //     this.authService.publishSignOut();
-    //     Auth.signOut();
-    //     // TODO: signal chrome extension to close chatbox
-    // }
 }
-
-/* Notes
- * - GraphQL query to obtain UUID cannot happne in auth.service because
- *   we need the user id before making a query and subscribing to the
- *   value changes.
- */

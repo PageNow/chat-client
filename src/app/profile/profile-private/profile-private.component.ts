@@ -84,7 +84,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
             res => {
                 if (res) {
-                    this.spinner.hide();
                     this.userInfo = res;
 
                     this.firstNameInput = res.first_name;
@@ -118,6 +117,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                             console.log(err);
                             this.profileImageUrl = '/assets/user.png';
                         });
+                    this.spinner.hide();
                 }
             },
             err => {

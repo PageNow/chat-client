@@ -66,22 +66,6 @@ const getGqlLink = (httpLink: HttpLinkHandler, wsLink: ApolloLink) : ApolloLink 
     schemas: [],
     providers: [
         httpInterceptorProviders,
-        // presence graphql api backend
-        {
-            provide: APOLLO_NAMED_OPTIONS,
-            useFactory: (httpLink: HttpLink): NamedOptions => {
-                const http = getGqlHttpLink(httpLink, PRESENCE_GQL_HTTPS_URL);
-                const ws = getGqlWsLink(PRESENCE_GQL_HTTPS_URL, PRESENCE_GQL_REGION);
-                const link = getGqlLink(http, ws);
-                return {
-                    presence: {
-                        cache: new InMemoryCache(),
-                        link
-                    }
-                };
-            },
-            deps: [HttpLink]
-        },
         // chat graphql api backend
         {
             provide: APOLLO_NAMED_OPTIONS,

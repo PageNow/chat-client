@@ -18,7 +18,7 @@ export class UserService {
         console.log('user service constructor');
         this.httpOptions = {
             headers: new HttpHeaders({
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             })
         };
     }
