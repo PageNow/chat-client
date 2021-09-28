@@ -1,0 +1,75 @@
+@import '../../stylings/variables';
+
+.main-div {
+    padding: 0 10px 0 10px;
+}
+
+.user-share-div {
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.user-sharing-intro-span {
+    font-size: 13px;
+    color: $tabs-color;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.user-sharing-url-span {
+    font-size: 15px;
+    color: black;
+    vertical-align: middle;
+}
+
+.presence-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-image-div {
+    margin-right: 10px;
+}
+
+.profile-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.profile-image:hover {
+    cursor: pointer;
+}
+
+.presence-page-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name-span {
+    width: max-content;
+    color: black;
+    font-size: 12px;
+}
+
+.user-name-span:hover {
+    cursor: pointer;
+}
+
+.page-a {
+    width: max-content;
+    text-decoration: none;
+    color: $link-color;
+    font-size: 15px;
+}
+
+.page-a:hover {
+    color: $link-hover-color;
+}

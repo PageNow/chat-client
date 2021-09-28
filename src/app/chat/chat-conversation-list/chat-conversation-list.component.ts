@@ -9,7 +9,7 @@ import { UserService } from "src/app/user/user.service";
 import { getFullName } from '../../shared/user_utils';
 import { UserInfoPublic } from "src/app/user/user.model";
 
-const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversation list...';
+const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
 
 @Component({
     selector: 'app-chat-conversation-list',
@@ -19,10 +19,7 @@ const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversation list...';
 export class ChatConversationListComponent implements OnInit {
     currUserId: string;
     conversationArr: Conversation[] = [];
-    userNameArr: string[] = [];
-    imgExtArr: string[] = [];
-    profileImgUrlArr: string[] = [];
-    profileImgExtArr: string[] = [];
+    userInfoMap: {[key: string]: UserInfoPublic} = {};
 
     spinnerMsg = '';
 
@@ -43,28 +40,33 @@ export class ChatConversationListComponent implements OnInit {
             .then(res => {
                 this.currUserId = res.username;
                 return this.chatService.getUserConversations(null)
-            })        
+            })
             .then(res => {
-                console.log(res);
-                this.conversationArr = res.data.getUserConversations;
-                const userIdArr = this.conversationArr.map(
-                    x => x.senderId === this.currUserId ? x.recipientId : x.senderId);
-                return this.userService.getUsersPublicInfo(userIdArr);
+                this.conversationArr = res;
+                const participantIdArr = this.conversationArr.map(x => x.participantId);
+                return this.userService.getUsersPublicInfo(Array.from(new Set(participantIdArr)));
             })
             .then(res => {
                 console.log(res);
-                this.userNameArr = res.map((x: UserInfoPublic) => getFullName(x.first_name, x.middle_name, x.last_name));
-                const userIdArr = res.map((x: UserInfoPublic) => x.user_id);
-                const imgExtArr = res.map((x: UserInfoPublic) => x.profile_image_extension);
-                this.profileImgExtArr = imgExtArr;
+                const userIdArr: string[] = [], imgExtArr: string[] = [];
+                res.forEach((x: UserInfoPublic) => {
+                    this.userInfoMap[x.user_id] = x;
+                    this.userInfoMap[x.user_id]['full_name'] = getFullName(x.first_name, x.middle_name, x.last_name);
+                    userIdArr.push(x.user_id);
+                    imgExtArr.push(x.profile_image_extension);
+                });
                 return this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr).toPromise();
             })
-            .then(res => {
-                this.profileImgUrlArr = res;
+            .then((res: {[key: string]: string}) => {
+                for (const [key, value] of Object.entries(res)) {
+                    this.userInfoMap[key]['profile_image_url'] = value;
+                }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
 

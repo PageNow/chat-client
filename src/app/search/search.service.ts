@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { USER_API_URL } from '../shared/constants';
+import { USER_API_URL } from '../shared/config';
 
 @Injectable({
     providedIn: 'root'

@@ -5,6 +5,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { PagesComponent } from './pages.component';
 import { PagesRoutingModule } from './pages-routing.module';
+import { FormsModule } from '@angular/forms';
+import { ProfileModule } from '../profile/profile.module';
 
 @NgModule({
     declarations: [
@@ -12,9 +14,11 @@ import { PagesRoutingModule } from './pages-routing.module';
     ],
     imports: [
         CommonModule,
+        FormsModule,
         HttpClientModule,
         NgxSpinnerModule,
-        PagesRoutingModule
+        PagesRoutingModule,
+        ProfileModule
     ]
 })
 export class PagesModule { }

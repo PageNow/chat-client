@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 
-import { USER_API_URL } from '../shared/constants';
+import { USER_API_URL } from '../shared/config';
 import { UserCreate, UserInfoPrivate, UserInfoUpdate } from './user.model';
 
 @Injectable({

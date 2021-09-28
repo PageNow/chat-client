@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { EXTENSION_ID } from '../../shared/constants';
+import { EXTENSION_ID } from '../../shared/config';
 import { AuthService } from '../auth.service';
 
 @Component({

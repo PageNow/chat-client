@@ -12,6 +12,7 @@ export interface UserInfoSummary {
     first_name: string;
     middle_name: string;
     last_name: string;
+    full_name?: string;
 
     description: string;
 
@@ -26,6 +27,8 @@ export interface UserInfoPublic extends UserInfoSummary {
     school: string;
     work: string;
     location: string;
+
+    profile_image_url?: string;
 }
 
 export interface UserInfoPrivate extends UserInfoPublic {

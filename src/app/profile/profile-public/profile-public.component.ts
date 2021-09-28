@@ -145,23 +145,24 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         if (!this.userInfo || !this.isFriend) { return; }
         this.spinnerMsg = SPINNER_SEND_MESSAGE_MSG;
         this.spinner.show();
-        const userPairId = this.currUserId < this.userInfo.user_id ?
-            this.currUserId + ' ' + this.userInfo.user_id : this.userInfo.user_id + ' ' + this.currUserId;
-        this.chatService.getDirectConversation(userPairId, null)
+        this.chatService.getDirectConversation(this.userInfo.user_id)
             .then((res: any): Promise<any> => {
-                if (res.data.getDirectConversation === null) {
-                    const userName = `${this.userInfo.first_name} ${this.userInfo.middle_name} ${this.userInfo.last_name}`.replace('  ', ' ');
-                    return this.chatService.createConversation(this.userInfo.user_id, this.currUserName, userName);
+                console.log(res);
+                if (res.data.conversationId === null) {
+                    return this.chatService.createConversation(
+                        [this.userInfo.user_id], false, '');
                 } else {
                     return Promise.resolve({ data: { createConversation: { conversationId: res.data.getDirectConversation.conversationId }}});
                 }
             })
             .then(res => {
+                this.spinnerMsg = '';
                 this.spinner.hide();
                 this.router.navigate([`/chat/conversation/${res.data.createConversation.conversationId}`]);
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }

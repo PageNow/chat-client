@@ -5,24 +5,24 @@
 </ngx-spinner>
 <div class='main-div'>
     Conversation List
-    <div *ngFor="let conversation of conversationArr; let i = index" class='conversation-div'>
+    <div *ngFor="let conversation of conversationArr" class='conversation-div'>
         <div class='profile-img-div'>
-            <img [src]="profileImgUrlArr[i]" class="profile-img"
+            <img [src]="userInfoMap[conversation.participantId]?.profile_image_url" class="profile-img"
                 onerror="this.src='/assets/user.png'">
         </div>
         <div class='conversation-preview-div'>
             <div class='conversation-header-div'>
                 <a [routerLink]="['/chat', 'conversation', conversation.conversationId]"
-                   [queryParams]="{ title: userNameArr[i], profileImgExt: profileImgExtArr[i] }">
-                   {{ userNameArr[i] }}
+                    [queryParams]="{ title: conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name, profileImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }">
+                   {{ conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name }}
                 </a>
             </div>
             <div class='conversation-message-div'>
-                <div>{{ conversation.content }}</div>
+                <div>{{ conversation.latestContent }}</div>
                 <div>{{ conversation.sentAt | dateFormat }}</div>
             </div>
         </div>
-        <div class='conversation-is-read-div' *ngIf="!conversation.isRead && conversation.recipientId === currUserId">
+        <div class='conversation-is-read-div' *ngIf="!conversation.isRead">
             <fa-icon [icon]="faCircle" class='fa-circle-icon'></fa-icon>
         </div>
     </div>

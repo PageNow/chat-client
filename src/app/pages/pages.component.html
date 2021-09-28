@@ -1,10 +1,40 @@
 <ngx-spinner>
     <p style="color: white;">
-        <strong>Fetching user data...</strong>
+        <strong>{{ spinnerMsg }}</strong>
     </p>
 </ngx-spinner>
-<div>
+<div class='main-div' *ngIf="!showProfile">
     <!-- <app-tabs [currTab]="'pages'"></app-tabs> -->
-    Pages for user
+    <div *ngIf="userPresence && userPresence.page" class='user-share-div'>
+        <span class='user-sharing-intro-span'>You are sharing</span>
+        <span class='user-sharing-url-span'>{{ userPresence.page.url }}</span>
+    </div>
+    <!-- <div>
+        <input [(ngModel)]="userNameInput" />
+    </div> -->
+    <div class='presence-arr-div' *ngFor="let presence of presenceArr">
+        <div class='presence-div'>
+            <div class='profile-image-div'>
+                <img [src]="userInfoMap[presence.userId].profileImgUrl"
+                    (click)="onClickProfile(presence.userId)"
+                    class="profile-image" onerror="this.src='/assets/user.png'">
+            </div>
+            <div class='presence-page-div' *ngIf="presence.page">
+                <span class='user-name-span' (click)="onClickProfile(presence.userId)">
+                    {{ userInfoMap[presence.userId].first_name }}
+                    {{ userInfoMap[presence.userId].middle_name }}
+                    {{ userInfoMap[presence.userId].last_name }}
+                </span>
+                <a [href]='presence.page.url' target="_blank" class='page-a'>
+                    {{ presence.page.domain }}: {{ presence.page.title }}
+                </a>
+            </div>
+            <div *ngIf="presence.page === null">
+                Offline
+            </div>
+        </div>
+    </div>
 
 </div>
+<app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">
+</app-profile-public>

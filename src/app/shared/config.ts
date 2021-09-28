@@ -1,7 +1,5 @@
-export const PRESENCE_GQL_HTTPS_URL = 'https://enzhzozla5cubbzyf3mzdgeyem.appsync-api.us-east-1.amazonaws.com/graphql';
-export const PRESENCE_GQL_REGION = 'us-east-1';
+export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';
 
-export const CHAT_GQL_HTTPS_URL = 'https://vhlw6tebirh6pjgw7xijld4g3q.appsync-api.us-east-1.amazonaws.com/graphql';
-export const CHAT_GQL_REGION = 'us-east-1';
-
-export const GQL_AUTH_TYPE = 'AMAZON_COGNITO_USER_POOLS';
+export const USER_API_URL = 'https://wnsy2l41l4.execute-api.us-west-2.amazonaws.com/dev';
+export const PRESENCE_API_URL = 'https://c3eztlefrh.execute-api.us-west-2.amazonaws.com/dev';
+export const CHAT_API_URL = 'https://9vd7f83qjk.execute-api.us-west-2.amazonaws.com/dev';

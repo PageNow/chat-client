@@ -2,15 +2,14 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { interval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
     faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { Auth } from 'aws-amplify';
 
-import { EXTENSION_ID, HEARTBEAT_PERIOD } from '../shared/constants';
+import { EXTENSION_ID } from '../shared/config';
 import { UserService } from '../user/user.service';
-import { PagesService } from '../pages/pages.service';
 import { UserInfoPrivate } from '../user/user.model';
 import { ChatService } from '../chat/chat.service';
 
@@ -21,10 +20,6 @@ import { ChatService } from '../chat/chat.service';
 })
 export class TabsComponent implements OnInit, OnDestroy {
     @Input() currTab: string;
-
-    currUrl = '';
-    currTitle = '';
-    redisUrl = ''; // my url stored in redis
 
     // variables relevant to userInfoPrivate
     userId: string | null;
@@ -41,11 +36,6 @@ export class TabsComponent implements OnInit, OnDestroy {
     faFileAlt = faFileAlt;
     faTimes = faTimes;
 
-    redisUrlSubscription: Subscription;
-    timerSubscription: Subscription;
-    messageSubscription: Subscription;
-    unreadConversationSubscription: Subscription;
-
     // if user is not registered, set to false
     tabsHidden = false;
 
@@ -53,7 +43,6 @@ export class TabsComponent implements OnInit, OnDestroy {
         private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private pagesService: PagesService,
         private chatService: ChatService
     ) {
         console.log('tabs.component constructor');
@@ -73,6 +62,15 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.shareMode = res.share_mode;
                 this.domainAllowSet = new Set(res.domain_allow_array);
                 this.domainDenySet = new Set(res.domain_deny_array);
+                const message = {
+                    type: 'update-user-info',
+                    data: {
+                        shareMode: res.share_mode,
+                        domainAllowSet: res.domain_allow_array,
+                        domainDenySet: res.domain_deny_array
+                    }
+                }
+                chrome.runtime.sendMessage(EXTENSION_ID, message);
                 this.spinner.hide();
             })
             .catch(err => {
@@ -97,15 +95,12 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         window.removeEventListener('message',
             this.messageEventListener.bind(this));
-
-        this.redisUrlSubscription?.unsubscribe();
-        this.timerSubscription?.unsubscribe();
-        this.messageSubscription?.unsubscribe();
-        this.unreadConversationSubscription?.unsubscribe();
     }
 
     private messageEventListener(event: MessageEvent): void {
-        // for chat messages
+        if (event.data.type === 'send-message') {
+            console.log(event.data.data);
+        }
     }
 
     onCloseChatbox(): void {

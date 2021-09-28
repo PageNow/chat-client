@@ -30,7 +30,6 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     conversationId: string;
     conversationTitle: string;
     recipientId: string;
-    recipientImgExt: string;
     recipientImgUrl: string;
     newMessageContent = '';
 
@@ -41,9 +40,6 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     // fontawesome icons
     faPaperPlane = faPaperPlane;
-
-    // chat message subscription
-    messageSubscription: Subscription;
     
     constructor(
         private route: ActivatedRoute,
@@ -56,42 +52,21 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         this.conversationId = this.route.snapshot.paramMap.get('conversationId') || '';
         this.route.queryParams.subscribe(params => {
             this.conversationTitle = params.title;
-            this.recipientImgExt = params.profileImgExt;
+            this.recipientImgUrl = params.profileImgUrl;
         });
         this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
         this.spinner.show();
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
-                return this.chatService.getDirectConversation(null, this.conversationId);
-            })
-            .then(res => {
-                console.log(res);
-                const userPairIdArr = res.data.getDirectConversation.userPairId.split(' ');
-                if (this.currUserId === userPairIdArr[0]) {
-                    this.recipientId = userPairIdArr[1];
-                } else {
-                    this.recipientId = userPairIdArr[0];
-                }
                 return this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT);
             })
             .then(res => {
-                console.log(res);
-                this.messageArr = res.data.getConversationMessages;
-                this.messageSubscribe();
-                this.spinner.hide();
-                return this.userService.getProfileImageGetUrl(this.recipientId, this.recipientImgExt).toPromise();
-            })
-            .then(res => {
-                console.log(res);
-                this.recipientImgUrl = res;
-                return this.chatService.setMessageIsRead(
-                    this.conversationId, this.recipientId, this.currUserId
-                );
-            })
-            .then(res => {
+                this.messageArr = res;
                 this.scrollToBottom();
-                console.log(res);
+                this.spinnerMsg = '';
+                this.spinner.hide();
+                // TODO: set message as read
             })
             .catch(err => {
                 console.log(err);
@@ -101,60 +76,44 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
-        this.messageSubscription?.unsubscribe();
     }
 
     sendMessage(): void {
         if (!this.conversationId || !this.recipientId || !this.newMessageContent || this.newMessageContent === '') {
             return;
         }
-        const sentAt = new Date(Date.now()).toISOString().slice(0, -1); // for date pipe to work
-        const messageContent = this.newMessageContent;
-        const newMessage: Message = {
-            messageId: '',
-            conversationId: this.conversationId,
-            sentAt: sentAt,
-            senderId: this.currUserId,
-            recipientId: this.recipientId,
-            content: messageContent,
-            isRead: false
-        }
-        this.isSendingMap = {
-            ...this.isSendingMap,
-            [sentAt]: true // use sentAt as key since it is unique
-        };        
-        this.messageArr = [newMessage, ...this.messageArr];
-        this.newMessageContent = '';
-        this.chatService.createDirectMessage(this.conversationId, messageContent, this.recipientId)
-            .then(res => {
-                console.log(res);
-                this.isSendingMap = {
-                    ...this.isSendingMap,
-                    [sentAt]: false
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                this.isSendingMap = {
-                    ...this.isSendingMap,
-                    [sentAt]: false
-                }
-            });
-    }
-
-    async messageSubscribe(): Promise<void> {
-        if (!this.currUserId) { return; }
-        console.log(this.currUserId);
-        this.messageSubscription = this.chatService.subscribeToNewMessagesInConversation(this.currUserId, this.conversationId)
-            .subscribe(
-                ({ data }: any) => {
-                    console.log(data);
-                    this.messageArr = [data.onCreateDirectMessage, ...this.messageArr];
-                },
-                (err: any) => {
-                    console.log(err);
-                }
-            );
+        // const sentAt = new Date(Date.now()).toISOString().slice(0, -1); // for date pipe to work
+        // const messageContent = this.newMessageContent;
+        // const newMessage: Message = {
+        //     messageId: '',
+        //     conversationId: this.conversationId,
+        //     sentAt: sentAt,
+        //     senderId: this.currUserId,
+        //     recipientId: this.recipientId,
+        //     content: messageContent,
+        //     isRead: false
+        // }
+        // this.isSendingMap = {
+        //     ...this.isSendingMap,
+        //     [sentAt]: true // use sentAt as key since it is unique
+        // };        
+        // this.messageArr = [newMessage, ...this.messageArr];
+        // this.newMessageContent = '';
+        // this.chatService.createDirectMessage(this.conversationId, messageContent, this.recipientId)
+        //     .then(res => {
+        //         console.log(res);
+        //         this.isSendingMap = {
+        //             ...this.isSendingMap,
+        //             [sentAt]: false
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         this.isSendingMap = {
+        //             ...this.isSendingMap,
+        //             [sentAt]: false
+        //         }
+        //     });
     }
 
     scrollToBottom(): void {

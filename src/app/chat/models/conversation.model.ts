@@ -1,9 +1,10 @@
 export interface Conversation {
     conversationId: string;
     title: string;
+    isGroup: boolean;
     sentAt: string;
-    content: string;
+    latestContent: string;
     senderId: string;
-    recipientId: string;
+    participantId: string;
     isRead: boolean;
 }

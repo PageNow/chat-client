@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { PRESENCE_API_URL } from '../shared/constants';
+import { PRESENCE_API_URL } from '../shared/config';
 
 @Injectable({
     providedIn: 'root'

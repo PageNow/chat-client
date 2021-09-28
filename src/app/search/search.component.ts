@@ -243,7 +243,7 @@ export class SearchComponent {
             );
         }
         forkJoin(profileImgUrlRequestArr).subscribe(urlArr => {
-            urlArr = urlArr.map(x => x !== null ? x : '/assets/usre.png');
+            urlArr = urlArr.map(x => x !== null ? x : '/assets/user.png');
             if (isFriend) {
                 this.friendProfileImgUrlArr = [...this.friendProfileImgUrlArr, ...urlArr];
             } else {
