@@ -1,10 +1,10 @@
 
 <!-- curr user is sender -->
 <div *ngIf="currUserId === message.senderId" class='sender-message-div'>
-    <div *ngIf="!isSendingMap[message.sentAt]" class='message-date-send-div'>
+    <div *ngIf="!isSending" class='message-date-send-div'>
         {{ message.sentAt | dateFormat }}
     </div>
-    <div *ngIf="isSendingMap[message.sentAt]" class='spinner-div'>
+    <div *ngIf="isSending" class='spinner-div'>
         <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
     </div>
     <div class='message-content-div message-content-send-div'> {{ message.content }} </div>

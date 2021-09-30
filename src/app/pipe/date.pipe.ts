@@ -5,7 +5,10 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class DateFormatPipe implements PipeTransform {
     transform(value: string): string {
-        const date = new Date(value + 'Z');  // change to ISO string
+        if (!value.endsWith('Z')) { // change to ISO string
+            value += 'Z';
+        }
+        const date = new Date(value);
         if (isNaN(date.getTime())) {
             return value;
         }

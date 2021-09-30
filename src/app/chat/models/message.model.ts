@@ -4,4 +4,5 @@ export interface Message {
     sentAt: string;
     senderId: string;
     content: string;
+    tempMessageId?: string;
 }

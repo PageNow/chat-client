@@ -1,15 +1,9 @@
 @import '../../../stylings/variables';
 
-$lr-padding: 12px;
+$lr-padding: 10px;
 $header-height: 30px;
 $header-margin-bottom: 5px;
-
-.main-div {
-    // padding: 0 12px 0 12px;
-    width: 100%;
-    min-height: 100%;
-    position: relative;
-}
+$chat-input-height: 30px;
 
 .header-div {
     padding: 0 $lr-padding 0 $lr-padding;
@@ -22,6 +16,28 @@ $header-margin-bottom: 5px;
     background-color: white;
     border-bottom: 1px solid $tabs-hr-color;
     margin-bottom: $header-margin-bottom;
+    z-index: 10;
+}
+
+.chat-div {
+    padding: 0 $lr-padding 5px $lr-padding;
+    position: absolute;
+    width: 100%;
+    overflow: auto;
+    top: $tabs-height + $header-height;
+    bottom: $chat-input-height;
+}
+
+.chat-input-div {
+    padding: 0 $lr-padding 0 $lr-padding;
+    bottom: 0;
+    position: fixed;
+    background-color: white;
+    height: $chat-input-height;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 5px;
 }
 
 .back-div {
@@ -58,12 +74,6 @@ $header-margin-bottom: 5px;
     color: $link-hover-color;
 }
 
-.chat-div {
-    padding: 0 $lr-padding 35px $lr-padding;
-    width: 100%;
-    z-index: -1;
-}
-
 .profile-img-div {
     margin-right: 5px;
     height: 100%;
@@ -76,18 +86,6 @@ $header-margin-bottom: 5px;
     height: 20px;
     border-radius: 100%;
     object-fit: cover;
-}
-
-.chat-input-div {
-    padding: 0 $lr-padding 0 $lr-padding;
-    bottom: 0;
-    position: fixed;
-    background-color: white;
-    height: 30px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    padding-bottom: 5px;
 }
 
 .chat-input {

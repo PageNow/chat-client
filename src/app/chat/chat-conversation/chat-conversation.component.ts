@@ -4,11 +4,12 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from "rxjs";
 import { Auth } from 'aws-amplify';
+import { v4 as uuidv4 } from 'uuid';
 
 import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET } from "src/app/shared/constants";
 import { ChatService } from "../chat.service";
 import { Message } from "../models/message.model";
-import { UserService } from "src/app/user/user.service";
+import { EXTENSION_ID } from "../../shared/config";
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 
@@ -22,10 +23,12 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     scrollTop = 0;
 
     currUserId: string;
-    currUserInfoSubscription: Subscription
+    currUserInfoSubscription: Subscription;
 
-    messageArr: Message[] = [];
+    messageArr: Message[] = []; // from old to new
+    sendingMessageArr: Message[] = [];
     isFullyLoaded = false;
+    newMessageSubscription: Subscription;
 
     conversationId: string;
     conversationTitle: string;
@@ -34,7 +37,6 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     newMessageContent = '';
 
     // TODO: errorMap
-    isSendingMap: {[key: string]: boolean} = {};
 
     spinnerMsg = '';
 
@@ -44,7 +46,6 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private spinner: NgxSpinnerService,
-        private userService: UserService,
         private chatService: ChatService
     ) { }
 
@@ -56,13 +57,32 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         });
         this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
         this.spinner.show();
+        this.newMessageSubscription = this.chatService.newMessageSubject.subscribe(
+            (res: Message) => {
+                console.log(res);
+                this.messageArr = [ ...this.messageArr, res ];
+                let delIdx;
+                for (let idx = this.sendingMessageArr.length - 1; idx >= 0; idx--) {
+                    if (this.sendingMessageArr[idx].tempMessageId === res.tempMessageId) {
+                        delIdx = idx;
+                        break;
+                    }
+                }
+                if (delIdx !== null && delIdx !== undefined) {
+                    this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1,) ];
+                }
+            },
+            err => {
+                console.log(err);
+            }
+        )
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
                 return this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT);
             })
             .then(res => {
-                this.messageArr = res;
+                this.messageArr = res.reverse();
                 this.scrollToBottom();
                 this.spinnerMsg = '';
                 this.spinner.hide();
@@ -79,45 +99,36 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     }
 
     sendMessage(): void {
-        if (!this.conversationId || !this.recipientId || !this.newMessageContent || this.newMessageContent === '') {
+        if (!this.conversationId || !this.newMessageContent || this.newMessageContent === '') {
             return;
         }
-        // const sentAt = new Date(Date.now()).toISOString().slice(0, -1); // for date pipe to work
-        // const messageContent = this.newMessageContent;
-        // const newMessage: Message = {
-        //     messageId: '',
-        //     conversationId: this.conversationId,
-        //     sentAt: sentAt,
-        //     senderId: this.currUserId,
-        //     recipientId: this.recipientId,
-        //     content: messageContent,
-        //     isRead: false
-        // }
-        // this.isSendingMap = {
-        //     ...this.isSendingMap,
-        //     [sentAt]: true // use sentAt as key since it is unique
-        // };        
-        // this.messageArr = [newMessage, ...this.messageArr];
-        // this.newMessageContent = '';
-        // this.chatService.createDirectMessage(this.conversationId, messageContent, this.recipientId)
-        //     .then(res => {
-        //         console.log(res);
-        //         this.isSendingMap = {
-        //             ...this.isSendingMap,
-        //             [sentAt]: false
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //         this.isSendingMap = {
-        //             ...this.isSendingMap,
-        //             [sentAt]: false
-        //         }
-        //     });
+        const tempMessageId = uuidv4();
+        const newMessage: Message = {
+            messageId: '',
+            tempMessageId: tempMessageId,
+            conversationId: this.conversationId,
+            sentAt: '',
+            senderId: this.currUserId,
+            content: this.newMessageContent,
+        };
+        
+        this.sendingMessageArr = [ ...this.sendingMessageArr, newMessage ];
+        const message = {
+            type: 'send-message',
+            data: {
+                tempMessageId: tempMessageId,
+                content: this.newMessageContent,
+                conversationId: this.conversationId
+            }
+        };
+        chrome.runtime.sendMessage(EXTENSION_ID, message);
+        this.newMessageContent = '';
+        this.scrollToBottom();
     }
 
     scrollToBottom(): void {
         try {
+            console.log('scrolling to bottom');
             this.conversationContainer.nativeElement.scrollIntoView({
                 behavior: "auto", block: "end", inline: "nearest"
             });

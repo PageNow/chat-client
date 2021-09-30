@@ -12,7 +12,7 @@ export class ChatMessageComponent {
     @Input() conversationTitle: string;
     @Input() message: Message;
     @Input() profileImgSrc: string;
-    @Input() prevSenderId: string | null;
+    @Input() prevSenderId: string | null | undefined;
     @Input() idx: number;
-    @Input() isSendingMap: {[key: string]: boolean}
+    @Input() isSending: boolean;
 }

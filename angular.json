@@ -30,6 +30,7 @@
                 "buffer",
                 "lodash",
                 "uuid",
+                "uuidv4",
                 "axios",
                 "aws-amplify",
                 "zen-observable",

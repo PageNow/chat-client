@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { Message } from './models/message.model';
 import { CHAT_API_URL } from '../shared/config';
@@ -8,12 +8,17 @@ import { CHAT_API_URL } from '../shared/config';
 @Injectable({
     providedIn: 'root'
 })
-export class ChatService {
+export class ChatService implements OnDestroy {
 
     private unreadConversationObj: {[key: string]: Message} = {};
     public unreadConversationSubject = new BehaviorSubject<{[key: string]: Message}>({});
+    public newMessageSubject = new Subject<Message>();
 
     constructor(private http: HttpClient) {
+        console.log('chat.service constructor');
+        window.addEventListener('message',
+            this.messageEventListener.bind(this));
+
         this.getUserConversations(false)
             .then(res => {
                 // for (const conversation of res.data.getUserConversations) {
@@ -32,6 +37,18 @@ export class ChatService {
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    private messageEventListener(event: MessageEvent): void {
+        if (event.data.type === 'new-message') {
+            console.log(event.data.data);
+            this.newMessageSubject.next(event.data.data);
+        }
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('message',
+            this.messageEventListener.bind(this));
     }
 
     public async getDirectConversation(targetUserId: string): Promise<any> {
