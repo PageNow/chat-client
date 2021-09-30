@@ -19,3 +19,9 @@ Object.keys(MONTHS_NUM_TO_STR).forEach(key => {
     monthsStrNumMap[MONTHS_NUM_TO_STR[parseInt(key, 10)]] = parseInt(key, 10);
 });
 export const MONTHS_STR_TO_NUM = monthsStrNumMap;
+
+export const getDateDiffInMin = (oldDateStr: string, newDateStr: string): number => {
+    const oldDate = Date.parse(oldDateStr);
+    const newDate = Date.parse(newDateStr);
+    return (newDate - oldDate) / 60000;
+};

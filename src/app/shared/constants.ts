@@ -17,3 +17,4 @@ export const SEARCH_RESULT_LIMIT = 10;
 export const INITIAL_MESSAGE_OFFSET = 0;
 
 export const INITIAL_MESSAGE_LIMIT = 15;
+export const LOAD_MESSAGE_LIMIT = 20;

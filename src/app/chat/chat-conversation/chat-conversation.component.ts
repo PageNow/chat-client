@@ -6,7 +6,7 @@ import { Subscription } from "rxjs";
 import { Auth } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
 
-import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET } from "src/app/shared/constants";
+import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET, LOAD_MESSAGE_LIMIT } from "src/app/shared/constants";
 import { ChatService } from "../chat.service";
 import { Message } from "../models/message.model";
 import { EXTENSION_ID } from "../../shared/config";
@@ -27,8 +27,9 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     messageArr: Message[] = []; // from old to new
     sendingMessageArr: Message[] = [];
-    isFullyLoaded = false;
     newMessageSubscription: Subscription;
+    messagesAllLoaded = true;
+    isLoadingMoreMessages = false;
 
     conversationId: string;
     conversationTitle: string;
@@ -79,13 +80,19 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
-                return this.chatService.getConversationMessages(this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT);
+                return this.chatService.getConversationMessages(
+                    this.conversationId, INITIAL_MESSAGE_OFFSET, INITIAL_MESSAGE_LIMIT, 'asc');
             })
             .then(res => {
-                this.messageArr = res.reverse();
-                this.scrollToBottom();
+                this.messageArr = res;
+                setTimeout(() => this.scrollToBottom(), 200);
                 this.spinnerMsg = '';
                 this.spinner.hide();
+                if (res.length < INITIAL_MESSAGE_LIMIT) {
+                    this.messagesAllLoaded = true;
+                } else {
+                    this.messagesAllLoaded = false;
+                }
                 // TODO: set message as read
             })
             .catch(err => {
@@ -111,8 +118,10 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             senderId: this.currUserId,
             content: this.newMessageContent,
         };
-        
+
         this.sendingMessageArr = [ ...this.sendingMessageArr, newMessage ];
+        setTimeout(() => this.scrollToBottom(), 200);
+
         const message = {
             type: 'send-message',
             data: {
@@ -123,15 +132,27 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         };
         chrome.runtime.sendMessage(EXTENSION_ID, message);
         this.newMessageContent = '';
-        this.scrollToBottom();
     }
 
     scrollToBottom(): void {
         try {
-            console.log('scrolling to bottom');
-            this.conversationContainer.nativeElement.scrollIntoView({
-                behavior: "auto", block: "end", inline: "nearest"
-            });
+            this.scrollTop = this.conversationContainer.nativeElement.scrollHeight;
         } catch (err) { /* */ }
+    }
+
+    loadPreviousMessages(): void {
+        this.isLoadingMoreMessages = true;
+        this.chatService.getConversationMessages(this.conversationId, this.messageArr.length, LOAD_MESSAGE_LIMIT, 'asc')
+            .then(res => {
+                this.messageArr = [ ...res, ...this.messageArr ];
+                if (res.length < LOAD_MESSAGE_LIMIT) {
+                    this.messagesAllLoaded = true;
+                }
+                this.isLoadingMoreMessages = false;
+            })
+            .catch(err => {
+                console.log(err);
+                this.isLoadingMoreMessages = false;
+            });
     }
 }

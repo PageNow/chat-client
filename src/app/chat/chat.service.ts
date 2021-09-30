@@ -67,9 +67,9 @@ export class ChatService implements OnDestroy {
     }
 
     public async getConversationMessages(
-        conversationId: string, offset: number, limit: number
+        conversationId: string, offset: number, limit: number, order = 'desc'
     ): Promise<any> {
-        const url = `${CHAT_API_URL}/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`;
+        const url = `${CHAT_API_URL}/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}&order=${order}`;
         return await this.http.get(url).toPromise();
     }
 

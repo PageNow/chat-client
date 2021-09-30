@@ -48,6 +48,8 @@ export class ChatConversationListComponent implements OnInit {
             })
             .then(res => {
                 console.log(res);
+                this.spinnerMsg = '';
+                this.spinner.hide();
                 const userIdArr: string[] = [], imgExtArr: string[] = [];
                 res.forEach((x: UserInfoPublic) => {
                     this.userInfoMap[x.user_id] = x;
@@ -61,8 +63,6 @@ export class ChatConversationListComponent implements OnInit {
                 for (const [key, value] of Object.entries(res)) {
                     this.userInfoMap[key]['profile_image_url'] = value;
                 }
-                this.spinnerMsg = '';
-                this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);

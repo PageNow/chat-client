@@ -5,6 +5,9 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class DateFormatPipe implements PipeTransform {
     transform(value: string): string {
+        if (value === '') {
+            return '';
+        }
         if (!value.endsWith('Z')) { // change to ISO string
             value += 'Z';
         }

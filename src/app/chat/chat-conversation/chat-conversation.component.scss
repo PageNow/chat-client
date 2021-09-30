@@ -24,7 +24,7 @@ $chat-input-height: 30px;
     position: absolute;
     width: 100%;
     overflow: auto;
-    top: $tabs-height + $header-height;
+    top: $tabs-height + $header-height + 5px;
     bottom: $chat-input-height;
 }
 
@@ -56,6 +56,21 @@ $chat-input-height: 30px;
 .back-a:hover {
     cursor: pointer;
     color: $link-hover-color;
+}
+
+.load-prev-messages-div {
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+}
+
+.load-prev-messages-span {
+    color: $link-color;
+}
+
+.load-prev-messages-span:hover {
+    color: $link-hover-color;
+    cursor: pointer;
 }
 
 .user-name-div {

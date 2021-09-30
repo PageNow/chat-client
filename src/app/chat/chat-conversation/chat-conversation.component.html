@@ -14,17 +14,24 @@
         </a>
     </div>
 </div>
-<div class='chat-div' #conversationContainer>
-    <span>Load Previous Messages</span>
+<div class='chat-div' #conversationContainer [scrollTop]="scrollTop">
+    <div class='load-prev-messages-div' *ngIf="!messagesAllLoaded && !isLoadingMoreMessages">
+        <span (click)="loadPreviousMessages()" class='load-prev-messages-span'>
+            Load Previous Messages
+        </span>
+    </div>
+    <div *ngIf="isLoadingMoreMessages" style="text-align: center;">
+        <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
+    </div>
     <app-chat-message *ngFor="let message of messageArr; let i = index;"
         [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
         [profileImgSrc]="recipientImgUrl" [prevSenderId]="i === 0 ? null : messageArr[i - 1].senderId"
-        [idx]="i" [isSending]="false"
+        [nextMessage]="i === messageArr.length - 1 ? null : messageArr[i + 1]" [isSending]="false"
     ></app-chat-message>
     <app-chat-message *ngFor="let message of sendingMessageArr; let i = index;"
         [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
         [profileImgSrc]="recipientImgUrl" [prevSenderId]="i === 0 ? messageArr[messageArr.length - 1]?.senderId : sendingMessageArr[i - 1].senderId"
-        [idx]="i" [isSending]="true"
+        [nextMessage]="null" [isSending]="true"
     ></app-chat-message>
 </div>
 <div class='chat-input-div'>
