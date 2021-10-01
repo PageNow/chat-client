@@ -21,11 +21,22 @@
 }
 
 .tab-div {
-    width: 40px;
+    width: 50px;
     text-align: center;
     height: 100%;
     vertical-align: middle;
     display: table;
+}
+
+.badge-span {
+    font-size: 10px;
+    color: white;
+    position: absolute;
+    background-color: $error-color;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    margin: 5px 0 0 -5px;
 }
 
 fa-icon {

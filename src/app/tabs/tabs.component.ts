@@ -39,14 +39,16 @@ export class TabsComponent implements OnInit, OnDestroy {
     // if user is not registered, set to false
     tabsHidden = false;
 
+    // variable for badges
+    nUnreadConversations = 0;
+    unreadConversationCntSubscription: Subscription;
+
     constructor(
         private router: Router,
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private chatService: ChatService
     ) {
-        console.log('tabs.component constructor');
-
         window.addEventListener('message',
             this.messageEventListener.bind(this));
 
@@ -84,6 +86,17 @@ export class TabsComponent implements OnInit, OnDestroy {
                     // this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
             });
+
+        this.nUnreadConversations = chatService.unreadConversationIdSet.size;
+        this.unreadConversationCntSubscription = this.chatService.unreadConversationCntSubject.subscribe(
+            (res: number) => {
+                console.log(res);
+                this.nUnreadConversations = res;
+            },
+            err => {
+                console.log(err);
+            }
+        )
     }
 
     ngOnInit(): void {
@@ -92,6 +105,7 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.userInfoSubscription?.unsubscribe();
+        this.unreadConversationCntSubscription?.unsubscribe();
 
         window.removeEventListener('message',
             this.messageEventListener.bind(this));

@@ -1,10 +1,22 @@
+@import '../../../stylings/variables';
+
+.main-div {
+    padding: 0 $main-lr-padding 0 $main-lr-padding;
+}
+
+.chat-header-div {
+    text-align: center;
+    padding: 5px 0 5px 0;
+}
+
 .profile-img-div {
     // position: relative;
+    margin-right: 10px;
 }
 
 .profile-img {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 100%;
     object-fit: cover;
     
@@ -16,25 +28,59 @@
 .conversation-div {
     display: flex;
     flex-direction: row;
+    padding-bottom: 10px;
 }
 
 .conversation-preview-div {
     display: flex;
     flex-direction: column;
+    height: 50px;
+}
+
+// .conversation-header-div {
+//     margin-top: 5px;
+// }
+
+.conversation-header-a {
+    text-decoration: none;
+    color: $link-color;
+    font-size: 15px;
+}
+
+.conversation-header-a:hover {
+    cursor: pointer;
+    color: $link-hover-color;
 }
 
 .conversation-message-div {
     display: flex;
     flex-direction: row;
+    align-items: flex-end;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.conversation-content-div {
+    font-size: 15px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.conversation-sentat-div {
+    font-size: 10px;
+    color: $date-color;
 }
 
 .conversation-is-read-div {
     display: table;
+    padding-left: 20px;
 }
 
 .fa-circle-icon {
-    font-size: 10px;
+    font-size: 7px;
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+    color: $error-color;
 }

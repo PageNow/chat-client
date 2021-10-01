@@ -103,6 +103,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
+        this.newMessageSubscription?.unsubscribe();
     }
 
     sendMessage(): void {

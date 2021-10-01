@@ -4,7 +4,7 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
-    Conversation List
+    <div class='chat-header-div'>Conversations</div>
     <div *ngFor="let conversation of conversationArr" class='conversation-div'>
         <div class='profile-img-div'>
             <img [src]="userInfoMap[conversation.participantId]?.profile_image_url" class="profile-img"
@@ -12,14 +12,19 @@
         </div>
         <div class='conversation-preview-div'>
             <div class='conversation-header-div'>
-                <a [routerLink]="['/chat', 'conversation', conversation.conversationId]"
+                <a class='conversation-header-a' [routerLink]="['/chat', 'conversation', conversation.conversationId]"
                     [queryParams]="{ title: conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name, profileImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }">
-                   {{ conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name }}
+                       {{ conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name }}
                 </a>
             </div>
             <div class='conversation-message-div'>
-                <div>{{ conversation.latestContent }}</div>
-                <div>{{ conversation.sentAt | dateFormat }}</div>
+                <div class='conversation-content-div'>
+                    {{ conversation.latestContent.split('\n')[0].slice(0, 25) }}
+                    {{ conversation.latestContent.split('\n')[0].length < 25 ? '' : '...' }}
+                </div>
+                <div class='conversation-sentat-div'>
+                    {{ conversation.sentAt | dateFormat }}
+                </div>
             </div>
         </div>
         <div class='conversation-is-read-div' *ngIf="!conversation.isRead">

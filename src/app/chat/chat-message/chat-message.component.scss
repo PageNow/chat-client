@@ -1,7 +1,6 @@
 @import '../../../stylings/variables';
 
 $date-font-size: 10px;
-$date-color: #878787;
 
 .sender-message-div {
     text-align: right;
@@ -50,7 +49,7 @@ $date-color: #878787;
 }
 
 .message-content-send-div {
-    background-color: #ffdf9e;
+    background-color: $message-content-background-color;
 }
 
 .message-date-rec-div {

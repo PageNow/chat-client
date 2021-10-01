@@ -1,12 +1,11 @@
 @import '../../../stylings/variables';
 
-$lr-padding: 10px;
 $header-height: 30px;
 $header-margin-bottom: 5px;
 $chat-input-height: 30px;
 
 .header-div {
-    padding: 0 $lr-padding 0 $lr-padding;
+    padding: 0 $main-lr-padding 0 $main-lr-padding;
     top: 32px;
     height: $header-height;
     position: sticky;
@@ -20,7 +19,7 @@ $chat-input-height: 30px;
 }
 
 .chat-div {
-    padding: 0 $lr-padding 5px $lr-padding;
+    padding: 0 $main-lr-padding 5px $main-lr-padding;
     position: absolute;
     width: 100%;
     overflow: auto;
@@ -29,7 +28,7 @@ $chat-input-height: 30px;
 }
 
 .chat-input-div {
-    padding: 0 $lr-padding 0 $lr-padding;
+    padding: 0 $main-lr-padding 0 $main-lr-padding;
     bottom: 0;
     position: fixed;
     background-color: white;

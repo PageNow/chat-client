@@ -4,35 +4,27 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 import { Message } from './models/message.model';
 import { CHAT_API_URL } from '../shared/config';
+import { Conversation } from './models/conversation.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ChatService implements OnDestroy {
 
-    private unreadConversationObj: {[key: string]: Message} = {};
-    public unreadConversationSubject = new BehaviorSubject<{[key: string]: Message}>({});
+    public unreadConversationIdSet: Set<string> = new Set();
+    public unreadConversationCntSubject = new BehaviorSubject<number>(0);
     public newMessageSubject = new Subject<Message>();
 
     constructor(private http: HttpClient) {
-        console.log('chat.service constructor');
         window.addEventListener('message',
             this.messageEventListener.bind(this));
 
-        this.getUserConversations(false)
-            .then(res => {
-                // for (const conversation of res.data.getUserConversations) {
-                //     this.unreadConversationObj[conversation.conversationId] = {
-                //         messageId: '',
-                //         conversationId: conversation.conversationId,
-                //         sentAt: conversation.sentAt,
-                //         senderId: conversation.senderId,
-                //         content: conversation.content,
-                //         isRead: conversation.isRead    
-                //     };
-                // }
-                console.log(res);
-                this.unreadConversationSubject.next(this.unreadConversationObj);
+        this.getUserConversations(null)
+            .then((res: Conversation[]) => {
+                res.filter((conversation: Conversation) => !conversation.isRead)
+                    .map((conversation: Conversation) => conversation.conversationId)
+                    .forEach((x: string) => this.unreadConversationIdSet.add(x))
+                this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
             })
             .catch(err => {
                 console.log(err);
@@ -41,8 +33,11 @@ export class ChatService implements OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'new-message') {
-            console.log(event.data.data);
             this.newMessageSubject.next(event.data.data);
+            if (!this.unreadConversationIdSet.has(event.data.data.conversationId)) {
+                this.unreadConversationIdSet.add(event.data.data.conversationId);
+                this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
+            }
         }
     }
 
@@ -99,15 +94,5 @@ export class ChatService implements OnDestroy {
     //         }
     //     });
     // }
-
-    public publishNewMessage(message: Message): void {
-        this.unreadConversationObj[message.conversationId] = message;
-        this.unreadConversationSubject.next(this.unreadConversationObj);
-    }
-
-    public removeReadConversation(conversationId: string): void {
-        delete this.unreadConversationObj[conversationId];
-        this.unreadConversationSubject.next(this.unreadConversationObj);
-    }
 
 }

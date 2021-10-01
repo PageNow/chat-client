@@ -42,6 +42,7 @@ export class ChatConversationListComponent implements OnInit {
                 return this.chatService.getUserConversations(null)
             })
             .then(res => {
+                console.log(res);
                 this.conversationArr = res;
                 const participantIdArr = this.conversationArr.map(x => x.participantId);
                 return this.userService.getUsersPublicInfo(Array.from(new Set(participantIdArr)));

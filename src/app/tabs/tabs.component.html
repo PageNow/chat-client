@@ -16,6 +16,9 @@
                 [ngClass]="{'selected-fa-icon': currTab === 'chat',
                             'default-fa-icon': currTab !== 'chat'}">
             </fa-icon>
+            <span *ngIf="nUnreadConversations" class="badge-span">
+                <strong>{{ nUnreadConversations }}</strong>
+            </span>
         </div>
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'search'}">
             <fa-icon [icon]="faSearch" [routerLink]="['/search']"
