@@ -77,11 +77,11 @@ export class UserService {
         );
     }
 
-    public getProfileImageGetUrlArr(userIdArr: string[], imgExtArr: string[]): Observable<any> {
+    public getProfileImageGetUrlArr(userIdArr: string[], imgExtArr: string[]): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/users/ids/${userIdArr.join(',')}/profile-image-url?image_ext_arr=${imgExtArr.join(',')}`,
             this.httpOptions
-        );
+        ).toPromise();
     }
 
     public deleteProfileIamge(): Observable<any> {

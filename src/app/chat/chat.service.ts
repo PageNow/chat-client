@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { Auth } from 'aws-amplify';
 
 import { Message } from './models/message.model';
 import { CHAT_API_URL } from '../shared/config';
@@ -11,13 +12,22 @@ import { Conversation } from './models/conversation.model';
 })
 export class ChatService implements OnDestroy {
 
+    private userId: string;
+
     public unreadConversationIdSet: Set<string> = new Set();
     public unreadConversationCntSubject = new BehaviorSubject<number>(0);
     public newMessageSubject = new Subject<Message>();
 
     constructor(private http: HttpClient) {
-        window.addEventListener('message',
-            this.messageEventListener.bind(this));
+        Auth.currentAuthenticatedUser()
+            .then(res => {
+                this.userId = res.username;
+                window.addEventListener('message',
+                    this.messageEventListener.bind(this));
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
         this.getUserConversations(null)
             .then((res: Conversation[]) => {
@@ -34,7 +44,9 @@ export class ChatService implements OnDestroy {
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'new-message') {
             this.newMessageSubject.next(event.data.data);
-            if (!this.unreadConversationIdSet.has(event.data.data.conversationId)) {
+            if (event.data.data.senderId !== this.userId &&
+                !this.unreadConversationIdSet.has(event.data.data.conversationId)
+            ) {
                 this.unreadConversationIdSet.add(event.data.data.conversationId);
                 this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
             }
@@ -65,6 +77,11 @@ export class ChatService implements OnDestroy {
         conversationId: string, offset: number, limit: number, order = 'desc'
     ): Promise<any> {
         const url = `${CHAT_API_URL}/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}&order=${order}`;
+        return await this.http.get(url).toPromise();
+    }
+
+    public async getConversationParticipants(conversationId: string): Promise<any> {
+        const url = `${CHAT_API_URL}/conversations/${conversationId}/participants`;
         return await this.http.get(url).toPromise();
     }
 

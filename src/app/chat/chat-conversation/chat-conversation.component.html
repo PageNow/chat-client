@@ -9,9 +9,10 @@
             onerror="this.src='/assets/user.png'">
     </div>
     <div class='user-name-div'>
-        <a class='user-name-a' [routerLink]="['/profile', recipientId]">
+        <a *ngIf="!conversationIsGroup" class='user-name-a' [routerLink]="['/profile', recipientId]">
             {{ conversationTitle }}
         </a>
+        <span *ngIf="conversationIsGroup" style="font-size: 15px;">{{ conversationTitle }}</span>
     </div>
 </div>
 <div class='chat-div' #conversationContainer [scrollTop]="scrollTop">
@@ -24,13 +25,13 @@
         <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
     </div>
     <app-chat-message *ngFor="let message of messageArr; let i = index;"
-        [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
-        [profileImgSrc]="recipientImgUrl" [prevSenderId]="i === 0 ? null : messageArr[i - 1].senderId"
+        [message]="message" [currUserId]="currUserId" [senderName]="userNameMap[message.senderId]"
+        [senderProfileImgSrc]="userProfileImgUrlMap[message.senderId]" [prevSenderId]="i === 0 ? null : messageArr[i - 1].senderId"
         [nextMessage]="i === messageArr.length - 1 ? null : messageArr[i + 1]" [isSending]="false"
     ></app-chat-message>
     <app-chat-message *ngFor="let message of sendingMessageArr; let i = index;"
-        [message]="message" [currUserId]="currUserId" [conversationTitle]="conversationTitle"
-        [profileImgSrc]="recipientImgUrl" [prevSenderId]="i === 0 ? messageArr[messageArr.length - 1]?.senderId : sendingMessageArr[i - 1].senderId"
+        [message]="message" [currUserId]="currUserId" [senderName]="userNameMap[message.senderId]"
+        [senderProfileImgSrc]="userProfileImgUrlMap[message.senderId]" [prevSenderId]="i === 0 ? messageArr[messageArr.length - 1]?.senderId : sendingMessageArr[i - 1].senderId"
         [nextMessage]="null" [isSending]="true"
     ></app-chat-message>
 </div>

@@ -52,11 +52,21 @@ export class TabsComponent implements OnInit, OnDestroy {
         window.addEventListener('message',
             this.messageEventListener.bind(this));
 
-        Auth.currentAuthenticatedUser()
-            .then(() => {
-                console.log('calling /users/me');
-                return this.userService.getCurrentUserInfo().toPromise();
+        Auth.currentSession()
+            .then(res => {
+                const message = {
+                    type: 'update-jwt',
+                    data: {
+                        jwt: res.getIdToken().getJwtToken()
+                    }
+                };
+                chrome.runtime.sendMessage(EXTENSION_ID, message);
             })
+            .catch(err => {
+                console.log(err);
+            });
+
+        this.userService.getCurrentUserInfo().toPromise()
             .then((res: UserInfoPrivate): void => {
                 console.log(res);
                 this.userService.publishCurrentUserInfo(res);

@@ -6,7 +6,8 @@
 
 .chat-header-div {
     text-align: center;
-    padding: 5px 0 5px 0;
+    padding: 10px 0 0 0;
+    font-size: 15px;
 }
 
 .profile-img-div {
@@ -28,7 +29,7 @@
 .conversation-div {
     display: flex;
     flex-direction: row;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 .conversation-preview-div {

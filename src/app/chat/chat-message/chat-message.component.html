@@ -12,9 +12,9 @@
 <!-- curr user is recipient -->
 <div *ngIf="currUserId !== message.senderId" class='recipient-message-div'>
     <div *ngIf="!prevSenderId || prevSenderId === currUserId" class='user-header-div'>
-        <img [src]="profileImgSrc" class="profile-img"
+        <img [src]="senderProfileImgSrc" class="profile-img"
             onerror="this.src='/assets/user.png'">
-        <span class='user-name-span'>{{ conversationTitle }}</span>
+        <span class='user-name-span'>{{ senderName }}</span>
     </div>
     <div class='message-rec-div'>
         <div class='message-content-div message-content-rec-div'>

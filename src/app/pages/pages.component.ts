@@ -51,7 +51,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                     userIdArr.push(userId);
                     imgExtArr.push(res.userInfoMap[userId].profile_image_extension);
                 });
-                this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr).toPromise()
+                this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr)
                     .then(res => {
                         for (let i = 0; i < userIdArr.length; i++) {
                             this.userInfoMap[userIdArr[i]]['profileImgUrl'] = res[userIdArr[i]];

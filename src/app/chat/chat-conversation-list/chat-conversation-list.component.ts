@@ -58,7 +58,7 @@ export class ChatConversationListComponent implements OnInit {
                     userIdArr.push(x.user_id);
                     imgExtArr.push(x.profile_image_extension);
                 });
-                return this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr).toPromise();
+                return this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr);
             })
             .then((res: {[key: string]: string}) => {
                 for (const [key, value] of Object.entries(res)) {

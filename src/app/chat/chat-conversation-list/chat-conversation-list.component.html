@@ -4,7 +4,7 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
-    <div class='chat-header-div'>Conversations</div>
+    <div class='chat-header-div'><strong>Conversations</strong></div>
     <div *ngFor="let conversation of conversationArr" class='conversation-div'>
         <div class='profile-img-div'>
             <img [src]="userInfoMap[conversation.participantId]?.profile_image_url" class="profile-img"
@@ -13,7 +13,11 @@
         <div class='conversation-preview-div'>
             <div class='conversation-header-div'>
                 <a class='conversation-header-a' [routerLink]="['/chat', 'conversation', conversation.conversationId]"
-                    [queryParams]="{ title: conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name, profileImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }">
+                    [queryParams]="{
+                        isGroup: conversation.isGroup, title: conversation.title, recipientId: conversation.participantId,
+                        recipientName: userInfoMap[conversation.participantId]?.full_name,
+                        recipientImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }"
+                >
                        {{ conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name }}
                 </a>
             </div>

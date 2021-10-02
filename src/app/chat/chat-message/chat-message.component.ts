@@ -10,9 +10,9 @@ import { getDateDiffInMin } from "../../shared/time_utils";
 })
 export class ChatMessageComponent implements OnInit{
     @Input() currUserId: string;
-    @Input() conversationTitle: string;
     @Input() message: Message;
-    @Input() profileImgSrc: string;
+    @Input() senderName: string;
+    @Input() senderProfileImgSrc: string;
     @Input() prevSenderId: string | null | undefined;
     @Input() isSending: boolean;
     @Input() nextMessage: Message | null;

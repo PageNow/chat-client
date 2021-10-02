@@ -10,6 +10,9 @@ import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET, LOAD_MESSAGE_LIMIT } fro
 import { ChatService } from "../chat.service";
 import { Message } from "../models/message.model";
 import { EXTENSION_ID } from "../../shared/config";
+import { UserService } from "src/app/user/user.service";
+import { UserInfoPublic } from "src/app/user/user.model";
+import { getFullName } from "src/app/shared/user_utils";
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 
@@ -25,17 +28,24 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     currUserId: string;
     currUserInfoSubscription: Subscription;
 
+    newMessageContent = '';
     messageArr: Message[] = []; // from old to new
     sendingMessageArr: Message[] = [];
     newMessageSubscription: Subscription;
     messagesAllLoaded = true;
     isLoadingMoreMessages = false;
 
+    // variables related to conversation
     conversationId: string;
+    conversationIsGroup: boolean;
     conversationTitle: string;
     recipientId: string;
-    recipientImgUrl: string;
-    newMessageContent = '';
+    recipientName: string; // for direct conversation
+    recipientImgUrl: string; // for direct conversation
+
+    // variables related to user information
+    userNameMap: {[key: string]: string} = {};
+    userProfileImgUrlMap: {[key: string]: string} = {};
 
     // TODO: errorMap
 
@@ -47,6 +57,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private spinner: NgxSpinnerService,
+        private userService: UserService,
         private chatService: ChatService
     ) { }
 
@@ -54,13 +65,63 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         this.conversationId = this.route.snapshot.paramMap.get('conversationId') || '';
         this.route.queryParams.subscribe(params => {
             this.conversationTitle = params.title;
-            this.recipientImgUrl = params.profileImgUrl;
+            this.conversationIsGroup = params.isGroup === 'true' ? true : false;
+            this.recipientId = params.recipientId;
+            this.recipientImgUrl = params.recipientImgUrl;
+            this.recipientName = params.recipientName;
+
+            this.userNameMap = {
+                ...this.userNameMap,
+                [this.recipientId]: this.recipientName
+            };
+            this.userProfileImgUrlMap = {
+                ...this.userProfileImgUrlMap,
+                [this.recipientId]: this.recipientImgUrl
+            };
+
+            // if group conversation, get participant information
+            this.chatService.getConversationParticipants(this.conversationId)
+                .then(res => {
+                    const delIdx = res.indexOf(this.recipientId);
+                    if (delIdx > -1) {
+                        res.splice(delIdx, 1);
+                    }                    
+                    return this.userService.getUsersPublicInfo(res);
+                })
+                .then(res => {
+                    const nameMap: {[key: string]: string} = {};
+                    const userIdArr: string[] = [], profileImgExtArr: string[] = [];
+                    res.forEach((x: UserInfoPublic) => {
+                        nameMap[x.user_id] = getFullName(x.first_name, x.middle_name, x.last_name);
+                        if (x.profile_image_extension && x.profile_image_uploaded_at) {
+                            userIdArr.push(x.user_id);
+                            profileImgExtArr.push(x.profile_image_extension);
+                        }
+                    });
+                    this.userNameMap = {
+                        ...this.userNameMap,
+                        ...nameMap
+                    };
+                    if (userIdArr.length === 0) {
+                        return Promise.resolve([]);
+                    }
+                    return this.userService.getProfileImageGetUrlArr(userIdArr, profileImgExtArr);
+                })
+                .then((res: {[key: string]: string}) => {
+                    this.userProfileImgUrlMap = {
+                        ...this.userProfileImgUrlMap,
+                        ...res
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         });
+
         this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
         this.spinner.show();
         this.newMessageSubscription = this.chatService.newMessageSubject.subscribe(
             (res: Message) => {
-                console.log(res);
                 this.messageArr = [ ...this.messageArr, res ];
                 let delIdx;
                 for (let idx = this.sendingMessageArr.length - 1; idx >= 0; idx--) {
@@ -97,6 +158,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }
