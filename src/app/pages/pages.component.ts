@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
+import { EXTENSION_ID } from '../shared/config';
+import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 
 import { PagesService } from './pages.service';
@@ -12,8 +15,15 @@ const SPINNER_PAGES_INIT_MSG = 'Fetching data...';
     styleUrls: ['./pages.component.scss']
 })
 export class PagesComponent implements OnInit, OnDestroy {
+    // variables related to user info
+    userInfoSubscription: Subscription;
     userId: string;
     userInfoMap: {[key: string]: any} = {}; // map of friendId to username
+    shareMode: string;
+    domainAllowSet: Set<string>;
+    domainDenySet: Set<string>;
+
+    // variables related to presence
     presenceArr: any = [];
     userPresence: any;
 
@@ -22,6 +32,10 @@ export class PagesComponent implements OnInit, OnDestroy {
     // variables for public profile component
     showProfile = false;
     profileId: string;
+
+    // variables for current url and domain
+    currUrl: string;
+    currDomain: string;
 
     spinnerMsg = '';
 
@@ -34,6 +48,21 @@ export class PagesComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.spinnerMsg = SPINNER_PAGES_INIT_MSG;
         this.spinner.show();
+
+        this.userInfoSubscription = this.userService.currUserInfo.subscribe(
+            (res: UserInfoPrivate | null) => {
+                console.log(res);
+                if (res) {
+                    this.shareMode = res.share_mode;
+                    this.domainAllowSet = new Set(res.domain_allow_array);
+                    this.domainDenySet = new Set(res.domain_deny_array);
+                }
+            },
+            (err: any) => {
+                console.log(err);
+            }
+        );
+
         this.pagesService.getPresence()
             .then(res => {
                 console.log(res);
@@ -64,16 +93,26 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.spinnerMsg = '';
                 this.spinner.hide();
             });
+        const message = {
+            type: 'get-curr-url'
+        };
+        chrome.runtime.sendMessage(EXTENSION_ID, message, (response) => {
+            console.log(response);
+            if (response.code === 'success') {
+                this.currUrl = response.data.url;
+                this.currDomain = response.data.domain;
+            }
+        });
     }
 
     ngOnDestroy(): void {
         window.removeEventListener('message',
             this.messageEventListener.bind(this));
+        this.userInfoSubscription?.unsubscribe();
     }
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'update-presence') {
-            console.log(event.data.data);
             if (event.data.data.userId === this.userId) {
                 this.userPresence = {
                     userId: event.data.data.userId,
@@ -114,5 +153,9 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     onClickBack(): void {
         this.showProfile = false;
+    }
+
+    allowCurrDomain(): void {
+        // allow curr domain based on share mode
     }
 }

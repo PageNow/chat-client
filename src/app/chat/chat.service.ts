@@ -94,22 +94,7 @@ export class ChatService implements OnDestroy {
         }).toPromise();
     }
     
-    // public async setMessageIsRead(
-    //     conversationId: string, senderId: string, recipientId: string
-    // ): Promise<any> {
-    //     return await this.apollo.mutate({
-    //         mutation: operations.setMessageIsRead,
-    //         variables: { conversationId, senderId, recipientId }
-    //     }).toPromise();
-    // }
-
-    // public subscribeToNewMessagesAll(userId: string): any {
-    //     return this.apollo.subscribe({
-    //         query: operations.onCreateDirectMessage,
-    //         variables: {
-    //             recipientId: userId
-    //         }
-    //     });
-    // }
-
+    public publishUnreadConversationCnt(): void {
+        this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
+    }
 }

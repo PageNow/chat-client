@@ -133,6 +133,14 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 if (delIdx !== null && delIdx !== undefined) {
                     this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1,) ];
                 }
+                // set message as read
+                const message = {
+                    type: 'read-messages',
+                    data: {
+                        conversationId: this.conversationId
+                    }
+                };
+                chrome.runtime.sendMessage(EXTENSION_ID, message);
             },
             err => {
                 console.log(err);
@@ -154,7 +162,15 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 } else {
                     this.messagesAllLoaded = false;
                 }
-                // TODO: set message as read
+                // set conversation messages as read
+                const message = {
+                    type: 'read-messages',
+                    data: {
+                        conversationId: this.conversationId
+                    }
+                };
+                console.log('sending read-messages to chrome runtime');
+                chrome.runtime.sendMessage(EXTENSION_ID, message);
             })
             .catch(err => {
                 console.log(err);

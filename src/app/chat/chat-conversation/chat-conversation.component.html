@@ -10,7 +10,7 @@
     </div>
     <div class='user-name-div'>
         <a *ngIf="!conversationIsGroup" class='user-name-a' [routerLink]="['/profile', recipientId]">
-            {{ conversationTitle }}
+            {{ recipientName }}
         </a>
         <span *ngIf="conversationIsGroup" style="font-size: 15px;">{{ conversationTitle }}</span>
     </div>

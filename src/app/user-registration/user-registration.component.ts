@@ -42,7 +42,7 @@ export class UserRegistrationComponent implements OnInit {
         console.log('user-registration onInit');
         Auth.currentAuthenticatedUser()
             .then(() => {
-                return this.userService.getCurrentUserInfo().toPromise();
+                return this.userService.getCurrentUserInfo();
             })
             .then(res => {
                 this.router.navigate([`/profile/${res.user_id}`]);

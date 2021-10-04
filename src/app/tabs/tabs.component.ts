@@ -1,7 +1,6 @@
 /// <reference types="chrome" />
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import {
     faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
@@ -45,12 +44,15 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     constructor(
         private router: Router,
-        private spinner: NgxSpinnerService,
         private userService: UserService,
         private chatService: ChatService
     ) {
-        window.addEventListener('message',
-            this.messageEventListener.bind(this));
+        Auth.currentAuthenticatedUser()
+            .then(res => {
+                this.userId = res.username;
+                window.addEventListener('message',
+                    this.messageEventListener.bind(this));
+            })
 
         Auth.currentSession()
             .then(res => {
@@ -66,41 +68,35 @@ export class TabsComponent implements OnInit, OnDestroy {
                 console.log(err);
             });
 
-        this.userService.getCurrentUserInfo().toPromise()
-            .then((res: UserInfoPrivate): void => {
-                console.log(res);
-                this.userService.publishCurrentUserInfo(res);
-                this.userId = res.user_id;
-                this.shareMode = res.share_mode;
-                this.domainAllowSet = new Set(res.domain_allow_array);
-                this.domainDenySet = new Set(res.domain_deny_array);
-                const message = {
-                    type: 'update-user-info',
-                    data: {
-                        shareMode: res.share_mode,
-                        domainAllowSet: res.domain_allow_array,
-                        domainDenySet: res.domain_deny_array
+        this.userInfoSubscription = this.userService.currUserInfo.subscribe(
+            (res: UserInfoPrivate | null) => {
+                if (res) {
+                    this.shareMode = res.share_mode;
+                    this.domainAllowSet = new Set(res.domain_allow_array);
+                    this.domainDenySet = new Set(res.domain_deny_array);
+                    const message = {
+                        type: 'update-user-info',
+                        data: {
+                            shareMode: res.share_mode,
+                            domainAllowSet: res.domain_allow_array,
+                            domainDenySet: res.domain_deny_array
+                        }
                     }
+                    chrome.runtime.sendMessage(EXTENSION_ID, message);
                 }
-                chrome.runtime.sendMessage(EXTENSION_ID, message);
-                this.spinner.hide();
-            })
-            .catch(err => {
-                this.spinner.hide();
+            },
+            (err: any) => {
                 console.log(err);
-                console.log(err.status);
                 if (err.status === 404) {
                     this.tabsHidden = true;
                     this.router.navigate(['/user-registration'], { replaceUrl: true});
-                } else {
-                    // this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
-            });
+            }
+        )
 
         this.nUnreadConversations = chatService.unreadConversationIdSet.size;
         this.unreadConversationCntSubscription = this.chatService.unreadConversationCntSubject.subscribe(
             (res: number) => {
-                console.log(res);
                 this.nUnreadConversations = res;
             },
             err => {
@@ -122,8 +118,18 @@ export class TabsComponent implements OnInit, OnDestroy {
     }
 
     private messageEventListener(event: MessageEvent): void {
-        if (event.data.type === 'send-message') {
-            console.log(event.data.data);
+        switch (event.data.type) {
+            case 'send-message':
+                console.log(event.data.data);
+                break;
+            case 'read-messages':
+                if (event.data.data.userId === this.userId) {
+                    this.chatService.unreadConversationIdSet.delete(event.data.data.conversationId);
+                    this.chatService.publishUnreadConversationCnt();
+                }
+                break;
+            default:
+                break;
         }
     }
 

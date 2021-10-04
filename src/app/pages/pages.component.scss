@@ -1,5 +1,8 @@
 @import '../../stylings/variables';
 
+$share-div-height: 25px;
+$share-div-margin-bottom: 5px;
+
 .main-div {
     padding: 0 10px 0 10px;
 }
@@ -7,10 +10,12 @@
 .user-share-div {
     white-space: nowrap;
     overflow: hidden;
-    margin-bottom: 5px;
+    margin-bottom: $share-div-margin-bottom;
     display: flex;
     flex-direction: row;
     align-items: center;
+    border-bottom: 1px solid $tabs-hr-color;
+    height: $share-div-height;
 }
 
 .user-sharing-intro-span {
@@ -26,11 +31,29 @@
     vertical-align: middle;
 }
 
+.url-block-div {
+    font-size: 15px;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: $share-div-margin-bottom;
+    border-bottom: 1px solid $tabs-hr-color;
+    height: $share-div-height;
+}
+
+.click-span {
+    color: $link-color;
+}
+
+.click-span:hover {
+    color: $link-hover-color;
+}
+
 .presence-div {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .profile-image-div {
@@ -56,7 +79,7 @@
 .user-name-span {
     width: max-content;
     color: black;
-    font-size: 12px;
+    font-size: 15px;
 }
 
 .user-name-span:hover {
@@ -67,9 +90,13 @@
     width: max-content;
     text-decoration: none;
     color: $link-color;
-    font-size: 15px;
+    font-size: 12px;
 }
 
 .page-a:hover {
     color: $link-hover-color;
+}
+
+.offline-span {
+    font-size: 12px;
 }

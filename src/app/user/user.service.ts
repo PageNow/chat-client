@@ -15,17 +15,18 @@ export class UserService {
     constructor(
         private http: HttpClient
     ) {
-        console.log('user service constructor');
-        this.httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json'
+        this.getCurrentUserInfo()
+            .then((res: UserInfoPrivate) => {
+                this.publishCurrentUserInfo(res);
             })
-        };
+            .catch(err => {
+                console.log(err);
+            });
     }
 
-    public getCurrentUserInfo(): Observable<any> {
+    public getCurrentUserInfo(): Promise<any> {
         console.log('authService: calling /users/me');
-        return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions);
+        return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions).toPromise();
     }
 
     public publishCurrentUserInfo(userInfo: UserInfoPrivate): void {
