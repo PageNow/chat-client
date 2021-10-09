@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from '@angular/core';
 
-import { Message } from "../models/message.model";
-import { getDateDiffInMin } from "../../shared/time_utils";
+import { Message } from '../models/message.model';
+import { getDateDiffInMin } from '../../shared/time_utils';
 
 @Component({
     selector: 'app-chat-message',
@@ -19,7 +19,7 @@ export class ChatMessageComponent implements OnInit{
 
     sentAt: string;
 
-    ngOnInit(): void {        
+    ngOnInit(): void {
         if (this.nextMessage === null) {
             this.sentAt = this.message.sentAt;
         } else if (this.nextMessage.senderId !== this.message.senderId) {

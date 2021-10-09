@@ -26,7 +26,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
 
     currUserId: string;
     currUserName: string;
-    
+
     userInfo: UserInfoPublic;
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
@@ -60,7 +60,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 console.log(err);
             }
         );
-        this.userService.getUserPublicInfo(this.userId).toPromise()
+        this.userService.getUserPublicInfo(this.userId)
             .then((res: UserInfoPublic) => {
                 console.log(res);
                 this.userInfo = res;

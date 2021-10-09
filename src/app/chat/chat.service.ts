@@ -27,13 +27,13 @@ export class ChatService implements OnDestroy {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
 
         this.getUserConversations(null)
             .then((res: Conversation[]) => {
                 res.filter((conversation: Conversation) => !conversation.isRead)
                     .map((conversation: Conversation) => conversation.conversationId)
-                    .forEach((x: string) => this.unreadConversationIdSet.add(x))
+                    .forEach((x: string) => this.unreadConversationIdSet.add(x));
                 this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
             })
             .catch(err => {
@@ -59,7 +59,7 @@ export class ChatService implements OnDestroy {
     }
 
     public async getDirectConversation(targetUserId: string): Promise<any> {
-        const url = `${CHAT_API_URL}/conversation/direct/${targetUserId}`
+        const url = `${CHAT_API_URL}/conversation/direct/${targetUserId}`;
         return await this.http.get(url).toPromise();
     }
 
@@ -90,10 +90,10 @@ export class ChatService implements OnDestroy {
     ): Promise<any> {
         const url = `${CHAT_API_URL}/conversation`;
         return await this.http.post(url, {
-            recipientIdArr: recipientIdArr, isGroup: isGroup, title: title
+            recipientIdArr, isGroup, title
         }).toPromise();
     }
-    
+
     public publishUnreadConversationCnt(): void {
         this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
     }

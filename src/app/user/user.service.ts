@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import { USER_API_URL } from '../shared/config';
@@ -9,7 +9,6 @@ import { UserCreate, UserInfoPrivate, UserInfoUpdate } from './user.model';
     providedIn: 'root'
 })
 export class UserService {
-    httpOptions: any;
     currUserInfo = new BehaviorSubject<UserInfoPrivate | null>(null);
 
     constructor(
@@ -20,75 +19,66 @@ export class UserService {
                 this.publishCurrentUserInfo(res);
             })
             .catch(err => {
-                console.log(err);
+                this.currUserInfo.error(err);
             });
     }
 
     public getCurrentUserInfo(): Promise<any> {
         console.log('authService: calling /users/me');
-        return this.http.get(`${USER_API_URL}/users/me`, this.httpOptions).toPromise();
+        return this.http.get(`${USER_API_URL}/users/me`).toPromise();
     }
 
     public publishCurrentUserInfo(userInfo: UserInfoPrivate): void {
-        console.log(userInfo);
         this.currUserInfo.next(userInfo);
     }
 
     public createCurrentUserInfo(userInfo: UserCreate): Observable<any> {
         return this.http.post(
             `${USER_API_URL}/users/me`,
-            JSON.stringify(userInfo),
-            this.httpOptions
+            JSON.stringify(userInfo)
         );
     }
 
-    public updateCurrentUserInfo(userInfo: UserInfoUpdate): Observable<any> {
+    public updateCurrentUserInfo(userInfo: UserInfoUpdate): Promise<any> {
         return this.http.put(
             `${USER_API_URL}/users/me`,
-            JSON.stringify(userInfo),
-            this.httpOptions
-        );
+            userInfo
+        ).toPromise();
     }
 
-    public getUserPublicInfo(userId: string): Observable<any> {
+    public getUserPublicInfo(userId: string): Promise<any> {
         return this.http.get(
-            `${USER_API_URL}/users/id/${userId}`,
-            this.httpOptions
-        );
+            `${USER_API_URL}/users/id/${userId}`
+        ).toPromise();
     }
 
     public getUsersPublicInfo(userIdArr: string[]): Promise<any> {
         return this.http.get(
-            `${USER_API_URL}/users/ids/${userIdArr}`,
-            this.httpOptions
+            `${USER_API_URL}/users/ids/${userIdArr}`
         ).toPromise();
     }
 
     public getProfileImageUploadUrl(imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`,
-            this.httpOptions
+            `${USER_API_URL}/users/me/profile-image-upload-url?image_ext=${imgExt}`
         );
     }
 
     public getProfileImageGetUrl(userId: string, imgExt: string): Observable<any> {
         return this.http.get(
-            `${USER_API_URL}/users/id/${userId}/profile-image-url?image_ext=${imgExt}`,
-            this.httpOptions
+            `${USER_API_URL}/users/id/${userId}/profile-image-url?image_ext=${imgExt}`
         );
     }
 
-    public getProfileImageGetUrlArr(userIdArr: string[], imgExtArr: string[]): Promise<any> {
+    public getProfileImageGetUrlMap(userIdArr: string[], imgExtArr: string[]): Promise<any> {
         return this.http.get(
-            `${USER_API_URL}/users/ids/${userIdArr.join(',')}/profile-image-url?image_ext_arr=${imgExtArr.join(',')}`,
-            this.httpOptions
+            `${USER_API_URL}/users/ids/${userIdArr.join(',')}/profile-image-url?image_ext_arr=${imgExtArr.join(',')}`
         ).toPromise();
     }
 
     public deleteProfileIamge(): Observable<any> {
         return this.http.delete(
-            `${USER_API_URL}/users/me/profile-image`,
-            this.httpOptions
+            `${USER_API_URL}/users/me/profile-image`
         );
     }
 }

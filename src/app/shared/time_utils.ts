@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const DATES = Array.from({length: 31}, (_, i) => i + 1);
 const currentTime = new Date();
 export const CURR_YEAR = currentTime.getFullYear();

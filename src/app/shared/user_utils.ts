@@ -8,4 +8,4 @@ export const getFullName = (
         fullName = `${firstName} ${lastName}`;
     }
     return fullName;
-}
+};

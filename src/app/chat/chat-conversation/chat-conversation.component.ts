@@ -1,18 +1,18 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { NgxSpinnerService } from "ngx-spinner";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
 
-import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET, LOAD_MESSAGE_LIMIT } from "src/app/shared/constants";
-import { ChatService } from "../chat.service";
-import { Message } from "../models/message.model";
-import { EXTENSION_ID } from "../../shared/config";
-import { UserService } from "src/app/user/user.service";
-import { UserInfoPublic } from "src/app/user/user.model";
-import { getFullName } from "src/app/shared/user_utils";
+import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET, LOAD_MESSAGE_LIMIT } from 'src/app/shared/constants';
+import { ChatService } from '../chat.service';
+import { Message } from '../models/message.model';
+import { EXTENSION_ID } from '../../shared/config';
+import { UserService } from 'src/app/user/user.service';
+import { UserInfoPublic } from 'src/app/user/user.model';
+import { getFullName } from 'src/app/shared/user_utils';
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 
@@ -53,7 +53,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
 
     // fontawesome icons
     faPaperPlane = faPaperPlane;
-    
+
     constructor(
         private route: ActivatedRoute,
         private spinner: NgxSpinnerService,
@@ -85,12 +85,13 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                     const delIdx = res.indexOf(this.recipientId);
                     if (delIdx > -1) {
                         res.splice(delIdx, 1);
-                    }                    
+                    }
                     return this.userService.getUsersPublicInfo(res);
                 })
                 .then(res => {
                     const nameMap: {[key: string]: string} = {};
-                    const userIdArr: string[] = [], profileImgExtArr: string[] = [];
+                    const userIdArr: string[] = [];
+                    const profileImgExtArr: string[] = [];
                     res.forEach((x: UserInfoPublic) => {
                         nameMap[x.user_id] = getFullName(x.first_name, x.middle_name, x.last_name);
                         if (x.profile_image_extension && x.profile_image_uploaded_at) {
@@ -105,13 +106,13 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                     if (userIdArr.length === 0) {
                         return Promise.resolve([]);
                     }
-                    return this.userService.getProfileImageGetUrlArr(userIdArr, profileImgExtArr);
+                    return this.userService.getProfileImageGetUrlMap(userIdArr, profileImgExtArr);
                 })
                 .then((res: {[key: string]: string}) => {
                     this.userProfileImgUrlMap = {
                         ...this.userProfileImgUrlMap,
                         ...res
-                    }
+                    };
                 })
                 .catch(err => {
                     console.log(err);
@@ -131,7 +132,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                     }
                 }
                 if (delIdx !== null && delIdx !== undefined) {
-                    this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1,) ];
+                    this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1, ) ];
                 }
                 // set message as read
                 const message = {
@@ -145,7 +146,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             err => {
                 console.log(err);
             }
-        )
+        );
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
@@ -191,11 +192,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         const tempMessageId = uuidv4();
         const newMessage: Message = {
             messageId: '',
-            tempMessageId: tempMessageId,
             conversationId: this.conversationId,
             sentAt: '',
             senderId: this.currUserId,
             content: this.newMessageContent,
+            tempMessageId
         };
 
         this.sendingMessageArr = [ ...this.sendingMessageArr, newMessage ];
@@ -204,7 +205,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         const message = {
             type: 'send-message',
             data: {
-                tempMessageId: tempMessageId,
+                tempMessageId,
                 content: this.newMessageContent,
                 conversationId: this.conversationId
             }

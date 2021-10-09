@@ -91,7 +91,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     this.lastNameInput = res.last_name;
 
                     this.descriptionInput = res.description;
-                    this.activitySettings = res.share_mode === 'default_all' ? 'share' : 'hide';
+                    this.activitySettings = res.share_mode === 'default_all' ? 'hide' : 'share';
                     this.domainAllowArr = res.domain_allow_array.sort();
                     this.domainDenyArr = res.domain_deny_array.sort();
 
@@ -117,11 +117,13 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                             console.log(err);
                             this.profileImageUrl = '/assets/user.png';
                         });
+                    this.spinnerMsg = '';
                     this.spinner.hide();
                 }
             },
             err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
                 this.router.navigate(['/auth/gate'], { replaceUrl:  true });
             }
@@ -153,21 +155,23 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             last_name: this.lastNameInput
         } as UserInfoUpdate;
 
-        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
-            (res: UserInfoPrivate) => {
+        this.userService.updateCurrentUserInfo(updatedUserInfo)
+            .then((res: UserInfoPrivate) => {
+                this.userService.publishCurrentUserInfo(res);
                 this.userInfo = res;
                 this.firstNameInput = res.first_name;
                 this.middleNameInput = res.middle_name;
                 this.lastNameInput = res.last_name;
                 this.nameErrorMsg = '';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            },
-            err => {
+            })
+            .catch(err => {
                 console.log(err);
-                this.nameErrorMsg = err.error.detail;
+                this.nameErrorMsg = 'Saving name failed';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            }
-        );
+            });
     }
 
     saveDescription(): void {
@@ -181,19 +185,21 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             description: this.descriptionInput
         } as UserInfoUpdate;
 
-        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
-            (res: UserInfoPrivate) => {
+        this.userService.updateCurrentUserInfo(updatedUserInfo)
+            .then((res: UserInfoPrivate) => {
+                this.userService.publishCurrentUserInfo(res);
                 this.userInfo = res;
                 this.descriptionInput = res.description;
                 this.descriptionErrorMsg = '';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            },
-            err => {
+            })
+            .catch(err => {
                 console.log(err);
-                this.descriptionErrorMsg = err.error.detail;
+                this.descriptionErrorMsg = 'Saving description failed';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            }
-        );
+            });
     }
 
     removeDomain(domainIdx: number): void {
@@ -207,10 +213,10 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     addDomain(): void {
-        if (this.activitySettings === 'share') {
+        if (this.activitySettings === 'hide') {
             this.domainDenyArr.push(this.domainInput);
             this.domainDenyArr.sort();
-        } else if (this.activitySettings === 'hide') {
+        } else if (this.activitySettings === 'share') {
             this.domainAllowArr.push(this.domainInput);
             this.domainAllowArr.sort();
         } else {
@@ -227,28 +233,30 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         const updatedUserInfo: UserInfoUpdate = {
             ...this.userInfo,
 
-            share_mode: this.activitySettings === 'share' ? 'default_all' : 'default_none',
+            share_mode: this.activitySettings === 'share' ? 'default_none' : 'default_all',
             domain_allow_arr: this.domainAllowArr,
             domain_deny_arr: this.domainDenyArr
         } as UserInfoUpdate;
 
-        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
-            (res: UserInfoPrivate) => {
+        this.userService.updateCurrentUserInfo(updatedUserInfo)
+            .then((res: UserInfoPrivate) => {
+                this.userService.publishCurrentUserInfo(res);
                 this.userInfo = res;
-                this.activitySettings = res.share_mode === 'default_all' ? 'share' : 'hide';
+                this.activitySettings = res.share_mode === 'default_all' ? 'hide' : 'share';
                 this.domainAllowArr = res.domain_allow_array;
                 this.domainDenyArr = res.domain_deny_array;
                 this.domainAllowArr.sort();
                 this.domainDenyArr.sort();
                 this.activitySettingsErrorMsg = '';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            },
-            err => {
+            })
+            .catch(err => {
                 console.log(err);
-                this.activitySettingsErrorMsg = err.error.detail;
+                this.activitySettingsErrorMsg = 'Saving activity settings failed';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            }
-        );
+            });
     }
 
     saveAdditionalInfo(): void {
@@ -271,8 +279,9 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             location_public: this.locationOption === 'public' ? true : false
         } as UserInfoUpdate;
 
-        this.userService.updateCurrentUserInfo(updatedUserInfo).subscribe(
-            (res: UserInfoPrivate) => {
+        this.userService.updateCurrentUserInfo(updatedUserInfo)
+            .then((res: UserInfoPrivate) => {
+                this.userService.publishCurrentUserInfo(res);
                 this.userInfo = res;
                 this.emailInput = res.email;
                 this.genderInput = res.gender;
@@ -287,14 +296,15 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.locationOption = res.location_public ? 'public' : 'private';
 
                 this.additionalInfoErrorMsg = '';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            },
-            err => {
+            })
+            .catch(err => {
                 console.log(err);
-                this.additionalInfoErrorMsg = err.error.detail;
+                this.additionalInfoErrorMsg = 'Saving additional info failed';
+                this.spinnerMsg = '';
                 this.spinner.hide();
-            }
-        );
+            });
     }
 
     onSelectFile(event: any): void {

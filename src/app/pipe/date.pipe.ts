@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
     name: 'dateFormat'
@@ -20,7 +20,7 @@ export class DateFormatPipe implements PipeTransform {
 
         const year = date.getFullYear();
         let month;
-        switch(date.getMonth()) {
+        switch ( date.getMonth() ) {
             case 0:
                 month = 'Jan';
                 break;

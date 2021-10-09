@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import { ChatConversationListComponent } from "./chat-conversation-list/chat-conversation-list.component";
-import { ChatConversationComponent } from "./chat-conversation/chat-conversation.component";
+import { ChatConversationListComponent } from './chat-conversation-list/chat-conversation-list.component';
+import { ChatConversationComponent } from './chat-conversation/chat-conversation.component';
 
 const chatRoutes: Routes = [
     { path: 'conversation/:conversationId', component: ChatConversationComponent },

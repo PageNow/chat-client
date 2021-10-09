@@ -25,7 +25,7 @@ export class TabsComponent implements OnInit, OnDestroy {
     userInfoSubscription: Subscription;
     shareMode: string;
     domainAllowSet: Set<string>;
-    domainDenySet: Set<string>;    
+    domainDenySet: Set<string>;
 
     // fontawesome icons
     faSearch = faSearch;
@@ -52,7 +52,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                 this.userId = res.username;
                 window.addEventListener('message',
                     this.messageEventListener.bind(this));
-            })
+            });
 
         Auth.currentSession()
             .then(res => {
@@ -70,6 +70,7 @@ export class TabsComponent implements OnInit, OnDestroy {
 
         this.userInfoSubscription = this.userService.currUserInfo.subscribe(
             (res: UserInfoPrivate | null) => {
+                console.log(res);
                 if (res) {
                     this.shareMode = res.share_mode;
                     this.domainAllowSet = new Set(res.domain_allow_array);
@@ -81,7 +82,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                             domainAllowSet: res.domain_allow_array,
                             domainDenySet: res.domain_deny_array
                         }
-                    }
+                    };
                     chrome.runtime.sendMessage(EXTENSION_ID, message);
                 }
             },
@@ -92,7 +93,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                     this.router.navigate(['/user-registration'], { replaceUrl: true});
                 }
             }
-        )
+        );
 
         this.nUnreadConversations = chatService.unreadConversationIdSet.size;
         this.unreadConversationCntSubscription = this.chatService.unreadConversationCntSubject.subscribe(
@@ -102,7 +103,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             err => {
                 console.log(err);
             }
-        )
+        );
     }
 
     ngOnInit(): void {

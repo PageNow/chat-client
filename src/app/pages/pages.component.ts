@@ -75,18 +75,19 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.spinnerMsg = '';
                 this.spinner.hide();
                 // get profile image url
-                const userIdArr: string[] = [], imgExtArr: string[] = [];
+                const userIdArr: string[] = [];
+                const imgExtArr: string[] = [];
                 Object.keys(res.userInfoMap).forEach(userId => {
                     userIdArr.push(userId);
                     imgExtArr.push(res.userInfoMap[userId].profile_image_extension);
                 });
-                this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr)
-                    .then(res => {
-                        for (let i = 0; i < userIdArr.length; i++) {
-                            this.userInfoMap[userIdArr[i]]['profileImgUrl'] = res[userIdArr[i]];
+                this.userService.getProfileImageGetUrlMap(userIdArr, imgExtArr)
+                    .then((profileImageUrlMap: {[key: string]: string}) => {
+                        for (const userId of userIdArr) {
+                            this.userInfoMap[userId].profileImgUrl = profileImageUrlMap[userId];
                         }
                         console.log(this.userInfoMap);
-                    })
+                    });
             })
             .catch(err => {
                 console.log(err);
@@ -121,7 +122,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                         title: event.data.data.title,
                         domain: event.data.data.domain
                     }
-                }
+                };
             } else {
                 let idxToRemove;
                 for (let idx = 0; idx < this.presenceArr.length; idx++) {
@@ -131,7 +132,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                     }
                 }
                 if (idxToRemove !== undefined && idxToRemove !== null) {
-                    this.presenceArr = [ ...this.presenceArr.slice(0, idxToRemove), ...this.presenceArr.slice(idxToRemove + 1) ]
+                    this.presenceArr = [ ...this.presenceArr.slice(0, idxToRemove), ...this.presenceArr.slice(idxToRemove + 1) ];
                     const updatedUserPresence = {
                         userId: event.data.data.userId,
                         page: {

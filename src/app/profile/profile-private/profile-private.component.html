@@ -85,11 +85,11 @@
             <option value="share">Share</option>
             <option value="hide">Hide</option>
         </select>
-        <span>all pages except the following</span>
+        <span>activites on the following domains</span>
     </div>
 
     <div class='domain-list-div'>
-        <div *ngIf="activitySettings === 'share'">
+        <div *ngIf="activitySettings === 'hide'">
             <div *ngFor="let domain of domainDenyArr; let domainIdx=index"
                  class='domain-div'>
                 <span>{{ domain }}</span>
@@ -98,7 +98,7 @@
                 </fa-icon>
             </div>
         </div>
-        <div *ngIf="activitySettings === 'hide'">
+        <div *ngIf="activitySettings === 'share'">
             <div *ngFor="let domain of domainAllowArr; let domainIdx=index" class='domain-div'>
                 <span>{{ domain }}</span>
                 <fa-icon [icon]="faMinus" class='minus-icon'
@@ -120,10 +120,10 @@
 
     <div class='domain-helper-div'>
         <span *ngIf="activitySettings === 'hide'">
-            * You will be sharing only the pages listed above.
+            * You will be sharing all pages except the ones above.
         </span>
         <span *ngIf="activitySettings === 'share'">
-            * You will be sharing all pages except the ones above.
+            * You will be sharing only the pages listed above.
         </span>
     </div>
 

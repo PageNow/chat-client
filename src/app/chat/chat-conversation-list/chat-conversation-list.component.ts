@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { NgxSpinnerService } from "ngx-spinner";
+import { Component, OnInit } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Auth } from 'aws-amplify';
-import { faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { ChatService } from "../chat.service";
-import { Conversation } from "../models/conversation.model";
-import { UserService } from "src/app/user/user.service";
+import { ChatService } from '../chat.service';
+import { Conversation } from '../models/conversation.model';
+import { UserService } from 'src/app/user/user.service';
 import { getFullName } from '../../shared/user_utils';
-import { UserInfoPublic } from "src/app/user/user.model";
+import { UserInfoPublic } from 'src/app/user/user.model';
 
 const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
 
@@ -25,7 +25,7 @@ export class ChatConversationListComponent implements OnInit {
 
     // fontawesome icons
     faCircle = faCircle;
-    
+
     constructor(
         private spinner: NgxSpinnerService,
         private userService: UserService,
@@ -35,11 +35,11 @@ export class ChatConversationListComponent implements OnInit {
     ngOnInit(): void {
         this.spinnerMsg = SPINNER_CONVERSATION_LIST_FETCH_MSG;
         this.spinner.show();
-        
+
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
-                return this.chatService.getUserConversations(null)
+                return this.chatService.getUserConversations(null);
             })
             .then(res => {
                 console.log(res);
@@ -51,18 +51,19 @@ export class ChatConversationListComponent implements OnInit {
                 console.log(res);
                 this.spinnerMsg = '';
                 this.spinner.hide();
-                const userIdArr: string[] = [], imgExtArr: string[] = [];
+                const userIdArr: string[] = [];
+                const imgExtArr: string[] = [];
                 res.forEach((x: UserInfoPublic) => {
                     this.userInfoMap[x.user_id] = x;
-                    this.userInfoMap[x.user_id]['full_name'] = getFullName(x.first_name, x.middle_name, x.last_name);
+                    this.userInfoMap[x.user_id].full_name = getFullName(x.first_name, x.middle_name, x.last_name);
                     userIdArr.push(x.user_id);
                     imgExtArr.push(x.profile_image_extension);
                 });
-                return this.userService.getProfileImageGetUrlArr(userIdArr, imgExtArr);
+                return this.userService.getProfileImageGetUrlMap(userIdArr, imgExtArr);
             })
             .then((res: {[key: string]: string}) => {
                 for (const [key, value] of Object.entries(res)) {
-                    this.userInfoMap[key]['profile_image_url'] = value;
+                    this.userInfoMap[key].profile_image_url = value;
                 }
             })
             .catch(err => {
