@@ -1,8 +1,3 @@
-<ngx-spinner>
-    <p style="color: white;">
-        <strong>{{ spinnerMsg }}</strong>
-    </p>
-</ngx-spinner>
 <div class='main-div' *ngIf="!showProfile">
     <div class='search-input-div'>
         <select class="form-select form-select-sm search-select"
@@ -12,17 +7,19 @@
         </select>
         <div class='search-input-group'>
             <fa-icon [icon]="faSearch" class='search-icon'></fa-icon>
-            <input [(ngModel)]="searchInput"
-                   class='search-input' [placeholder]="searchPlaceholder" />
+            <input [ngModel]="searchInput" (ngModelChange)="onInputChange($event)"
+                   class='search-input form-control' [placeholder]="searchPlaceholder" />
             <fa-icon [icon]="faTimesCircle" class='cancel-icon' (click)="removeSearchInput()"></fa-icon>
         </div>
-        <button type="button" class="search-btn"
-                [disabled]="searchInput === ''" (click)="onSearch()">
-            Search
-        </button>
     </div>
-    <div class='search-output-div'>
-        <div *ngFor="let user of searchedFriendArr; let idx = index" class='search-output-item-div'>
+    <div class="search-spinner-div" *ngIf="isSearching">
+        <span class="spinner-border spinner-border-md text-primary"
+              role="status" aria-hidden="true">
+        </span>
+    </div>
+    <div class='search-output-div' *ngIf="!isSearching">
+        <div *ngFor="let user of searchedFriendArr; let idx = index"
+            class='search-output-item-div'>
             <div class='user-profile-image-div'>
                 <a [routerLink]="['/profile', user.user_id]" class="profile-a">
                     <img [src]="friendProfileImgUrlArr[idx]"
@@ -35,7 +32,7 @@
                         {{ user.first_name}} {{ user.middle_name }} {{ user.last_name }}
                     </span>
                 </div>
-                <div>{{ user.description }}</div>
+                <div class='description-div'>{{ user.description }}</div>
             </div>
         </div>
         <div *ngFor="let user of searchedUserArr; let idx = index" class='search-output-item-div'>
@@ -55,11 +52,18 @@
             </div>
         </div>
     </div>
-    <div *ngIf="searched && (!endOfFriendsSearch || !endOfUsersSearch)" class='search-more-div'>
+    <div *ngIf="!isSearching && !isSearchingMore && searched && (!endOfFriendsSearch || !endOfUsersSearch) && searchInput !== ''"
+         class='search-more-div'>
         <span (click)="onSearchMore()" class='search-more-span'>See More</span>
     </div>
-    <div *ngIf="endOfFriendsSearch && endOfUsersSearch" class='end-of-search-div'>
+    <div *ngIf="!isSearching && !isSearchingMore && endOfFriendsSearch && endOfUsersSearch && searchInput !== ''"
+         class='end-of-search-div'>
         End of Search
+    </div>
+    <div class="search-more-spinner-div" *ngIf="isSearchingMore">
+        <span class="spinner-border spinner-border-sm text-secondary"
+              role="status" aria-hidden="true">
+        </span>
     </div>
 </div>
 <app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">

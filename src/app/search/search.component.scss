@@ -1,7 +1,12 @@
 @import '../../stylings/variables';
 
 .main-div {
-    padding-top: 10px;
+    padding: 10px $main-lr-padding 0 $main-lr-padding;
+}
+
+.search-spinner-div {
+    text-align: center;
+    margin-top: 50px;
 }
 
 .search-input-div {
@@ -14,6 +19,7 @@
 
 .search-select {
     width: 90px;
+    margin-right: 10px;
 }
 
 .search-input-group {
@@ -21,8 +27,8 @@
 }
 
 .search-input {
-    padding: 0 25px 0 25px;
-    width: 180px;
+    padding: 2px 25px 2px 25px;
+    width: 230px;
 }
 
 .search-icon {
@@ -41,6 +47,10 @@
     color: grey;
 }
 
+.cancel-icon:hover {
+    cursor: pointer;
+}
+
 .search-output-div {
     margin-top: 15px;
 }
@@ -55,8 +65,8 @@
 }
 
 .profile-image {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 100%;
     object-fit: cover;
 }
@@ -67,6 +77,7 @@
 }
 
 .profile-link {
+    font-size: 15px;
     text-decoration: none;
     color: $link-color;
 }
@@ -74,6 +85,10 @@
 .profile-link:hover {
     cursor: pointer;
     color: $link-hover-color;
+}
+
+.description-div {
+    font-size: 14px;
 }
 
 .search-more-div {
@@ -94,5 +109,10 @@
 .end-of-search-div {
     text-align: center;
     font-size: 14px;
+    margin-top: 15px;
+}
+
+.search-more-spinner-div {
+    text-align: center;
     margin-top: 15px;
 }

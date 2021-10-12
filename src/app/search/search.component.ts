@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
 import { SEARCH_RESULT_LIMIT } from '../shared/constants';
 import { UserService } from '../user/user.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-
-const SPINNER_SEARCH_MSG = 'Searching users...';
 
 @Component({
     selector: 'app-search',
@@ -22,6 +20,7 @@ export class SearchComponent {
     searchOption = 'email';
     searchInput = '';
     searchPlaceholder = 'Enter email...';
+    searchInputChanged: Subject<string> = new Subject<string>();
 
     searched = false;
     searchedFriendArr: UserInfoSummary[] = [];
@@ -37,13 +36,28 @@ export class SearchComponent {
     showProfile = false;
     profileId: string;
 
-    spinnerMsg = '';
+    // boolean for showing spinner
+    isSearching = false;
+    isSearchingMore = false;
 
     constructor(
-        private spinner: NgxSpinnerService,
         private searchService: SearchService,
         private userService: UserService
-    ) { }
+    ) {
+        this.searchInputChanged.pipe(
+            debounceTime(300),
+            distinctUntilChanged()
+        ).subscribe(searchInput => {
+            this.searchInput = searchInput;
+            if (this.searchInput.length > 0) {
+                this.onSearch();
+            } else {
+                this.searchedFriendArr = [];
+                this.searchedUserArr = [];
+                this.searchedFriendIdSet = new Set([]);
+            }
+        });
+    }
 
     onSearch(): void {
         this.searched = true;
@@ -52,8 +66,7 @@ export class SearchComponent {
         this.userProfileImgUrlArr = [];
         this.endOfFriendsSearch = false;
         this.endOfUsersSearch = false;
-        this.spinnerMsg = SPINNER_SEARCH_MSG;
-        this.spinner.show();
+        this.isSearching = true;
         if (this.searchOption === 'email') {
             this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
                 .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
@@ -76,10 +89,10 @@ export class SearchComponent {
                     if (resUserArr.length > 0) {
                         this.updateProfileImgArr(resUserArr, false);
                     }
-                    this.spinner.hide();
+                    this.isSearching = false;
                 })
                 .catch(err => {
-                    this.spinner.hide();
+                    this.isSearching = false;
                     console.log(err);
                 });
         } else if (this.searchOption === 'name') {
@@ -104,11 +117,11 @@ export class SearchComponent {
                     if (resUserArr.length > 0) {
                         this.updateProfileImgArr(resUserArr, false);
                     }
-                    this.spinner.hide();
+                    this.isSearching = false;
                 })
                 .catch(err => {
                     console.log(err);
-                    this.spinner.hide();
+                    this.isSearching = false;
                 });
         }
     }
@@ -117,8 +130,7 @@ export class SearchComponent {
         console.log(this.endOfFriendsSearch);
         console.log(this.endOfUsersSearch);
         if (this.endOfFriendsSearch && this.endOfUsersSearch) { return; }
-        this.spinnerMsg = SPINNER_SEARCH_MSG;
-        this.spinner.show();
+        this.isSearchingMore = true;
         if (this.searchOption === 'email') {
             // there are still friends that must be included in the search result
             if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) {
@@ -144,11 +156,11 @@ export class SearchComponent {
                         if (resUserArr.length > 0) {
                             this.updateProfileImgArr(resUserArr, false);
                         }
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     })
                     .catch(err => {
                         console.log(err);
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     });
             } else { // only need to call searchUsers API Endpoint because there are no more friends
                 this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
@@ -161,11 +173,11 @@ export class SearchComponent {
                         if (resUserArr.length > 0) {
                             this.updateProfileImgArr(resUserArr, false);
                         }
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     })
                     .catch(err => {
                         console.log(err);
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     });
             }
         } else if (this.searchOption === 'name') {
@@ -191,11 +203,11 @@ export class SearchComponent {
                         if (resUserArr.length > 0) {
                             this.updateProfileImgArr(resUserArr, false);
                         }
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     })
                     .catch(err => {
                         console.log(err);
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     });
             } else {
                 this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
@@ -208,18 +220,18 @@ export class SearchComponent {
                         if (resUserArr.length > 0) {
                             this.updateProfileImgArr(resUserArr, false);
                         }
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     })
                     .catch(err => {
                         console.log(err);
-                        this.spinner.hide();
+                        this.isSearchingMore = false;
                     });
             }
         }
     }
 
     removeSearchInput(): void {
-        this.searchInput = '';
+        this.searchInputChanged.next('');
     }
 
     onSearchOptionChange(event: any): void {
@@ -231,6 +243,10 @@ export class SearchComponent {
         } else if (event.target.value === 'name') {
             this.searchPlaceholder = 'Enter name...';
         }
+    }
+
+    onInputChange(event: any): void {
+        this.searchInputChanged.next(event);
     }
 
     updateProfileImgArr(userInfoArr: UserInfoSummary[], isFriend: boolean): void {

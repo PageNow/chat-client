@@ -53,6 +53,7 @@ export class PagesComponent implements OnInit, OnDestroy {
             (res: UserInfoPrivate | null) => {
                 console.log(res);
                 if (res) {
+                    console.log(res);
                     this.shareMode = res.share_mode;
                     this.domainAllowSet = new Set(res.domain_allow_array);
                     this.domainDenySet = new Set(res.domain_deny_array);
@@ -114,6 +115,7 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'update-presence') {
+            console.log(event.data);
             if (event.data.data.userId === this.userId) {
                 this.userPresence = {
                     userId: event.data.data.userId,
