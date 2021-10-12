@@ -146,19 +146,26 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.spinnerMsg = SPINNER_SEND_MESSAGE_MSG;
         this.spinner.show();
         this.chatService.getDirectConversation(this.userInfo.user_id)
-            .then((res: any): Promise<any> => {
+            .then((res: any) => {
                 console.log(res);
-                if (res.data.conversationId === null) {
+                if (res.conversationId === undefined || res.conversationId === null) {
                     return this.chatService.createConversation(
                         [this.userInfo.user_id], false, '');
                 } else {
-                    return Promise.resolve({ data: { createConversation: { conversationId: res.data.getDirectConversation.conversationId }}});
+                    return Promise.resolve({ conversationId: res.conversationId });
                 }
             })
             .then(res => {
+                console.log(res);
                 this.spinnerMsg = '';
                 this.spinner.hide();
-                this.router.navigate([`/chat/conversation/${res.data.createConversation.conversationId}`]);
+                // console.log(`/chat/conversation/${res.conversationId}?isGroup=false&title=&recipientId=${this.userInfo.user_id}&recipientName=${this.userFullName}&recipientImgUrl=${this.userProfileImgUrl}`);
+                // this.router.navigate([`/chat/conversation/${res.conversationId}?isGroup=false&recipientId=${this.userInfo.user_id}&recipientName=${this.userFullName}&recipientImgUrl=${this.userProfileImgUrl}`], { replaceUrl: true });
+                this.router.navigate([`/chat/conversation/${res.conversationId}`], { queryParams: {
+                    isGroup: 'false', title: '', recipientId: this.userInfo.user_id,
+                    recipientName: getFullName(this.userInfo.first_name, this.userInfo.middle_name, this.userInfo.last_name),
+                    recipientImgUrl: this.userProfileImgUrl
+                }});
             })
             .catch(err => {
                 console.log(err);

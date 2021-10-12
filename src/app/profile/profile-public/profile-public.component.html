@@ -17,23 +17,23 @@
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && isFriendRequestPending === false"
          class='profile-btn-div'>
-        <button (click)="addFriend()">Add Friend</button>
+        <button class='btn btn-primary btn-sm' (click)="addFriend()">Add Friend</button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === true"
          class='profile-btn-div'>
-        <button (click)="sendMessage()">Message</button>
+        <button class='btn btn-primary btn-sm' (click)="sendMessage()">Message</button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === true"
          class='profile-btn-div'>
-        <button (click)="deleteFriend()">Unfriend</button>
+        <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">Unfriend</button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && isFriendRequestPending === true"
          class='profile-btn-div'>
-        <button (click)="deleteFriend()">Cancel Friend Request</button>
+        <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">Cancel Friend Request</button>
     </div>
     <!-- <div><button>Pending Friend Request</button></div> -->
     <div *ngIf="currUserId && userId === currUserId" class='profile-btn-div'>
-        <button (click)="navigateToMyProfile()">Edit Profile</button>
+        <button class='btn btn-primary btn-sm' (click)="navigateToMyProfile()">Edit Profile</button>
     </div>
     <div class='description-div'>
         {{ userInfo?.description }}
