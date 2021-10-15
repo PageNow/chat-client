@@ -1,6 +1,5 @@
 export interface UserCreate {
     first_name: string;
-    middle_name: string;
     last_name: string;
     dob: string;
     gender: string;
@@ -10,7 +9,6 @@ export interface UserInfoSummary {
     user_id: string;
 
     first_name: string;
-    middle_name: string;
     last_name: string;
     full_name?: string;
 
@@ -48,7 +46,6 @@ export interface UserInfoPrivate extends UserInfoPublic {
 
 export interface UserInfoUpdate {
     first_name: string;
-    middle_name: string;
     last_name: string;
 
     description: string;

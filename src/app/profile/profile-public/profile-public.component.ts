@@ -53,7 +53,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             res => {
                 if (res) {
                     this.currUserId = res.user_id;
-                    this.currUserName = getFullName(res.first_name, res.middle_name, res.last_name);
+                    this.currUserName = getFullName(res.first_name, res.last_name);
                 }
             },
             err => {
@@ -163,7 +163,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 // this.router.navigate([`/chat/conversation/${res.conversationId}?isGroup=false&recipientId=${this.userInfo.user_id}&recipientName=${this.userFullName}&recipientImgUrl=${this.userProfileImgUrl}`], { replaceUrl: true });
                 this.router.navigate([`/chat/conversation/${res.conversationId}`], { queryParams: {
                     isGroup: 'false', title: '', recipientId: this.userInfo.user_id,
-                    recipientName: getFullName(this.userInfo.first_name, this.userInfo.middle_name, this.userInfo.last_name),
+                    recipientName: getFullName(this.userInfo.first_name, this.userInfo.last_name),
                     recipientImgUrl: this.userProfileImgUrl
                 }});
             })

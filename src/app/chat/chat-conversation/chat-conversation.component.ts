@@ -93,7 +93,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                     const userIdArr: string[] = [];
                     const profileImgExtArr: string[] = [];
                     res.forEach((x: UserInfoPublic) => {
-                        nameMap[x.user_id] = getFullName(x.first_name, x.middle_name, x.last_name);
+                        nameMap[x.user_id] = getFullName(x.first_name, x.last_name);
                         if (x.profile_image_extension && x.profile_image_uploaded_at) {
                             userIdArr.push(x.user_id);
                             profileImgExtArr.push(x.profile_image_extension);

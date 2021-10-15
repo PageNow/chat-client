@@ -55,7 +55,7 @@ export class ChatConversationListComponent implements OnInit {
                 const imgExtArr: string[] = [];
                 res.forEach((x: UserInfoPublic) => {
                     this.userInfoMap[x.user_id] = x;
-                    this.userInfoMap[x.user_id].full_name = getFullName(x.first_name, x.middle_name, x.last_name);
+                    this.userInfoMap[x.user_id].full_name = getFullName(x.first_name, x.last_name);
                     userIdArr.push(x.user_id);
                     imgExtArr.push(x.profile_image_extension);
                 });

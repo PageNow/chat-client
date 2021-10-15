@@ -26,7 +26,6 @@
         <div class='presence-page-div'>
             <span class='user-name-span' (click)="onClickProfile(presence.userId)">
                 {{ userInfoMap[presence.userId].first_name }}
-                {{ userInfoMap[presence.userId].middle_name }}
                 {{ userInfoMap[presence.userId].last_name }}
             </span>
             <a *ngIf="presence.page" [href]='presence.page.url' target="_blank" class='page-a'>

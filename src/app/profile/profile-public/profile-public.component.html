@@ -13,7 +13,7 @@
         />
     </div>
     <div class='name-div'>
-        <strong>{{ userInfo?.first_name }} {{ userInfo?.middle_name }} {{ userInfo?.last_name }}</strong>
+        <strong>{{ userInfo?.first_name }} {{ userInfo?.last_name }}</strong>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && isFriendRequestPending === false"
          class='profile-btn-div'>

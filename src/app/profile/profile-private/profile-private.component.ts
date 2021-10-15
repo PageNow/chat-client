@@ -37,7 +37,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     // Name
     firstNameInput = '';
-    middleNameInput = '';
     lastNameInput = '';
     nameErrorMsg = '';
 
@@ -87,7 +86,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     this.userInfo = res;
 
                     this.firstNameInput = res.first_name;
-                    this.middleNameInput = res.middle_name;
                     this.lastNameInput = res.last_name;
 
                     this.descriptionInput = res.description;
@@ -151,7 +149,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             ...this.userInfo,
 
             first_name: this.firstNameInput,
-            middle_name: this.middleNameInput,
             last_name: this.lastNameInput
         } as UserInfoUpdate;
 
@@ -160,7 +157,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                 this.userService.publishCurrentUserInfo(res);
                 this.userInfo = res;
                 this.firstNameInput = res.first_name;
-                this.middleNameInput = res.middle_name;
                 this.lastNameInput = res.last_name;
                 this.nameErrorMsg = '';
                 this.spinnerMsg = '';

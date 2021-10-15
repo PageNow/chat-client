@@ -70,7 +70,6 @@ export class UserRegistrationComponent implements OnInit {
 
         const userInfo: UserCreate = {
             first_name: this.firstName,
-            middle_name: '',
             last_name: this.lastName,
             gender: this.gender === 'other' && this.otherGender !== '' ?
                     this.otherGender : this.gender,
