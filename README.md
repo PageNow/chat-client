@@ -20,6 +20,10 @@
 * First sign-in process is not smooth
 * External provider - check if the same email exists
 
+### Pages
+
+* Better UI on displaying offline and current page
+
 ### Cache
 
 * Use cache for profile images
