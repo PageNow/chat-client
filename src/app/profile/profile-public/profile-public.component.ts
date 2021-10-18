@@ -9,8 +9,11 @@ import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
 import { getFullName } from '../../shared/user_utils';
+import { NotificationsService } from 'src/app/notifications/notifications.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
+const SPINNER_FRIENDSHIP_ACCEPT_MSG = 'Accepting friend request...';
+const SPINNER_FRIENDSHIP_REJECT_MSG = 'Rejecting friend request...';
 const SPINNER_FRIENDSHIP_ADD_MSG = 'Making friend request...';
 const SPINNER_FRIENDSHIP_DELETE_MSG = 'Cancelling friend request...';
 const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
@@ -23,7 +26,8 @@ const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Input() userId: string;
     @Output() backEvent = new EventEmitter<boolean>();
-    @Output() deleteFriendEvent = new EventEmitter<string>();
+    @Output() deleteFriendRequestEvent = new EventEmitter<string>();
+    @Output() acceptFriendRequestEvent = new EventEmitter<string>();
 
     currUserId: string;
     currUserName: string;
@@ -32,9 +36,11 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     userProfileImgUrl = '/assets/user.png';
     currUserInfoSubscription: Subscription;
 
-    isFriend: boolean;
-    isFriendRequestPending: boolean;
+    // variables related to friendship status
     friendshipInfo: Friendship;
+    isFriend: boolean;
+    friendRequestSent: boolean; // true if there is a friend request sent
+    friendRequestReceived: boolean; // 
 
     spinnerMsg = '';
 
@@ -43,7 +49,8 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private friendshipService: FriendshipService,
-        private chatService: ChatService
+        private chatService: ChatService,
+        private notificationsService: NotificationsService
     ) { }
 
     ngOnInit(): void {
@@ -63,7 +70,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         );
         this.userService.getUserPublicInfo(this.userId)
             .then((res: UserInfoPublic) => {
-                console.log(res);
                 this.userInfo = res;
                 return this.userService.getProfileImageGetUrl(
                     res.user_id, res.profile_image_extension
@@ -77,21 +83,30 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 console.log(res);
                 if (res) {
                     this.friendshipInfo = res;
-                    if (res.accepted_at) {
+                    if (res.accepted_at) { // is friend
                         this.isFriend = true;
-                        this.isFriendRequestPending = false;
-                    } else {
+                        this.friendRequestSent = false;
+                    this.friendRequestReceived = false;
+                    } else if (this.currUserId === res.user_id1) { // not friend, friend request sent
                         this.isFriend = false;
-                        this.isFriendRequestPending = true;
+                        this.friendRequestSent = true;
+                        this.friendRequestReceived = false;
+                    } else { // not friend, friend request received
+                        this.isFriend = false;
+                        this.friendRequestSent = false;
+                        this.friendRequestReceived = true;
                     }
-                } else {
+                } else { // not friend and no friend request sent/received
                     this.isFriend = false;
-                    this.isFriendRequestPending = false;
+                    this.friendRequestSent = false;
+                    this.friendRequestReceived = false;
                 }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }
@@ -113,12 +128,40 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 console.log(res);
                 if (res.success) {
                     this.isFriend = false;
-                    this.isFriendRequestPending = true;
+                    this.friendRequestSent = true;
+                    this.friendRequestReceived = false;
                 }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
+                this.spinner.hide();
+            });
+    }
+    
+    acceptFriendRequest(): void {
+        if (!this.userInfo) { return; }
+        this.spinnerMsg = SPINNER_FRIENDSHIP_ACCEPT_MSG;
+        this.spinner.show();
+        this.friendshipService.acceptFriendRequest(this.userInfo.user_id)
+            .then(res => {
+                console.log(res);
+                if (res.success) {
+                    this.isFriend = true;
+                    this.friendRequestSent = false;
+                    this.friendRequestReceived = false;
+                    this.acceptFriendRequestEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
+                    this.notificationsService.decrementNotificationCnt();
+                }
+                this.spinnerMsg = '';
+                this.spinner.hide();
+            })
+            .catch(err => {
+                console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }
@@ -131,16 +174,43 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             .then(res => {
                 if (res.success) {
                     this.isFriend = false;
-                    this.isFriendRequestPending = false;
-                    this.deleteFriendEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
+                    this.friendRequestSent = false;
+                    this.friendRequestReceived = false;
+                    this.deleteFriendRequestEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
                         this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
                 }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
+    }
+
+    deleteFriendRequest(): void {
+        if (!this.userInfo) { return; }
+        this.spinnerMsg= SPINNER_FRIENDSHIP_REJECT_MSG;
+        this.spinner.show();
+        this.friendshipService.deleteFriendRequest(this.userId)
+            .then(res => {
+                if (res.success) {
+                    this.isFriend = false;
+                    this.friendRequestSent = false;
+                    this.friendRequestReceived = false;
+                    this.deleteFriendRequestEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
+                    this.notificationsService.decrementNotificationCnt();
+                }
+                this.spinnerMsg = '';
+                this.spinner.hide();
+            })
+            .catch(err => {
+                console.log(err);
+                this.spinnerMsg = '';
+                this.spinner.hide();
+            })
     }
 
     sendMessage(): void {

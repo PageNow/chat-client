@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { forkJoin } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { FriendshipService } from '../friendship/friendship.service';
 import { UserInfoSummary } from '../user/user.model';
 import { UserService } from '../user/user.service';
+import { NotificationsService } from './notifications.service';
 
-const SPINNER_NOTIFICATION_FETCH_MSG = 'Fetching notifications...';
 const SPINNER_FRIEND_ACCEPT_MSG = 'Accepting friend request...';
 const SPINNER_FRIEND_DELETE_MSG = 'Deleting friend request...';
 
@@ -15,9 +15,12 @@ const SPINNER_FRIEND_DELETE_MSG = 'Deleting friend request...';
     templateUrl: './notifications.component.html',
     styleUrls: ['./notifications.component.scss']
 })
-export class NotificationsComponent implements OnInit {
-    friendshipRequestUserArr: UserInfoSummary[] = [];
-    profileImgUrlArr: string[] = [];
+export class NotificationsComponent implements OnInit, OnDestroy {
+    friendRequestUserArrSubscription: Subscription;
+    friendRequestUserArr: UserInfoSummary[] = [];
+    userProfileImgUrlMap: {[key: string]: string} = {};
+
+    isNotificationLoaded = false;
 
     spinnerMsg = '';
 
@@ -28,52 +31,65 @@ export class NotificationsComponent implements OnInit {
     constructor(
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private friendshipService: FriendshipService
+        private friendshipService: FriendshipService,
+        private notificationsService: NotificationsService
     ) { }
 
     ngOnInit(): void {
-        this.spinnerMsg = SPINNER_NOTIFICATION_FETCH_MSG;
-        this.spinner.show();
-        this.friendshipService.getFriendshipRequests().toPromise()
-            .then((res: UserInfoSummary[]) => {
+        this.notificationsService.friendRequestUserArrSubject.subscribe(
+            (res: UserInfoSummary[]) => {
                 console.log(res);
-                this.friendshipRequestUserArr = res;
-                if (res.length > 0) {
-                    this.getProfileImgArr(res);
-                }
-                this.spinner.hide();
+                this.friendRequestUserArr = res;
+                this.updateUserProfileImgUrlMap(res);
+                this.isNotificationLoaded = true;
+            },
+            err => {
+                console.log(err);
+                this.isNotificationLoaded = true;
+            }
+        )
+    }
+
+    ngOnDestroy(): void {
+        this.friendRequestUserArrSubscription?.unsubscribe();
+    }
+
+    updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
+        const requestUserInfoArr = userInfoArr.filter((x: UserInfoSummary) =>
+            !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
+        if (requestUserInfoArr.length > 0) {
+            this.userService.getProfileImageGetUrlMap(
+                requestUserInfoArr.map(x => x.user_id), requestUserInfoArr.map(x => x.profile_image_extension)
+            ).then(res => {
+                console.log(res);
+                this.userProfileImgUrlMap = {
+                    ...this.userProfileImgUrlMap,
+                    ...res
+                };
             })
             .catch(err => {
                 console.log(err);
-                this.spinner.hide();
             });
-    }
-
-    getProfileImgArr(userInfoArr: UserInfoSummary[]): void {
-        const profileImgUrlRequestArr = [];
-        for (const userInfo of userInfoArr) {
-            profileImgUrlRequestArr.push(
-                this.userService.getProfileImageGetUrl(
-                    userInfo.user_id, userInfo.profile_image_extension
-                )
-            );
         }
-        forkJoin(profileImgUrlRequestArr).subscribe(urlArr => {
-            this.profileImgUrlArr = urlArr.map(x => x !== null ? x : '/assets/usre.png');
-        });
     }
 
     acceptFriendRequest(userId: string): void {
         this.spinnerMsg = SPINNER_FRIEND_ACCEPT_MSG;
         this.spinner.show();
-        this.friendshipService.acceptFriendRequest(userId).toPromise()
+        this.friendshipService.acceptFriendRequest(userId)
             .then(res => {
                 console.log(res);
-                this.friendshipRequestUserArr = this.friendshipRequestUserArr.filter(x => x.user_id !== userId);
+                if (res.success) {
+                    this.friendRequestUserArr = this.friendRequestUserArr.filter(
+                        (x: UserInfoSummary) => x.user_id !== userId);
+                    this.notificationsService.decrementNotificationCnt();
+                }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }
@@ -84,11 +100,17 @@ export class NotificationsComponent implements OnInit {
         this.friendshipService.deleteFriendRequest(userId)
             .then(res => {
                 console.log(res);
-                this.friendshipRequestUserArr = this.friendshipRequestUserArr.filter(x => x.user_id !== userId);
+                if (res.success) {
+                    this.friendRequestUserArr = this.friendRequestUserArr.filter(
+                        (x: UserInfoSummary) => x.user_id !== userId);
+                    this.notificationsService.decrementNotificationCnt();
+                }
+                this.spinnerMsg = '';
                 this.spinner.hide();
             })
             .catch(err => {
                 console.log(err);
+                this.spinnerMsg = '';
                 this.spinner.hide();
             });
     }

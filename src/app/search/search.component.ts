@@ -48,7 +48,7 @@ export class SearchComponent {
     constructor(
         private searchService: SearchService,
         private userService: UserService,
-        private friendshipService: FriendshipService
+        private friendshipService: FriendshipService,
     ) {
         this.searchInputChanged.pipe(
             debounceTime(300),
@@ -186,10 +186,21 @@ export class SearchComponent {
             })
     }
 
-    onDelete(event: string): void {
+    onDeleteFriendRequest(event: string): void {
         for (let idx = 0; idx < this.searchedUserArr.length; idx++) {
             if (this.searchedUserArr[idx].user_id === event) {
                 this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_NONE;
+                return;
+            }
+        }
+    }
+
+    onAcceptFriendRequest(event: string): void {
+        console.log(event);
+        for (let idx = 0; idx < this.searchedUserArr.length; idx++) {
+            if (this.searchedUserArr[idx].user_id === event) {
+                this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_ACCEPTED;
+                return;
             }
         }
     }

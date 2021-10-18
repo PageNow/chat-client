@@ -11,6 +11,7 @@ import { EXTENSION_ID } from '../shared/config';
 import { UserService } from '../user/user.service';
 import { UserInfoPrivate } from '../user/user.model';
 import { ChatService } from '../chat/chat.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   selector: 'app-tabs',
@@ -42,10 +43,15 @@ export class TabsComponent implements OnInit, OnDestroy {
     nUnreadConversations = 0;
     unreadConversationCntSubscription: Subscription;
 
+    // variables for notifications
+    nNotifications = 0;
+    notificationCntSubscription: Subscription;
+
     constructor(
         private router: Router,
         private userService: UserService,
-        private chatService: ChatService
+        private chatService: ChatService,
+        private notificationsService: NotificationsService
     ) {
         Auth.currentAuthenticatedUser()
             .then(res => {
@@ -104,6 +110,15 @@ export class TabsComponent implements OnInit, OnDestroy {
                 console.log(err);
             }
         );
+
+        this.notificationCntSubscription = this.notificationsService.notificationCntSubject.subscribe(
+            (res: number) => {
+                this.nNotifications = res;
+            },
+            err => {
+                console.log(err);
+            }
+        )
     }
 
     ngOnInit(): void {
@@ -113,6 +128,7 @@ export class TabsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.userInfoSubscription?.unsubscribe();
         this.unreadConversationCntSubscription?.unsubscribe();
+        this.notificationCntSubscription?.unsubscribe();
 
         window.removeEventListener('message',
             this.messageEventListener.bind(this));

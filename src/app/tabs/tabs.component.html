@@ -26,6 +26,9 @@
                 [ngClass]="{'selected-fa-icon': currTab === 'notifications',
                             'default-fa-icon': currTab !== 'notifications'}">
             </fa-icon>
+            <span *ngIf="nNotifications" class="badge-span">
+                <strong>{{ nNotifications }}</strong>
+            </span>
         </div>
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'profile-me'}">
             <fa-icon [icon]="faUserCircle" [routerLink]="['/profile', 'me']"

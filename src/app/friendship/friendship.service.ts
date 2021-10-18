@@ -21,11 +21,11 @@ export class FriendshipService {
         };
     }
 
-    public getFriendshipRequests(): Observable<any> {
+    public getFriendshipRequests(): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/friendship/requests`,
             this.httpOptions
-        );
+        ).toPromise();
     }
 
     public checkFriendship(userId: string): Observable<any> {
@@ -38,7 +38,7 @@ export class FriendshipService {
     public addFriend(userId: string): Promise<any> {
         const friendshipRequest = { user_id2: userId };
         return this.http.post(
-            `${USER_API_URL}/friendship/request`,
+            `${USER_API_URL}/friendship/requests`,
             friendshipRequest,
             this.httpOptions
         ).toPromise();
@@ -58,16 +58,16 @@ export class FriendshipService {
 
     public deleteFriendRequest(userId: string): Promise<any> {
         return this.http.delete(
-            `${USER_API_URL}/friendship/request/${userId}`,
+            `${USER_API_URL}/friendship/requests/${userId}`,
             this.httpOptions
         ).toPromise();
     }
 
-    public acceptFriendRequest(userId: string): Observable<any> {
+    public acceptFriendRequest(userId: string): Promise<any> {
         return this.http.post(
             `${USER_API_URL}/friendship/accept`,
             { user_id1: userId },
             this.httpOptions
-        );
+        ).toPromise();
     }
 }

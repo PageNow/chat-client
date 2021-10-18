@@ -15,7 +15,8 @@
     <div class='name-div'>
         <strong>{{ userInfo?.first_name }} {{ userInfo?.last_name }}</strong>
     </div>
-    <div *ngIf="currUserId && userId !== currUserId && isFriend === false && isFriendRequestPending === false"
+    <div *ngIf="currUserId && userId !== currUserId && isFriend === false
+                && friendRequestSent === false && friendRequestReceived === false"
          class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="addFriend()">Add Friend</button>
     </div>
@@ -27,9 +28,23 @@
          class='profile-btn-div'>
         <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">Unfriend</button>
     </div>
-    <div *ngIf="currUserId && userId !== currUserId && isFriend === false && isFriendRequestPending === true"
+    <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
          class='profile-btn-div'>
-        <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">Cancel Friend Request</button>
+        <button class='btn btn-primary btn-sm' (click)="acceptFriendRequest()">
+            Accept Friend Request
+        </button>
+    </div>
+    <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
+         class='profile-btn-div'>
+        <button class='btn btn-secondary btn-sm' (click)="deleteFriendRequest()">
+            Decline Friend Request
+        </button>
+    </div>
+    <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestSent === true"
+         class='profile-btn-div'>
+        <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">
+            Cancel Friend Request
+        </button>
     </div>
     <!-- <div><button>Pending Friend Request</button></div> -->
     <div *ngIf="currUserId && userId === currUserId" class='profile-btn-div'>

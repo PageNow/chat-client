@@ -4,11 +4,16 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
-    <div class='subheader-div'>Friend Requests</div>
-    <div *ngFor='let user of friendshipRequestUserArr; let idx = index' class='notification-item-div'>
+    <div *ngIf="friendRequestUserArr.length > 0" class='subheader-div'>
+        <strong>Friend Requests</strong>
+    </div>
+    <div *ngIf="isNotificationLoaded && friendRequestUserArr.length === 0" class='subheader-div'>
+        There is no notification.
+    </div>
+    <div *ngFor='let user of friendRequestUserArr; let idx = index' class='notification-item-div'>
         <div class='profile-image-div'>
             <a [routerLink]="['/profile', user.user_id]" class="profile-a">
-                <img [src]="profileImgUrlArr[idx]"
+                <img [src]="userProfileImgUrlMap[user.user_id]"
                  class="profile-image" onerror="this.src='/assets/user.png'">
             </a>
         </div>
