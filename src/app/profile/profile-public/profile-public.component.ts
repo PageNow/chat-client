@@ -23,6 +23,7 @@ const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Input() userId: string;
     @Output() backEvent = new EventEmitter<boolean>();
+    @Output() deleteFriendEvent = new EventEmitter<string>();
 
     currUserId: string;
     currUserName: string;
@@ -107,7 +108,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         if (!this.userInfo) { return; }
         this.spinnerMsg = SPINNER_FRIENDSHIP_ADD_MSG;
         this.spinner.show();
-        this.friendshipService.addFriend(this.userInfo.user_id).toPromise()
+        this.friendshipService.addFriend(this.userInfo.user_id)
             .then(res => {
                 console.log(res);
                 if (res.success) {
@@ -126,12 +127,13 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         if (!this.userInfo) { return; }
         this.spinnerMsg = SPINNER_FRIENDSHIP_DELETE_MSG;
         this.spinner.show();
-        this.friendshipService.deleteFriend(this.friendshipInfo.user_id1, this.friendshipInfo.user_id2).toPromise()
+        this.friendshipService.deleteFriend(this.friendshipInfo.user_id1, this.friendshipInfo.user_id2)
             .then(res => {
-                console.log(res);
                 if (res.success) {
                     this.isFriend = false;
                     this.isFriendRequestPending = false;
+                    this.deleteFriendEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
                 }
                 this.spinner.hide();
             })

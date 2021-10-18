@@ -16,6 +16,9 @@ export interface UserInfoSummary {
 
     profile_image_uploaded_at: Date;
     profile_image_extension: string;
+
+    friendship_state?: number;
+    mutual_friend_count?: number;
 }
 
 export interface UserInfoPublic extends UserInfoSummary {

@@ -1,6 +1,6 @@
 <div class='main-div' *ngIf="!showProfile">
     <div class='search-input-div'>
-        <select class="form-select form-select-sm search-select"
+        <select class="form-select form-select-sm search-select" [value]="searchOption"
                 (change)="onSearchOptionChange($event)">
             <option value="email">Email</option>
             <option value="name">Name</option>
@@ -18,45 +18,51 @@
         </span>
     </div>
     <div class='search-output-div' *ngIf="!isSearching">
-        <div *ngFor="let user of searchedFriendArr; let idx = index"
+        <div *ngFor="let user of searchedUserArr; let idx = index"
             class='search-output-item-div'>
             <div class='user-profile-image-div'>
                 <a [routerLink]="['/profile', user.user_id]" class="profile-a">
-                    <img [src]="friendProfileImgUrlArr[idx]"
+                    <img [src]="userProfileImgUrlMap[user.user_id]"
                         class="profile-image" onerror="this.src='/assets/user.png'">
                 </a>
             </div>
             <div class='user-info-div'>
-                <div>
+                <div class='profile-link-div'>
                     <span class='profile-link' (click)="onClickProfile(user)">
                         {{ user.first_name}} {{ user.last_name }}
                     </span>
                 </div>
-                <div class='description-div'>{{ user.description }}</div>
-            </div>
-        </div>
-        <div *ngFor="let user of searchedUserArr; let idx = index" class='search-output-item-div'>
-            <div class='user-profile-image-div'>
-                <a [routerLink]="['/profile', user.user_id]" class="profile-a">
-                    <img [src]="userProfileImgUrlArr[idx]"
-                        class="profile-image" onerror="this.src='/assets/user.png'">
-                </a>
-            </div>
-            <div class='user-info-div'>
-                <div>
-                    <span class='profile-link' (click)="onClickProfile(user)">
-                        {{ user.first_name}} {{ user.last_name }}
+                <div *ngIf="user.friendship_state === FRIENDSHIP_ACCEPTED"
+                     class='user-friendship-div'>
+                    <span>Friend</span>
+                </div>
+                <div *ngIf="user.friendship_state !== FRIENDSHIP_ACCEPTED && user.mutual_friend_count !== undefined && user.mutual_friend_count > 0"
+                     class='user-friendship-div'>
+                    <span>{{ user.mutual_friend_count }} Mutual Friend{{ user.mutual_friend_count > 1 ? 's' : '' }}</span>
+                </div>
+                <div *ngIf="user.friendship_state !== FRIENDSHIP_ACCEPTED && user.mutual_friend_count !== undefined && user.mutual_friend_count === 0"
+                     class='description-div'>
+                    <span *ngIf="user.description !== ''">
+                        {{ user.description }} 
+                    </span>
+                    <span *ngIf="user.description === ''">
+                        &nbsp;
                     </span>
                 </div>
-                <div>{{ user.description }} </div>
+            </div>
+            <div class='user-icon-div' *ngIf="user.friendship_state === FRIENDSHIP_NONE">
+                <fa-icon [icon]="faUserPlus" class='add-friend-icon' (click)="addFriend(idx)"></fa-icon>
+            </div>
+            <div class='user-icon-div' *ngIf="user.friendship_state === FRIENDSHIP_PENDING">
+                <fa-icon [icon]="faUserClock" class='pending-friend-icon'></fa-icon>
             </div>
         </div>
     </div>
-    <div *ngIf="!isSearching && !isSearchingMore && searched && (!endOfFriendsSearch || !endOfUsersSearch) && searchInput !== ''"
+    <div *ngIf="!isSearching && !isSearchingMore && searched && !endOfSearch && searchInput !== ''"
          class='search-more-div'>
         <span (click)="onSearchMore()" class='search-more-span'>See More</span>
     </div>
-    <div *ngIf="!isSearching && !isSearchingMore && endOfFriendsSearch && endOfUsersSearch && searchInput !== ''"
+    <div *ngIf="!isSearching && !isSearchingMore && endOfSearch && searchInput !== ''"
          class='end-of-search-div'>
         End of Search
     </div>
@@ -66,5 +72,6 @@
         </span>
     </div>
 </div>
-<app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">
+<app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()"
+    (deleteFriendEvent)="onDelete($event)">
 </app-profile-public>

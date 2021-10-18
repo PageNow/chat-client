@@ -20,42 +20,20 @@ export class SearchService {
         };
     }
 
-    public searchFriendsByEmail(
-        email: string, exact: boolean, limit: number, offset: number
-    ): Promise<any> {
-        const exactStr = exact ? 'true' : 'false';
-        return this.http.get(
-            `${USER_API_URL}/friendship/search/email/${email}?exact=${exactStr}&limit=${limit}&offset=${offset}`,
-            this.httpOptions
-        ).toPromise();
-    }
-
     public searchUsersByEmail(
-        email: string, exact: boolean, limit: number, offset: number
+        email: string, limit: number, offset: number
     ): Promise<any> {
-        const exactStr = exact ? 'true' : 'false';
         return this.http.get(
-            `${USER_API_URL}/users/search/email/${email}?exact=${exactStr}&limit=${limit}&offset=${offset}`,
-            this.httpOptions
-        ).toPromise();
-    }
-
-    public searchFriendsByName(
-        name: string, exact: boolean, limit: number, offset: number
-    ): Promise<any> {
-        const exactStr = exact ? 'true' : 'false';
-        return this.http.get(
-            `${USER_API_URL}/friendship/search/name/${name}?exact=${exactStr}&limit=${limit}&offset=${offset}`,
+            `${USER_API_URL}/users/search/email/${email}?limit=${limit}&offset=${offset}`,
             this.httpOptions
         ).toPromise();
     }
 
     public searchUsersByName(
-        name: string, exact: boolean, limit: number, offset: number
+        name: string, limit: number, offset: number
     ): Promise<any> {
-        const exactStr = exact ? 'true' : 'false';
         return this.http.get(
-            `${USER_API_URL}/users/search/name/${name}?exact=${exactStr}&limit=${limit}&offset=${offset}`,
+            `${USER_API_URL}/users/search/name/${name}?limit=${limit}&offset=${offset}`,
             this.httpOptions
         ).toPromise();
     }

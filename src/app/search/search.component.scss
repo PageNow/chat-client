@@ -58,6 +58,8 @@
 .search-output-item-div {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .user-profile-image-div {
@@ -72,8 +74,11 @@
 }
 
 .user-info-div {
-    display: flex;
-    flex-direction: column;
+    flex-grow: 1;
+}
+
+.profile-link-div {
+    margin-bottom: auto;
 }
 
 .profile-link {
@@ -87,8 +92,36 @@
     color: $link-hover-color;
 }
 
+.user-friendship-div {
+    color: $date-color;
+    font-size: 13px;
+    align-items: flex-start;
+    vertical-align: text-top;
+}
+
 .description-div {
-    font-size: 14px;
+    font-size: 13px;
+    color: $date-color;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.user-icon-div {
+    padding-right: 5px;
+}
+
+.add-friend-icon {
+    color: $tabs-color;
+    font-size: 15px;
+}
+
+.add-friend-icon:hover {
+    cursor: pointer;
+    color: black;
+}
+
+.pending-friend-icon {
+    color: $date-color;
 }
 
 .search-more-div {

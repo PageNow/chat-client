@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
-import { faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { forkJoin, Subject } from 'rxjs';
+import { faSearch, faTimesCircle, faUserPlus, faUserClock } from '@fortawesome/free-solid-svg-icons';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
 import { SEARCH_RESULT_LIMIT } from '../shared/constants';
 import { UserService } from '../user/user.service';
+import { FriendshipState } from '../friendship/friendship.model';
+import { FriendshipService } from '../friendship/friendship.service';
 
 @Component({
     selector: 'app-search',
@@ -16,21 +18,19 @@ import { UserService } from '../user/user.service';
 export class SearchComponent {
     faSearch = faSearch;
     faTimesCircle = faTimesCircle;
+    faUserPlus = faUserPlus;
+    faUserClock = faUserClock;
 
-    searchOption = 'email';
+    // variables for search input
+    searchOption = 'name';
     searchInput = '';
-    searchPlaceholder = 'Enter email...';
+    searchPlaceholder = 'Enter name...';
     searchInputChanged: Subject<string> = new Subject<string>();
 
     searched = false;
-    searchedFriendArr: UserInfoSummary[] = [];
+    endOfSearch = false; // boolean for indicating whether there is no more  
     searchedUserArr: UserInfoSummary[] = [];
-    searchedFriendIdSet: Set<string> = new Set();
-    friendProfileImgUrlArr: string[] = [];
-    userProfileImgUrlArr: string[] = [];
-
-    endOfFriendsSearch = false;
-    endOfUsersSearch = false;
+    userProfileImgUrlMap: {[key: string]: string} = {};
 
     // variables for public profile component
     showProfile = false;
@@ -40,9 +40,15 @@ export class SearchComponent {
     isSearching = false;
     isSearchingMore = false;
 
+    // variables for friendship state enum to be used in template
+    FRIENDSHIP_ACCEPTED = FriendshipState.ACCEPTED;
+    FRIENDSHIP_PENDING = FriendshipState.PENDING;
+    FRIENDSHIP_NONE = FriendshipState.NONE;
+
     constructor(
         private searchService: SearchService,
-        private userService: UserService
+        private userService: UserService,
+        private friendshipService: FriendshipService
     ) {
         this.searchInputChanged.pipe(
             debounceTime(300),
@@ -52,181 +58,73 @@ export class SearchComponent {
             if (this.searchInput.length > 0) {
                 this.onSearch();
             } else {
-                this.searchedFriendArr = [];
                 this.searchedUserArr = [];
-                this.searchedFriendIdSet = new Set([]);
+                this.searched = false;
+                this.endOfSearch = false;
             }
         });
     }
 
     onSearch(): void {
         this.searched = true;
-        this.searchedFriendIdSet = new Set();
-        this.friendProfileImgUrlArr = [];
-        this.userProfileImgUrlArr = [];
-        this.endOfFriendsSearch = false;
-        this.endOfUsersSearch = false;
         this.isSearching = true;
         if (this.searchOption === 'email') {
-            this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
-                .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
-                    if (res.length >= 0 && res.length < SEARCH_RESULT_LIMIT) {
-                        this.endOfFriendsSearch = true;
-                    }
-                    res.map(x => this.searchedFriendIdSet.add(x.user_id));
-                    this.searchedFriendArr = res;
-                    if (res.length > 0) {
-                        this.updateProfileImgArr(res, true);
-                    }
-                    return this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
-                })
-                .then(res => {
-                    if (this.endOfFriendsSearch && res.length === 0) {
-                        this.endOfUsersSearch = true;
-                    }
-                    const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                    this.searchedUserArr = resUserArr;
-                    if (resUserArr.length > 0) {
-                        this.updateProfileImgArr(resUserArr, false);
-                    }
+            this.searchService.searchUsersByEmail(this.searchInput, SEARCH_RESULT_LIMIT, 0)
+                .then((res: UserInfoSummary[]) => {
+                    console.log(res);
+                    this.searchedUserArr = res;
                     this.isSearching = false;
-                })
-                .catch(err => {
-                    this.isSearching = false;
-                    console.log(err);
-                });
-        } else if (this.searchOption === 'name') {
-            this.searchService.searchFriendsByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
-                .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
+                    this.updateUserProfileImgUrlMap(res);
                     if (res.length < SEARCH_RESULT_LIMIT) {
-                        this.endOfFriendsSearch = true;
+                        this.endOfSearch = true;
                     }
-                    res.map(x => this.searchedFriendIdSet.add(x.user_id));
-                    this.searchedFriendArr = res;
-                    if (res.length > 0) {
-                        this.updateProfileImgArr(res, true);
-                    }
-                    return this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
                 })
-                .then(res => {
-                    if (this.endOfFriendsSearch && res.length === 0) {
-                        this.endOfUsersSearch = true;
-                    }
-                    const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                    this.searchedUserArr = resUserArr;
-                    if (resUserArr.length > 0) {
-                        this.updateProfileImgArr(resUserArr, false);
-                    }
+        } else if (this.searchOption === 'name') {
+            this.searchService.searchUsersByName(this.searchInput, SEARCH_RESULT_LIMIT, 0)
+                .then((res: UserInfoSummary[]) => {
+                    console.log(res);
+                    this.searchedUserArr = res;
                     this.isSearching = false;
+                    this.updateUserProfileImgUrlMap(res);
+                    if (res.length < SEARCH_RESULT_LIMIT) {
+                        this.endOfSearch = true;
+                    }
                 })
-                .catch(err => {
-                    console.log(err);
-                    this.isSearching = false;
-                });
         }
     }
 
     onSearchMore(): void {
-        console.log(this.endOfFriendsSearch);
-        console.log(this.endOfUsersSearch);
-        if (this.endOfFriendsSearch && this.endOfUsersSearch) { return; }
+        if (this.endOfSearch) { return; }
         this.isSearchingMore = true;
         if (this.searchOption === 'email') {
-            // there are still friends that must be included in the search result
-            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) {
-                this.searchService.searchFriendsByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
-                    .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
-                        if (res.length < SEARCH_RESULT_LIMIT) {
-                            this.endOfFriendsSearch = true;
-                        }
-                        res.map(x => this.searchedFriendIdSet.add(x.user_id));
-                        this.searchedFriendArr = [...this.searchedFriendArr, ...res];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, true);
-                        }
-                        return this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
-                    })
-                    .then(res => {
-                        // endOfFriendsSearch means that there is at least one search for users
-                        if (this.endOfFriendsSearch && res.length === 0) {
-                            this.endOfUsersSearch = true;
-                        }
-                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
-                        if (resUserArr.length > 0) {
-                            this.updateProfileImgArr(resUserArr, false);
-                        }
-                        this.isSearchingMore = false;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.isSearchingMore = false;
-                    });
-            } else { // only need to call searchUsers API Endpoint because there are no more friends
-                this.searchService.searchUsersByEmail(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
-                    .then((res: UserInfoSummary[]): void => {
-                        if (res.length < SEARCH_RESULT_LIMIT) {
-                            this.endOfUsersSearch = true;
-                        }
-                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
-                        if (resUserArr.length > 0) {
-                            this.updateProfileImgArr(resUserArr, false);
-                        }
-                        this.isSearchingMore = false;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.isSearchingMore = false;
-                    });
-            }
+            this.searchService.searchUsersByEmail(this.searchInput, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
+                .then((res: UserInfoSummary[]) => {
+                    console.log(res);
+                    this.searchedUserArr = [ ...this.searchedUserArr, ...res ];
+
+                    this.isSearchingMore = false;
+                    this.updateUserProfileImgUrlMap(res);
+                    if (res.length < SEARCH_RESULT_LIMIT) {
+                        this.endOfSearch = true;
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         } else if (this.searchOption === 'name') {
-            if (this.searchedUserArr.length === 0 && !this.endOfFriendsSearch) {
-                this.searchService.searchFriendsByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedFriendArr.length)
-                    .then((res: UserInfoSummary[]): Promise<UserInfoSummary[]> => {
-                        if (res.length < SEARCH_RESULT_LIMIT) {
-                            this.endOfFriendsSearch = true;
-                        }
-                        res.map(x => this.searchedFriendIdSet.add(x.user_id));
-                        this.searchedFriendArr = [...this.searchedFriendArr, ...res];
-                        if (res.length > 0) {
-                            this.updateProfileImgArr(res, true);
-                        }
-                        return this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT - res.length, 0);
-                    })
-                    .then(res => {
-                        if (this.endOfFriendsSearch && res.length === 0) {
-                            this.endOfUsersSearch = true;
-                        }
-                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
-                        if (resUserArr.length > 0) {
-                            this.updateProfileImgArr(resUserArr, false);
-                        }
-                        this.isSearchingMore = false;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.isSearchingMore = false;
-                    });
-            } else {
-                this.searchService.searchUsersByName(this.searchInput, false, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
-                    .then((res: UserInfoSummary[]): void => {
-                        if (res.length < SEARCH_RESULT_LIMIT) {
-                            this.endOfUsersSearch = true;
-                        }
-                        const resUserArr = res.filter(x => !this.searchedFriendIdSet.has(x.user_id));
-                        this.searchedUserArr = [...this.searchedUserArr, ...resUserArr];
-                        if (resUserArr.length > 0) {
-                            this.updateProfileImgArr(resUserArr, false);
-                        }
-                        this.isSearchingMore = false;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.isSearchingMore = false;
-                    });
-            }
+            this.searchService.searchUsersByName(this.searchInput, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
+                .then((res: UserInfoSummary[]) => {
+                    console.log(res);
+                    this.searchedUserArr = [ ...this.searchedUserArr, ...res ];
+                    this.isSearchingMore = false;
+                    this.updateUserProfileImgUrlMap(res);
+                    if (res.length < SEARCH_RESULT_LIMIT) {
+                        this.endOfSearch = true;
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         }
     }
 
@@ -235,9 +133,8 @@ export class SearchComponent {
     }
 
     onSearchOptionChange(event: any): void {
-        this.searched = false;
-        this.endOfFriendsSearch = false;
-        this.endOfUsersSearch = false;
+        this.removeSearchInput();
+        this.searchOption = event.target.value;
         if (event.target.value === 'email') {
             this.searchPlaceholder = 'Enter email...';
         } else if (event.target.value === 'name') {
@@ -249,23 +146,23 @@ export class SearchComponent {
         this.searchInputChanged.next(event);
     }
 
-    updateProfileImgArr(userInfoArr: UserInfoSummary[], isFriend: boolean): void {
-        const profileImgUrlRequestArr = [];
-        for (const userInfo of userInfoArr) {
-            profileImgUrlRequestArr.push(
-                this.userService.getProfileImageGetUrl(
-                    userInfo.user_id, userInfo.profile_image_extension
-                )
-            );
+    updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
+        const requestUserInfoArr = userInfoArr.filter(x =>
+            !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
+        if (requestUserInfoArr.length > 0) {
+            this.userService.getProfileImageGetUrlMap(
+                requestUserInfoArr.map(x => x.user_id), requestUserInfoArr.map(x => x.profile_image_extension)
+            ).then(res => {
+                console.log(res);
+                this.userProfileImgUrlMap = {
+                    ...this.userProfileImgUrlMap,
+                    ...res
+                };
+            })
+            .catch(err => {
+                console.log(err);
+            });
         }
-        forkJoin(profileImgUrlRequestArr).subscribe(urlArr => {
-            urlArr = urlArr.map(x => x !== null ? x : '/assets/user.png');
-            if (isFriend) {
-                this.friendProfileImgUrlArr = [...this.friendProfileImgUrlArr, ...urlArr];
-            } else {
-                this.userProfileImgUrlArr = [...this.userProfileImgUrlArr, ...urlArr];
-            }
-        });
     }
 
     onClickProfile(userInfo: UserInfoSummary): void {
@@ -275,5 +172,25 @@ export class SearchComponent {
 
     onClickBack(): void {
         this.showProfile = false;
+    }
+
+    addFriend(idx: number): void {        
+        this.friendshipService.addFriend(this.searchedUserArr[idx].user_id)
+            .then(res => {
+                if (res.success) {
+                    this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_PENDING;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    onDelete(event: string): void {
+        for (let idx = 0; idx < this.searchedUserArr.length; idx++) {
+            if (this.searchedUserArr[idx].user_id === event) {
+                this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_NONE;
+            }
+        }
     }
 }

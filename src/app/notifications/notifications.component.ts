@@ -81,7 +81,7 @@ export class NotificationsComponent implements OnInit {
     deleteFriendRequest(userId: string): void {
         this.spinnerMsg = SPINNER_FRIEND_DELETE_MSG;
         this.spinner.show();
-        this.friendshipService.deleteFriendRequest(userId).toPromise()
+        this.friendshipService.deleteFriendRequest(userId)
             .then(res => {
                 console.log(res);
                 this.friendshipRequestUserArr = this.friendshipRequestUserArr.filter(x => x.user_id !== userId);

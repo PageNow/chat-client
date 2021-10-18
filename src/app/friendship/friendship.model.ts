@@ -4,3 +4,9 @@ export interface Friendship {
     requested_at: string;
     accepted_at: string | null;
 }
+
+export enum FriendshipState {
+    ACCEPTED = 2,
+    PENDING = 1,
+    NONE = 0
+}
