@@ -6,6 +6,10 @@
 <div class='main-div'>
     <div class='back-div'>
         <span class='back-span' (click)="onClickBack()">&lt; Back</span>
+        <span *ngIf="currUserId && userId !== currUserId && isFriend === true"
+              class='unfriend-span' (click)="deleteFriend()" >
+            Unfriend
+        </span>
     </div>
     <div class='profile-image-div'>
         <img [src]="userProfileImgUrl"
@@ -23,10 +27,6 @@
     <div *ngIf="currUserId && userId !== currUserId && isFriend === true"
          class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="sendMessage()">Message</button>
-    </div>
-    <div *ngIf="currUserId && userId !== currUserId && isFriend === true"
-         class='profile-btn-div'>
-        <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">Unfriend</button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
          class='profile-btn-div'>
@@ -70,5 +70,8 @@
             <div class='additional-info-label-div'>Gender</div>
             <div class='additional-info-content-div'>{{ userInfo?.gender }}</div>
         </div>
+    </div>
+    <div class='mutual-friends-div'>
+        
     </div>
 </div>

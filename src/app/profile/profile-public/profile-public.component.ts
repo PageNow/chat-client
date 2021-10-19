@@ -9,6 +9,7 @@ import { UserInfoPublic } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
 import { getFullName } from '../../shared/user_utils';
+import { USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
 import { NotificationsService } from 'src/app/notifications/notifications.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
@@ -33,7 +34,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     currUserName: string;
 
     userInfo: UserInfoPublic;
-    userProfileImgUrl = '/assets/user.png';
+    userProfileImgUrl = USER_DEFAULT_IMG_ASSET;
     currUserInfoSubscription: Subscription;
 
     // variables related to friendship status
@@ -71,9 +72,13 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.userService.getUserPublicInfo(this.userId)
             .then((res: UserInfoPublic) => {
                 this.userInfo = res;
-                return this.userService.getProfileImageGetUrl(
-                    res.user_id, res.profile_image_extension
-                ).toPromise();
+                if (res.profile_image_extension) {
+                    return this.userService.getProfileImageGetUrl(
+                        res.user_id, res.profile_image_extension
+                    );
+                } else {
+                    return Promise.resolve(USER_DEFAULT_IMG_ASSET);
+                }
             })
             .then(res => {
                 this.userProfileImgUrl = res;

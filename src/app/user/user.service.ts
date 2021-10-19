@@ -64,13 +64,13 @@ export class UserService {
         );
     }
 
-    public getProfileImageGetUrl(userId: string, imgExt: string): Observable<any> {
+    public getProfileImageGetUrl(userId: string, imgExt: string): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/users/id/${userId}/profile-image-url?image_ext=${imgExt}`
-        );
+        ).toPromise();
     }
 
-    public getProfileImageGetUrlMap(userIdArr: string[], imgExtArr: string[]): Promise<any> {
+    public getProfileImageGetUrlMap(userIdArr: any[], imgExtArr: any[]): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/users/ids/${userIdArr.join(',')}/profile-image-url?image_ext_arr=${imgExtArr.join(',')}`
         ).toPromise();

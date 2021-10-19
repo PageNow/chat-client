@@ -3,6 +3,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
 import { FriendshipService } from '../friendship/friendship.service';
+import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
 import { UserInfoSummary } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { NotificationsService } from './notifications.service';
@@ -19,6 +20,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     friendRequestUserArrSubscription: Subscription;
     friendRequestUserArr: UserInfoSummary[] = [];
     userProfileImgUrlMap: {[key: string]: string} = {};
+    userProfileImgExtMap: {[key: string]: string} = {};
 
     isNotificationLoaded = false;
 
@@ -55,11 +57,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     }
 
     updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
-        const requestUserInfoArr = userInfoArr.filter((x: UserInfoSummary) =>
+        let requestUserInfoArr = userInfoArr.filter((x: UserInfoSummary) =>
             !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
+        requestUserInfoArr.filter(x => x.profile_image_extension === null).forEach(x => {
+            this.userProfileImgUrlMap[x.user_id] = USER_DEFAULT_IMG_ASSET;
+        });
+        requestUserInfoArr = requestUserInfoArr.filter(x => x.profile_image_extension);
         if (requestUserInfoArr.length > 0) {
             this.userService.getProfileImageGetUrlMap(
-                requestUserInfoArr.map(x => x.user_id), requestUserInfoArr.map(x => x.profile_image_extension)
+                requestUserInfoArr.map(x => x.user_id),
+                requestUserInfoArr.map(x => x.profile_image_extension)
             ).then(res => {
                 console.log(res);
                 this.userProfileImgUrlMap = {

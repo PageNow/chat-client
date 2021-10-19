@@ -9,7 +9,7 @@ import {
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
-import { VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
+import { USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
 const SPINNER_FETCH_MSG = 'Fetching user data...';
 const SPINNER_UPLOAD_MSG = 'Uploading user data...';
@@ -105,16 +105,19 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     this.workOption = res.work_public ? 'public' : 'private';
                     this.locationOption = res.location_public ? 'public' : 'private';
 
-                    this.userService.getProfileImageGetUrl(
-                        res.user_id, res.profile_image_extension
-                    ).toPromise()
-                        .then(resp => {
+                    if (res.profile_image_extension) {
+                        this.userService.getProfileImageGetUrl(
+                            res.user_id, res.profile_image_extension
+                        ).then(resp => {
                             this.profileImageUrl = resp;
                         })
                         .catch(err => {
                             console.log(err);
                             this.profileImageUrl = '/assets/user.png';
                         });
+                    } else {
+                        this.profileImageUrl = USER_DEFAULT_IMG_ASSET;
+                    }
                     this.spinnerMsg = '';
                     this.spinner.hide();
                 }
@@ -368,5 +371,9 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     toggleProfileImageUploader(): void {
         this.profileImageUploaderOn = !this.profileImageUploaderOn;
+    }
+
+    viewFriends(): void {
+        //
     }
 }

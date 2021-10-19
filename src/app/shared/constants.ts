@@ -18,3 +18,5 @@ export const INITIAL_MESSAGE_OFFSET = 0;
 
 export const INITIAL_MESSAGE_LIMIT = 15;
 export const LOAD_MESSAGE_LIMIT = 20;
+
+export const USER_DEFAULT_IMG_ASSET = '/assets/user.png';

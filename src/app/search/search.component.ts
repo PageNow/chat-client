@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
-import { SEARCH_RESULT_LIMIT } from '../shared/constants';
+import { SEARCH_RESULT_LIMIT, USER_DEFAULT_IMG_ASSET } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { FriendshipState } from '../friendship/friendship.model';
 import { FriendshipService } from '../friendship/friendship.service';
@@ -147,11 +147,16 @@ export class SearchComponent {
     }
 
     updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
-        const requestUserInfoArr = userInfoArr.filter(x =>
+        let requestUserInfoArr = userInfoArr.filter(x =>
             !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
+        requestUserInfoArr.filter(x => x.profile_image_extension === null).forEach(x => {
+            this.userProfileImgUrlMap[x.user_id] = USER_DEFAULT_IMG_ASSET;
+        });
+        requestUserInfoArr = requestUserInfoArr.filter(x => x.profile_image_extension);
         if (requestUserInfoArr.length > 0) {
             this.userService.getProfileImageGetUrlMap(
-                requestUserInfoArr.map(x => x.user_id), requestUserInfoArr.map(x => x.profile_image_extension)
+                requestUserInfoArr.map(x => x.user_id),
+                requestUserInfoArr.map(x => x.profile_image_extension)
             ).then(res => {
                 console.log(res);
                 this.userProfileImgUrlMap = {

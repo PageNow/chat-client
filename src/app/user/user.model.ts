@@ -14,8 +14,8 @@ export interface UserInfoSummary {
 
     description: string;
 
-    profile_image_extension: string;
-    profile_image_uploaded_at?: string;
+    profile_image_extension: string | null;
+    profile_image_uploaded_at: string | null;
 
     friendship_state?: number;
     mutual_friend_count?: number;

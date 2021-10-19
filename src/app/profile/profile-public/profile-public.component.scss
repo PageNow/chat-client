@@ -6,6 +6,9 @@
 
 .back-div {
     margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .back-span {
@@ -16,6 +19,16 @@
 .back-span:hover {
     cursor: pointer;
     color: $link-hover-color;
+}
+
+.unfriend-span {
+    font-size: 15px;
+    color: $date-color;
+}
+
+.unfriend-span:hover {
+    cursor: pointer;
+    color: black;
 }
 
 .profile-image-div {

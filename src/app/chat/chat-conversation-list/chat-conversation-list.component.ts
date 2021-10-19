@@ -8,6 +8,7 @@ import { Conversation } from '../models/conversation.model';
 import { UserService } from 'src/app/user/user.service';
 import { getFullName } from '../../shared/user_utils';
 import { UserInfoPublic } from 'src/app/user/user.model';
+import { USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
 
 const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
 
@@ -56,10 +57,18 @@ export class ChatConversationListComponent implements OnInit {
                 res.forEach((x: UserInfoPublic) => {
                     this.userInfoMap[x.user_id] = x;
                     this.userInfoMap[x.user_id].full_name = getFullName(x.first_name, x.last_name);
-                    userIdArr.push(x.user_id);
-                    imgExtArr.push(x.profile_image_extension);
+                    if (x.profile_image_extension) {
+                        userIdArr.push(x.user_id);
+                        imgExtArr.push(x.profile_image_extension);
+                    } else {
+                        this.userInfoMap[x.user_id].profile_image_url = USER_DEFAULT_IMG_ASSET;
+                    }
                 });
-                return this.userService.getProfileImageGetUrlMap(userIdArr, imgExtArr);
+                if (userIdArr.length > 0) {
+                    return this.userService.getProfileImageGetUrlMap(userIdArr, imgExtArr);
+                } else {
+                    return Promise.resolve({});
+                }
             })
             .then((res: {[key: string]: string}) => {
                 for (const [key, value] of Object.entries(res)) {
