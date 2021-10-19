@@ -23,8 +23,9 @@ export class SearchService {
     public searchUsersByEmail(
         email: string, limit: number, offset: number
     ): Promise<any> {
+        const emailURI = encodeURIComponent(email);
         return this.http.get(
-            `${USER_API_URL}/users/search/email/${email}?limit=${limit}&offset=${offset}`,
+            `${USER_API_URL}/users/search/email/${emailURI}?limit=${limit}&offset=${offset}`,
             this.httpOptions
         ).toPromise();
     }
@@ -32,8 +33,9 @@ export class SearchService {
     public searchUsersByName(
         name: string, limit: number, offset: number
     ): Promise<any> {
+        const nameURI = encodeURIComponent(name);
         return this.http.get(
-            `${USER_API_URL}/users/search/name/${name}?limit=${limit}&offset=${offset}`,
+            `${USER_API_URL}/users/search/name/${nameURI}?limit=${limit}&offset=${offset}`,
             this.httpOptions
         ).toPromise();
     }

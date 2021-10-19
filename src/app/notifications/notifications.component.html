@@ -1,5 +1,5 @@
 <ngx-spinner>
-    <p style="color: white;">
+    <p style="color: white; font-size: 14px;">
         <strong>{{ spinnerMsg }}</strong>
     </p>
 </ngx-spinner>
@@ -17,23 +17,30 @@
                  class="profile-image" onerror="this.src='/assets/user.png'">
             </a>
         </div>
-        <div class='detail-div'>
-            <div class='user-info-div'>
-                <div>
-                    <a [routerLink]="['/profile', user.user_id]" class="profile-a">
-                        {{ user.first_name }} {{ user.last_name }}
-                    </a>
-                </div>
-                <div>{{ user.description }}</div>
+        <div class='user-info-div'>
+            <div class='profile-link-div'>
+                <span class='profile-link' (click)="onClickProfile(user)">
+                    {{ user.first_name }} {{ user.last_name }}
+                </span>
             </div>
-            <div class='button-group-div'>
-                <button class='accept-button' (click)="acceptFriendRequest(user.user_id)">
-                    Accept
-                </button>
-                <button class='decline-button' (click)="deleteFriendRequest(user.user_id)">
-                    Decline
-                </button>
+            <div class='requested-date-div'>
+                <span>
+                    Requested at {{ user.requested_at | dateFormat: true }}
+                </span>
             </div>
+            <div class='description-div'>
+                <span>{{ user.description }}</span>
+            </div>
+        </div>
+        <div class='accept-button-div'>
+            <button class='btn btn-outline-primary btn-sm' (click)="acceptFriendRequest(user.user_id)">
+                Accept
+            </button>
+        </div>
+        <div class='decline-button-div'>
+            <button class='btn btn-outline-secondary btn-sm' (click)="deleteFriendRequest(user.user_id)">
+                Decline
+            </button>
         </div>
     </div>
 </div>

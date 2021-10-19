@@ -1,14 +1,19 @@
-$button-font-size: 15px;
+@import '../../stylings/variables';
+
+.main-div {
+    padding: 10px $main-lr-padding 0 $main-lr-padding;
+}
 
 .subheader-div {
     text-align: center;
-    padding-top: 10px;
     font-size: 15px;
 }
 
 .notification-item-div {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .profile-image-div {
@@ -16,21 +21,33 @@ $button-font-size: 15px;
 }
 
 .profile-image {
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     border-radius: 100%;
     object-fit: cover;
 }
 
-.detail-div {
-    display: flex;
-    flex-direction: column;
+.user-info-div {
+    flex-grow: 1;
 }
 
-.accept-button {
-    font-size: $button-font-size;
+.profile-link {
+    font-size: 15px;
+    text-decoration: none;
+    color: $link-color;
 }
 
-.decline-button {
-    font-size: $button-font-size;
+.profile-link:hover {
+    cursor: pointer;
+    color: $link-hover-color;
+}
+
+.requested-date-div {
+    color: $date-color;
+    font-size: 13px;
+    margin-top: -2px;
+}
+
+.accept-button-div {
+    margin-right: 5px;
 }

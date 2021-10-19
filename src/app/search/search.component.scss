@@ -67,8 +67,8 @@
 }
 
 .profile-image {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 100%;
     object-fit: cover;
 }
@@ -95,8 +95,7 @@
 .user-friendship-div {
     color: $date-color;
     font-size: 13px;
-    align-items: flex-start;
-    vertical-align: text-top;
+    margin-top: -2px;
 }
 
 .description-div {
@@ -104,6 +103,7 @@
     color: $date-color;
     white-space: nowrap;
     overflow: hidden;
+    margin-top: -2px;
 }
 
 .user-icon-div {

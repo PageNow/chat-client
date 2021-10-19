@@ -31,4 +31,8 @@ export class NotificationsService {
         this.notificationCnt = this.notificationCnt - 1;
         this.notificationCntSubject.next(this.notificationCnt);
     }
+
+    public publishFriendRequestUserArr(friendRequestUserArr: UserInfoSummary[]): void {
+        this.friendRequestUserArrSubject.next(friendRequestUserArr);
+    }
 }

@@ -36,7 +36,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.notificationsService.friendRequestUserArrSubject.subscribe(
+        this.friendRequestUserArrSubscription = this.notificationsService.friendRequestUserArrSubject.subscribe(
             (res: UserInfoSummary[]) => {
                 console.log(res);
                 this.friendRequestUserArr = res;
@@ -47,7 +47,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
                 console.log(err);
                 this.isNotificationLoaded = true;
             }
-        )
+        );
     }
 
     ngOnDestroy(): void {
@@ -83,6 +83,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
                     this.friendRequestUserArr = this.friendRequestUserArr.filter(
                         (x: UserInfoSummary) => x.user_id !== userId);
                     this.notificationsService.decrementNotificationCnt();
+                    this.notificationsService.publishFriendRequestUserArr(this.friendRequestUserArr);
                 }
                 this.spinnerMsg = '';
                 this.spinner.hide();
@@ -104,6 +105,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
                     this.friendRequestUserArr = this.friendRequestUserArr.filter(
                         (x: UserInfoSummary) => x.user_id !== userId);
                     this.notificationsService.decrementNotificationCnt();
+                    this.notificationsService.publishFriendRequestUserArr(this.friendRequestUserArr);
                 }
                 this.spinnerMsg = '';
                 this.spinner.hide();

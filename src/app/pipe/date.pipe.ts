@@ -4,8 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
     name: 'dateFormat'
 })
 export class DateFormatPipe implements PipeTransform {
-    transform(value: string): string {
-        if (value === '') {
+    transform(value: string | undefined, onlyDate = false): string {
+        if (value === undefined || value === '') {
             return '';
         }
         if (!value.endsWith('Z')) { // change to ISO string
@@ -60,11 +60,14 @@ export class DateFormatPipe implements PipeTransform {
         }
         const day = date.getDate();
 
-        let hour = date.getHours();
-        const isPM = hour >= 12 ? true : false;
-        hour = hour > 12 ? hour - 12 : hour;
-        const minute = date.getMinutes().toString().padStart(2, '0');
-
-        return `${month} ${day}, ${year === currYear ? '' : year} ${hour}:${minute} ${isPM ? 'pm' : 'am'}`;
+        if (onlyDate) {
+            return `${month} ${day} ${year === currYear ? '' : ', ' + year}`;
+        } else {
+            let hour = date.getHours();
+            const isPM = hour >= 12 ? true : false;
+            hour = hour > 12 ? hour - 12 : hour;
+            const minute = date.getMinutes().toString().padStart(2, '0');
+            return `${month} ${day} ${year === currYear ? '' : ', ' + year} ${hour}:${minute} ${isPM ? 'pm' : 'am'}`;
+        }
     }
 }

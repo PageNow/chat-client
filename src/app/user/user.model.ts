@@ -14,11 +14,12 @@ export interface UserInfoSummary {
 
     description: string;
 
-    profile_image_uploaded_at: Date;
     profile_image_extension: string;
+    profile_image_uploaded_at?: string;
 
     friendship_state?: number;
     mutual_friend_count?: number;
+    requested_at?: string;
 }
 
 export interface UserInfoPublic extends UserInfoSummary {

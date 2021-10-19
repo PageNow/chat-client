@@ -8,7 +8,7 @@
         <div class='search-input-group'>
             <fa-icon [icon]="faSearch" class='search-icon'></fa-icon>
             <input [ngModel]="searchInput" (ngModelChange)="onInputChange($event)"
-                   class='search-input form-control' [placeholder]="searchPlaceholder" />
+                   class='search-input form-control' [placeholder]="searchPlaceholder" pattern="[a-zA-Z ]*"/>
             <fa-icon [icon]="faTimesCircle" class='cancel-icon' (click)="removeSearchInput()"></fa-icon>
         </div>
     </div>
