@@ -43,6 +43,11 @@
             </button>
         </div>
     </div>
+    <div class="refresh-div">
+        <span class="refresh-span" (click)="refreshFriendRequests()">
+            Refresh Friend Requests
+        </span>
+    </div>
 </div>
 <app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">
 </app-profile-public>

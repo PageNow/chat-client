@@ -14,7 +14,7 @@ export class NotificationsService {
     public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>([]); 
 
     constructor(
-        friendshipService: FriendshipService
+        private friendshipService: FriendshipService
     ) {
         friendshipService.getFriendshipRequests()
             .then((res: UserInfoSummary[]) => {
@@ -24,7 +24,7 @@ export class NotificationsService {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     public decrementNotificationCnt(): void {
@@ -34,5 +34,17 @@ export class NotificationsService {
 
     public publishFriendRequestUserArr(friendRequestUserArr: UserInfoSummary[]): void {
         this.friendRequestUserArrSubject.next(friendRequestUserArr);
+    }
+
+    public refreshFriendRequests(): void {
+        this.friendshipService.getFriendshipRequests()
+            .then((res: UserInfoSummary[]) => {
+                this.notificationCnt = res.length;
+                this.notificationCntSubject.next(res.length);
+                this.friendRequestUserArrSubject.next(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 }

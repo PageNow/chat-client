@@ -117,6 +117,10 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             });
     }
 
+    refreshFriendRequests(): void {
+        this.notificationsService.refreshFriendRequests();
+    }
+
     onClickProfile(userInfo: UserInfoSummary): void {
         this.profileId = userInfo.user_id;
         this.showProfile = true;
