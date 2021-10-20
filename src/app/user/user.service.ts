@@ -81,4 +81,10 @@ export class UserService {
             `${USER_API_URL}/users/me/profile-image`
         );
     }
+
+    public getUserMutualFriends(userId: string, limit: number, offset: number): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/id/${userId}/mutual-friends?limit=${limit}&offset=${offset}`
+        ).toPromise();
+    }
 }

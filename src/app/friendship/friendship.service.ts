@@ -28,11 +28,11 @@ export class FriendshipService {
         ).toPromise();
     }
 
-    public checkFriendship(userId: string): Observable<any> {
+    public checkFriendship(userId: string): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/friendship/check/${userId}`,
             this.httpOptions
-        );
+        ).toPromise();
     }
 
     public addFriend(userId: string): Promise<any> {

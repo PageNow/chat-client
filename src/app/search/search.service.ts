@@ -11,14 +11,7 @@ export class SearchService {
 
     constructor(
         private http: HttpClient
-    ) {
-        console.log('search service constructor');
-        this.httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json'
-            })
-        };
-    }
+    ) { }
 
     public searchUsersByEmail(
         email: string, limit: number, offset: number
@@ -26,7 +19,6 @@ export class SearchService {
         const emailURI = encodeURIComponent(email);
         return this.http.get(
             `${USER_API_URL}/users/search/email/${emailURI}?limit=${limit}&offset=${offset}`,
-            this.httpOptions
         ).toPromise();
     }
 
@@ -36,7 +28,6 @@ export class SearchService {
         const nameURI = encodeURIComponent(name);
         return this.http.get(
             `${USER_API_URL}/users/search/name/${nameURI}?limit=${limit}&offset=${offset}`,
-            this.httpOptions
         ).toPromise();
     }
 }

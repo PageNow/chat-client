@@ -71,7 +71,31 @@
             <div class='additional-info-content-div'>{{ userInfo?.gender }}</div>
         </div>
     </div>
-    <div class='mutual-friends-div'>
-        
+    <div class='mutual-friends-div' *ngIf="mutualFriendArr.length > 0">
+        <div class='mutual-friends-header-div'>
+            <strong>Mutual Friends </strong>({{ mutualFriendCount }})
+        </div>
+        <div *ngFor="let user of mutualFriendArr" class='mutual-friend-user-div'>
+            <div class='user-profile-image-div'>
+                <img [src]="userProfileImgUrlMap[user.user_id]"
+                    class="user-profile-image" onerror="this.src='/assets/user.png'">
+            </div>
+            <div class='user-info-div'>
+                <div class='user-name-div'>
+                    <span class='user-name-span'>
+                        {{ user.first_name }} {{ user.last_name }}
+                    </span>
+                </div>
+                <div class='user-description-div'>
+                    <span *ngIf="user.description !== ''">{{ user.description }}</span>
+                    <span *ngIf="user.description === ''">&nbsp;</span>
+                </div>
+            </div>
+        </div>
+        <div class='load-more-div' *ngIf="!endOfLoad">
+            <span class='load-more-span' (click)="getMutualFriends(userId, mutualFriendArr.length)">
+                Load More Mutual Friends
+            </span>
+        </div>
     </div>
 </div>

@@ -75,3 +75,59 @@
 .additional-info-label-div {
     width: 80px;
 }
+
+.mutual-friends-header-div {
+    font-size: 15px;
+    margin-bottom: 5px;
+    margin: 10px 5px 10px 0;
+}
+
+.mutual-friend-user-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.user-profile-image-div {
+    margin-right: 10px;
+}
+
+.user-profile-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.user-info-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name-span {
+    font-size: 15px;
+}
+
+.user-description-div {
+    font-size: 13px;
+    color: $date-color;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: -2px;
+}
+
+.load-more-div {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.load-more-span {
+    font-size: 13px;
+    color: $link-color
+}
+
+.load-more-span:hover {
+    cursor: pointer;
+    color: $link-hover-color;
+}

@@ -73,6 +73,7 @@
     </div>
 </div>
 <app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()"
+    [mutualFriendCount]="profileMutualFriendCount"
     (deleteFriendRequestEvent)="onDeleteFriendRequest($event)"
     (acceptFriendRequestEvent)="onAcceptFriendRequest($event)">
 </app-profile-public>

@@ -35,6 +35,7 @@ export class SearchComponent {
     // variables for public profile component
     showProfile = false;
     profileId: string;
+    profileMutualFriendCount: number;
 
     // boolean for showing spinner
     isSearching = false;
@@ -71,7 +72,6 @@ export class SearchComponent {
         if (this.searchOption === 'email') {
             this.searchService.searchUsersByEmail(this.searchInput, SEARCH_RESULT_LIMIT, 0)
                 .then((res: UserInfoSummary[]) => {
-                    console.log(res);
                     this.searchedUserArr = res;
                     this.isSearching = false;
                     this.updateUserProfileImgUrlMap(res);
@@ -82,7 +82,6 @@ export class SearchComponent {
         } else if (this.searchOption === 'name') {
             this.searchService.searchUsersByName(this.searchInput, SEARCH_RESULT_LIMIT, 0)
                 .then((res: UserInfoSummary[]) => {
-                    console.log(res);
                     this.searchedUserArr = res;
                     this.isSearching = false;
                     this.updateUserProfileImgUrlMap(res);
@@ -99,9 +98,7 @@ export class SearchComponent {
         if (this.searchOption === 'email') {
             this.searchService.searchUsersByEmail(this.searchInput, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
                 .then((res: UserInfoSummary[]) => {
-                    console.log(res);
                     this.searchedUserArr = [ ...this.searchedUserArr, ...res ];
-
                     this.isSearchingMore = false;
                     this.updateUserProfileImgUrlMap(res);
                     if (res.length < SEARCH_RESULT_LIMIT) {
@@ -114,7 +111,6 @@ export class SearchComponent {
         } else if (this.searchOption === 'name') {
             this.searchService.searchUsersByName(this.searchInput, SEARCH_RESULT_LIMIT, this.searchedUserArr.length)
                 .then((res: UserInfoSummary[]) => {
-                    console.log(res);
                     this.searchedUserArr = [ ...this.searchedUserArr, ...res ];
                     this.isSearchingMore = false;
                     this.updateUserProfileImgUrlMap(res);
@@ -172,6 +168,7 @@ export class SearchComponent {
 
     onClickProfile(userInfo: UserInfoSummary): void {
         this.profileId = userInfo.user_id;
+        this.profileMutualFriendCount = userInfo.mutual_friend_count ? userInfo.mutual_friend_count : 0;
         this.showProfile = true;
     }
 

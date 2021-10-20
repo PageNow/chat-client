@@ -9,16 +9,16 @@ import { FriendshipService } from "../friendship/friendship.service";
 })
 export class NotificationsService {
     
-    public notificationCnt = 0;
-    public notificationCntSubject = new BehaviorSubject<number>(this.notificationCnt);
-    public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>([]); 
+    private friendRequestUserArr: UserInfoSummary[] = [];
+    public notificationCntSubject = new BehaviorSubject<number>(0);
+    public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>(this.friendRequestUserArr); 
 
     constructor(
         private friendshipService: FriendshipService
     ) {
         friendshipService.getFriendshipRequests()
             .then((res: UserInfoSummary[]) => {
-                this.notificationCnt = res.length;
+                this.friendRequestUserArr = res;
                 this.notificationCntSubject.next(res.length);
                 this.friendRequestUserArrSubject.next(res);
             })
@@ -27,19 +27,22 @@ export class NotificationsService {
             });
     }
 
-    public decrementNotificationCnt(): void {
-        this.notificationCnt = this.notificationCnt - 1;
-        this.notificationCntSubject.next(this.notificationCnt);
+    public removeFriendRequest(userId: string): void {
+        this.friendRequestUserArr = this.friendRequestUserArr
+            .filter((x: UserInfoSummary) => x.user_id !== userId);
+        this.notificationCntSubject.next(this.friendRequestUserArr.length);
+        this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
     }
 
     public publishFriendRequestUserArr(friendRequestUserArr: UserInfoSummary[]): void {
+        this.friendRequestUserArr = friendRequestUserArr;
         this.friendRequestUserArrSubject.next(friendRequestUserArr);
     }
 
     public refreshFriendRequests(): void {
         this.friendshipService.getFriendshipRequests()
             .then((res: UserInfoSummary[]) => {
-                this.notificationCnt = res.length;
+                this.friendRequestUserArr = res;
                 this.notificationCntSubject.next(res.length);
                 this.friendRequestUserArrSubject.next(res);
             })
@@ -47,4 +50,6 @@ export class NotificationsService {
                 console.log(err);
             });
     }
+
+    
 }

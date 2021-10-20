@@ -5,11 +5,11 @@ import { Subscription } from 'rxjs';
 
 import { Friendship } from '../../friendship/friendship.model';
 import { FriendshipService } from '../..//friendship/friendship.service';
-import { UserInfoPublic } from '../../user/user.model';
+import { UserInfoPublic, UserInfoSummary } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
 import { getFullName } from '../../shared/user_utils';
-import { USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
+import { LOAD_MUTUAL_FRIENDS_LIMIT, USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
 import { NotificationsService } from 'src/app/notifications/notifications.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
@@ -26,6 +26,7 @@ const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 })
 export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Input() userId: string;
+    @Input() mutualFriendCount: number;
     @Output() backEvent = new EventEmitter<boolean>();
     @Output() deleteFriendRequestEvent = new EventEmitter<string>();
     @Output() acceptFriendRequestEvent = new EventEmitter<string>();
@@ -36,12 +37,17 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     userInfo: UserInfoPublic;
     userProfileImgUrl = USER_DEFAULT_IMG_ASSET;
     currUserInfoSubscription: Subscription;
+    userProfileImgUrlMap: {[key: string]: string} = {};
 
     // variables related to friendship status
     friendshipInfo: Friendship;
     isFriend: boolean;
     friendRequestSent: boolean; // true if there is a friend request sent
     friendRequestReceived: boolean; // 
+
+    // variable for mutual friends
+    mutualFriendArr: UserInfoSummary[] = [];
+    endOfLoad = false;
 
     spinnerMsg = '';
 
@@ -55,7 +61,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.userId);
         this.spinnerMsg = SPINNER_PROFILE_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
@@ -69,6 +74,8 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 console.log(err);
             }
         );
+
+        // get profile image url
         this.userService.getUserPublicInfo(this.userId)
             .then((res: UserInfoPublic) => {
                 this.userInfo = res;
@@ -82,10 +89,24 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             })
             .then(res => {
                 this.userProfileImgUrl = res;
-                return this.friendshipService.checkFriendship(this.userInfo.user_id).toPromise();
             })
+            .catch(err => {
+                console.log(err);
+                this.userProfileImgUrl = USER_DEFAULT_IMG_ASSET;
+            });
+        
+        this.getFriendshipStatus(this.userId);
+
+        this.getMutualFriends(this.userId, 0);
+    }
+
+    ngOnDestroy(): void {
+        this.currUserInfoSubscription?.unsubscribe();
+    }
+
+    getFriendshipStatus(userId: string): void {
+        this.friendshipService.checkFriendship(userId)
             .then((res: Friendship) => {
-                console.log(res);
                 if (res) {
                     this.friendshipInfo = res;
                     if (res.accepted_at) { // is friend
@@ -116,8 +137,42 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             });
     }
 
-    ngOnDestroy(): void {
-        this.currUserInfoSubscription?.unsubscribe();
+    getMutualFriends(userId: string, offset: number): void {
+        this.userService.getUserMutualFriends(userId, LOAD_MUTUAL_FRIENDS_LIMIT, offset)
+            .then((res: UserInfoSummary[]) => {
+                if (res.length < LOAD_MUTUAL_FRIENDS_LIMIT) {
+                    this.endOfLoad = true;
+                }
+                this.mutualFriendArr = [ ...this.mutualFriendArr, ...res ];
+                this.updateUserProfileImgUrlMap(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
+        let requestUserInfoArr = userInfoArr.filter((x: UserInfoSummary) =>
+            !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
+        requestUserInfoArr.filter(x => x.profile_image_extension === null).forEach(x => {
+            this.userProfileImgUrlMap[x.user_id] = USER_DEFAULT_IMG_ASSET;
+        });
+        requestUserInfoArr = requestUserInfoArr.filter(x => x.profile_image_extension);
+        if (requestUserInfoArr.length > 0) {
+            this.userService.getProfileImageGetUrlMap(
+                requestUserInfoArr.map(x => x.user_id),
+                requestUserInfoArr.map(x => x.profile_image_extension)
+            ).then(res => {
+                console.log(res);
+                this.userProfileImgUrlMap = {
+                    ...this.userProfileImgUrlMap,
+                    ...res
+                };
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        }
     }
 
     onClickBack(): void {
@@ -157,9 +212,10 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                     this.isFriend = true;
                     this.friendRequestSent = false;
                     this.friendRequestReceived = false;
-                    this.acceptFriendRequestEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
-                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
-                    this.notificationsService.decrementNotificationCnt();
+                    const acceptUserId = this.friendshipInfo.user_id1 === this.currUserId ?
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1;
+                    this.acceptFriendRequestEvent.emit(acceptUserId);
+                    this.notificationsService.removeFriendRequest(acceptUserId);
                 }
                 this.spinnerMsg = '';
                 this.spinner.hide();
@@ -204,9 +260,10 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                     this.isFriend = false;
                     this.friendRequestSent = false;
                     this.friendRequestReceived = false;
-                    this.deleteFriendRequestEvent.emit(this.friendshipInfo.user_id1 === this.currUserId ?
-                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1);
-                    this.notificationsService.decrementNotificationCnt();
+                    const deleteUserId = this.friendshipInfo.user_id1 === this.currUserId ?
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1
+                    this.deleteFriendRequestEvent.emit(deleteUserId);
+                    this.notificationsService.removeFriendRequest(deleteUserId);
                 }
                 this.spinnerMsg = '';
                 this.spinner.hide();
