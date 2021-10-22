@@ -87,4 +87,11 @@ export class UserService {
             `${USER_API_URL}/users/id/${userId}/mutual-friends?limit=${limit}&offset=${offset}`
         ).toPromise();
     }
+
+    public updateUserDomainAllowArray(domainAllowArray: string[]): Promise<any> {
+        return this.http.put(
+            `${USER_API_URL}/users/me/domain_array/allow`,
+            domainAllowArray
+        ).toPromise();
+    }
 }

@@ -17,26 +17,65 @@
     >
         Click <span class='click-span' (click)="allowCurrDomain()">here</span> to allow <strong>{{ currDomain }}</strong> to be shared
     </div>
-    <div class='presence-div' *ngFor="let presence of presenceArr">
+
+    <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlinePresenceArr.length === 0"
+         class='presence-intro-div'>
+        <span>Search friends to share your activity with!</span>
+    </div>
+
+    <div class='presence-subheader-div'>
+        <span class='dot sharing-dot'></span>
+        <span>Online Friends ({{ onlinePresenceArr.length }})</span>
+    </div>
+    <div class='presence-div' *ngFor="let presence of onlinePresenceArr">
         <div class='profile-image-div'>
             <img [src]="userInfoMap[presence.userId].profileImgUrl"
                 (click)="onClickProfile(presence.userId)"
                 class="profile-image" onerror="this.src='/assets/user.png'">
         </div>
         <div class='presence-page-div'>
-            <span class='user-name-span' (click)="onClickProfile(presence.userId)">
+            <div class='presence-user-name-div'>
+                <span class='user-name-span user-name-online-span'
+                      (click)="onClickProfile(presence.userId)">
+                    {{ userInfoMap[presence.userId].first_name }}
+                    {{ userInfoMap[presence.userId].last_name }}
+                </span>
+            </div>
+            <div>
+                <a *ngIf="presence.page" [href]='presence.page.url'
+                   target="_blank" class='page-a'>
+                    <span class='presence-page-span'>
+                        {{ presence.page.domain }}: {{ presence.page.title }}
+                    </span>
+                </a>
+            </div>            
+        </div>
+    </div>
+
+    <div class='presence-subheader-div'>
+        <span class='dot hiding-dot'></span>
+        <span class='presence-subheader-offline-span'>
+            Offline Friends ({{ offlinePresenceArr.length }})
+        </span>
+    </div>
+    <div class='presence-div' *ngFor="let presence of offlinePresenceArr">
+        <div class='profile-image-div'>
+            <img [src]="userInfoMap[presence.userId].profileImgUrl"
+                (click)="onClickProfile(presence.userId)"
+                class="profile-image profile-image-offline"
+                onerror="this.src='/assets/user.png'">
+        </div>
+        <div class='presence-page-div'>
+            <span class='user-name-span user-name-offline-span'
+                  (click)="onClickProfile(presence.userId)">
                 {{ userInfoMap[presence.userId].first_name }}
                 {{ userInfoMap[presence.userId].last_name }}
             </span>
-            <a *ngIf="presence.page" [href]='presence.page.url' target="_blank" class='page-a'>
-                {{ presence.page.domain }}: {{ presence.page.title }}
-            </a>
-            <span *ngIf="presence.page === null" class='offline-span'>
+            <span class='offline-span'>
                 Offline
             </span>
         </div>
     </div>
-
 </div>
 <app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()">
 </app-profile-public>

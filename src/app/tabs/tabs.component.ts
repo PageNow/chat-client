@@ -86,7 +86,8 @@ export class TabsComponent implements OnInit, OnDestroy {
                         data: {
                             shareMode: res.share_mode,
                             domainAllowSet: res.domain_allow_array,
-                            domainDenySet: res.domain_deny_array
+                            domainDenySet: res.domain_deny_array,
+                            updatePresence: false
                         }
                     };
                     chrome.runtime.sendMessage(EXTENSION_ID, message);

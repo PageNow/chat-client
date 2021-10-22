@@ -61,6 +61,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        console.log(this.mutualFriendCount);
         this.spinnerMsg = SPINNER_PROFILE_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(

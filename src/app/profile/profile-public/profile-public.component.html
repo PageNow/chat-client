@@ -73,7 +73,10 @@
     </div>
     <div class='mutual-friends-div' *ngIf="mutualFriendArr.length > 0">
         <div class='mutual-friends-header-div'>
-            <strong>Mutual Friends </strong>({{ mutualFriendCount }})
+            <strong>Mutual Friends </strong>
+            <span *ngIf="mutualFriendCount !== null && mutualFriendCount !== undefined">
+                ({{ mutualFriendCount }})
+            </span>
         </div>
         <div *ngFor="let user of mutualFriendArr" class='mutual-friend-user-div'>
             <div class='user-profile-image-div'>

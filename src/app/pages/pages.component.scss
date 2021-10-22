@@ -47,6 +47,11 @@ $share-div-margin-bottom: 5px;
 
 .click-span:hover {
     color: $link-hover-color;
+    cursor: pointer;
+}
+
+.presence-intro-div {
+    text-align: center;
 }
 
 .presence-div {
@@ -54,6 +59,15 @@ $share-div-margin-bottom: 5px;
     flex-direction: row;
     align-items: center;
     margin-bottom: 5px;
+}
+
+.presence-subheader-div {
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.presence-subheader-offline-span {
+    color: $tabs-color;
 }
 
 .profile-image-div {
@@ -71,19 +85,34 @@ $share-div-margin-bottom: 5px;
     cursor: pointer;
 }
 
+.profile-image-offline {
+    opacity: 0.5;
+}
+
 .presence-page-div {
     display: flex;
     flex-direction: column;
 }
 
+// .presence-page-span {
+//     display: block;
+// }
+
 .user-name-span {
     width: max-content;
-    color: black;
     font-size: 15px;
 }
 
 .user-name-span:hover {
     cursor: pointer;
+}
+
+.user-name-online-span {
+    color: black;
+}
+
+.user-name-offline-span {
+    color: $tabs-color;
 }
 
 .page-a {
@@ -99,4 +128,21 @@ $share-div-margin-bottom: 5px;
 
 .offline-span {
     font-size: 12px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.sharing-dot {
+    background-color: green;
+}
+
+.hiding-dot {
+    background-color: white;
+    border: 1px solid black;
 }
