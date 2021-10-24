@@ -63,9 +63,10 @@
 }
 
 .conversation-content-div {
-    font-size: 15px;
+    font-size: 13px;
     margin-right: 10px;
     overflow: hidden;
+    color: $tabs-color;
 }
 
 .conversation-sentat-div {
@@ -75,7 +76,7 @@
 
 .conversation-is-read-div {
     display: table;
-    padding-left: 20px;
+    padding-left: 10px;
 }
 
 .fa-circle-icon {

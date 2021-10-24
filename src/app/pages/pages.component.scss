@@ -58,12 +58,12 @@ $share-div-margin-bottom: 5px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 }
 
 .presence-subheader-div {
     font-size: 15px;
-    margin-bottom: 3px;
+    margin: 5px 0 5px 0;
 }
 
 .presence-subheader-offline-span {
@@ -92,11 +92,15 @@ $share-div-margin-bottom: 5px;
 .presence-page-div {
     display: flex;
     flex-direction: column;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-// .presence-page-span {
-//     display: block;
-// }
+.presence-title-span {
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+}
 
 .user-name-span {
     width: max-content;
@@ -115,6 +119,12 @@ $share-div-margin-bottom: 5px;
     color: $tabs-color;
 }
 
+.domain-span {
+    margin-left: 10px;
+    font-size: 12px;
+    color: $link-hover-color;
+}
+
 .page-a {
     width: max-content;
     text-decoration: none;
@@ -124,6 +134,11 @@ $share-div-margin-bottom: 5px;
 
 .page-a:hover {
     color: $link-hover-color;
+}
+
+.activity-hidden-span {
+    font-size: 12px;
+    color: $tabs-color;
 }
 
 .offline-span {

@@ -123,25 +123,27 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         this.spinner.show();
         this.newMessageSubscription = this.chatService.newMessageSubject.subscribe(
             (res: Message) => {
-                this.messageArr = [ ...this.messageArr, res ];
-                let delIdx;
-                for (let idx = this.sendingMessageArr.length - 1; idx >= 0; idx--) {
-                    if (this.sendingMessageArr[idx].tempMessageId === res.tempMessageId) {
-                        delIdx = idx;
-                        break;
+                if (res.conversationId === this.conversationId) {
+                    this.messageArr = [ ...this.messageArr, res ];
+                    let delIdx;
+                    for (let idx = this.sendingMessageArr.length - 1; idx >= 0; idx--) {
+                        if (this.sendingMessageArr[idx].tempMessageId === res.tempMessageId) {
+                            delIdx = idx;
+                            break;
+                        }
                     }
-                }
-                if (delIdx !== null && delIdx !== undefined) {
-                    this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1, ) ];
-                }
-                // set message as read
-                const message = {
-                    type: 'read-messages',
-                    data: {
-                        conversationId: this.conversationId
+                    if (delIdx !== null && delIdx !== undefined) {
+                        this.sendingMessageArr = [ ...this.sendingMessageArr.slice(0, delIdx), ...this.sendingMessageArr.slice(delIdx + 1, ) ];
                     }
-                };
-                chrome.runtime.sendMessage(EXTENSION_ID, message);
+                    // set message as read
+                    const message = {
+                        type: 'read-messages',
+                        data: {
+                            conversationId: this.conversationId
+                        }
+                    };
+                    chrome.runtime.sendMessage(EXTENSION_ID, message);
+                }
             },
             err => {
                 console.log(err);
@@ -170,7 +172,6 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                         conversationId: this.conversationId
                     }
                 };
-                console.log('sending read-messages to chrome runtime');
                 chrome.runtime.sendMessage(EXTENSION_ID, message);
             })
             .catch(err => {

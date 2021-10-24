@@ -85,6 +85,11 @@ export class ChatService implements OnDestroy {
         return await this.http.get(url).toPromise();
     }
 
+    public async getConversation(conversationId: string): Promise<any> {
+        const url = `${CHAT_API_URL}/conversations/${conversationId}`;
+        return await this.http.get(url).toPromise();
+    }
+
     public async createConversation(
         recipientIdArr: string[], isGroup: boolean, title: string
     ): Promise<any> {

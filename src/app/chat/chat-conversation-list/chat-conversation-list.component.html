@@ -23,8 +23,9 @@
             </div>
             <div class='conversation-message-div'>
                 <div class='conversation-content-div'>
-                    {{ conversation.latestContent.split('\n')[0].slice(0, 25) }}
-                    {{ conversation.latestContent.split('\n')[0].length < 25 ? '' : '...' }}
+                    <span *ngIf="conversation.senderId === currUserId">You:</span>
+                    {{ conversation.latestContent.split('\n')[0].slice(0, 35) }}
+                    {{ conversation.latestContent.split('\n')[0].length < 35 ? '' : '...' }}
                 </div>
                 <div class='conversation-sentat-div'>
                     {{ conversation.sentAt | dateFormat }}

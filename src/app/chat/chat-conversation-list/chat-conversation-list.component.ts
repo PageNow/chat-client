@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Auth } from 'aws-amplify';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
@@ -9,6 +10,7 @@ import { UserService } from 'src/app/user/user.service';
 import { getFullName } from '../../shared/user_utils';
 import { UserInfoPublic } from 'src/app/user/user.model';
 import { USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
+import { Message } from '../models/message.model';
 
 const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
 
@@ -17,7 +19,7 @@ const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
     templateUrl: './chat-conversation-list.component.html',
     styleUrls: ['./chat-conversation-list.component.scss']
 })
-export class ChatConversationListComponent implements OnInit {
+export class ChatConversationListComponent implements OnInit, OnDestroy {
     currUserId: string;
     conversationArr: Conversation[] = [];
     userInfoMap: {[key: string]: UserInfoPublic} = {};
@@ -26,6 +28,8 @@ export class ChatConversationListComponent implements OnInit {
 
     // fontawesome icons
     faCircle = faCircle;
+
+    newMessageSubscription: Subscription;
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -40,16 +44,19 @@ export class ChatConversationListComponent implements OnInit {
         Auth.currentAuthenticatedUser()
             .then(res => {
                 this.currUserId = res.username;
+                this.subscribeToNewMessages();
                 return this.chatService.getUserConversations(null);
             })
             .then(res => {
-                console.log(res);
                 this.conversationArr = res;
                 const participantIdArr = this.conversationArr.map(x => x.participantId);
-                return this.userService.getUsersPublicInfo(Array.from(new Set(participantIdArr)));
+                if (res.length > 0) {
+                    return this.userService.getUsersPublicInfo(Array.from(new Set(participantIdArr)));
+                } else {
+                    return Promise.resolve([]);
+                }
             })
             .then(res => {
-                console.log(res);
                 this.spinnerMsg = '';
                 this.spinner.hide();
                 const userIdArr: string[] = [];
@@ -80,6 +87,65 @@ export class ChatConversationListComponent implements OnInit {
                 this.spinnerMsg = '';
                 this.spinner.hide();
             });
+    }
 
+    ngOnDestroy(): void {
+        this.newMessageSubscription?.unsubscribe();
+    }
+
+    subscribeToNewMessages(): void {
+        this.newMessageSubscription = this.chatService.newMessageSubject.subscribe(
+            (res: Message) => {
+                const conversationIdx = this.conversationArr.map(
+                    (x: Conversation) => x.conversationId).indexOf(res.conversationId);
+                let participantId: string;
+                let newConversation: Conversation;
+                if (conversationIdx === -1) { // if the new message is a new conversation
+                    this.chatService.getConversation(res.conversationId)
+                        .then(resp => {
+                            participantId = resp.participantId;
+                            newConversation = {
+                                conversationId: res.conversationId,
+                                title: resp.title,
+                                isGroup: resp.isGroup,
+                                sentAt: res.sentAt,
+                                latestContent: res.content,
+                                senderId: res.senderId,
+                                participantId: resp.participantId,
+                                isRead: res.senderId === this.currUserId
+                            };
+                            if (!Object.prototype.hasOwnProperty.call(this.userInfoMap, participantId)) {
+                                return this.userService.getUserPublicInfo(participantId);
+                            } else {
+                                return Promise.resolve(this.userInfoMap[participantId]);
+                            }
+                        })
+                        .then((resp: UserInfoPublic) => {
+                            this.userInfoMap[participantId] = resp;
+                            this.userInfoMap[participantId].full_name = getFullName(resp.first_name, resp.last_name);
+                            this.conversationArr = [ newConversation, ...this.conversationArr ];
+                            if (resp.profile_image_extension) {
+                                return this.userService.getProfileImageGetUrl(participantId, resp.profile_image_extension);
+                            } else {
+                                return Promise.resolve(USER_DEFAULT_IMG_ASSET);
+                            }
+                        })
+                        .then((resp: string) => {
+                            this.userInfoMap[participantId].profile_image_url = resp;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                } else { // if the new message is part of an existing conversation
+                    this.conversationArr[conversationIdx].latestContent = res.content;
+                    this.conversationArr[conversationIdx].senderId = res.senderId;
+                    this.conversationArr[conversationIdx].sentAt = res.sentAt;
+                    this.conversationArr[conversationIdx].isRead = res.senderId === this.currUserId;
+                }
+            },
+            err => {
+                console.log(err);
+            }
+        )
     }
 }

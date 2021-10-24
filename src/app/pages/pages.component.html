@@ -40,15 +40,17 @@
                     {{ userInfoMap[presence.userId].first_name }}
                     {{ userInfoMap[presence.userId].last_name }}
                 </span>
+                <span *ngIf="presence.page && presence.page.domain !== ''" class='domain-span'>
+                    <strong>{{ presence.page.domain }}</strong>
+                </span>
             </div>
-            <div>
-                <a *ngIf="presence.page" [href]='presence.page.url'
-                   target="_blank" class='page-a'>
-                    <span class='presence-page-span'>
-                        {{ presence.page.domain }}: {{ presence.page.title }}
-                    </span>
-                </a>
-            </div>            
+            <a *ngIf="presence.page && presence.page.url !== ''" [href]='presence.page.url'
+               target="_blank" class='page-a'>
+                {{ presence.page.title }}
+            </a>
+            <span *ngIf="presence.page && presence.page.url === ''" class='activity-hidden-span'>
+                Activity Hidden
+            </span>
         </div>
     </div>
 

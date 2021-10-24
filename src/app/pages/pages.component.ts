@@ -202,11 +202,15 @@ export class PagesComponent implements OnInit, OnDestroy {
                         userId: event.data.data.userId,
                         page: null
                     };
-                    this.offlinePresenceArr = [ ...this.offlinePresenceArr, updatedPresence ];
+                    this.offlinePresenceArr = [ updatedPresence, ...this.offlinePresenceArr ];
                     this.onlineUserIdSet.delete(presenceUserId);
                     this.offlineUserIdSet.add(presenceUserId);
                 }
             }
+        } else if (event.data.type === 'update-domain-array') {
+            console.log(event.data);
+            this.domainAllowSet = new Set(event.data.data.domainAllowArray);
+            this.domainDenySet = new Set(event.data.data.domainDenyArray);
         }
     }
 
