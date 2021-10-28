@@ -36,7 +36,7 @@
     ></app-chat-message>
 </div>
 <div class='chat-input-div'>
-    <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message'/>
+    <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' (keydown.enter)="sendMessage()"/>
     <button (click)="sendMessage()" class='message-send-button'
         [disabled]="newMessageContent === ''">
         <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>

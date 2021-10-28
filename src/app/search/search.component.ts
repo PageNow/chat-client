@@ -28,7 +28,7 @@ export class SearchComponent {
     searchInputChanged: Subject<string> = new Subject<string>();
 
     searched = false;
-    endOfSearch = false; // boolean for indicating whether there is no more  
+    endOfSearch = false; // boolean for indicating whether there is no more
     searchedUserArr: UserInfoSummary[] = [];
     userProfileImgUrlMap: {[key: string]: string} = {};
 
@@ -78,7 +78,7 @@ export class SearchComponent {
                     if (res.length < SEARCH_RESULT_LIMIT) {
                         this.endOfSearch = true;
                     }
-                })
+                });
         } else if (this.searchOption === 'name') {
             this.searchService.searchUsersByName(this.searchInput, SEARCH_RESULT_LIMIT, 0)
                 .then((res: UserInfoSummary[]) => {
@@ -88,7 +88,7 @@ export class SearchComponent {
                     if (res.length < SEARCH_RESULT_LIMIT) {
                         this.endOfSearch = true;
                     }
-                })
+                });
         }
     }
 
@@ -154,7 +154,6 @@ export class SearchComponent {
                 requestUserInfoArr.map(x => x.user_id),
                 requestUserInfoArr.map(x => x.profile_image_extension)
             ).then(res => {
-                console.log(res);
                 this.userProfileImgUrlMap = {
                     ...this.userProfileImgUrlMap,
                     ...res
@@ -176,7 +175,7 @@ export class SearchComponent {
         this.showProfile = false;
     }
 
-    addFriend(idx: number): void {        
+    addFriend(idx: number): void {
         this.friendshipService.addFriend(this.searchedUserArr[idx].user_id)
             .then(res => {
                 if (res.success) {
@@ -185,23 +184,31 @@ export class SearchComponent {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
     onDeleteFriendRequest(event: string): void {
-        for (let idx = 0; idx < this.searchedUserArr.length; idx++) {
-            if (this.searchedUserArr[idx].user_id === event) {
-                this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_NONE;
+        for (const searchedUser of this.searchedUserArr) {
+            if (searchedUser.user_id === event) {
+                searchedUser.friendship_state = this.FRIENDSHIP_NONE;
                 return;
             }
         }
     }
 
     onAcceptFriendRequest(event: string): void {
-        console.log(event);
-        for (let idx = 0; idx < this.searchedUserArr.length; idx++) {
-            if (this.searchedUserArr[idx].user_id === event) {
-                this.searchedUserArr[idx].friendship_state = this.FRIENDSHIP_ACCEPTED;
+        for (const searchedUser of this.searchedUserArr) {
+            if (searchedUser.user_id === event) {
+                searchedUser.friendship_state = this.FRIENDSHIP_ACCEPTED;
+                return;
+            }
+        }
+    }
+
+    onCreateFriendRequest(event: string): void {
+        for (const searchedUser of this.searchedUserArr) {
+            if (searchedUser.user_id === event) {
+                searchedUser.friendship_state = this.FRIENDSHIP_PENDING;
                 return;
             }
         }

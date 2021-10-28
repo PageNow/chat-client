@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../auth.service';
-import { AuthState } from '../auth.model';
+import Auth from '@aws-amplify/auth';
 
 @Component({
     selector: 'app-auth-gate',
@@ -10,16 +9,15 @@ import { AuthState } from '../auth.model';
     styleUrls: ['./auth-gate.component.scss']
 })
 export class AuthGateComponent {
-    authState: AuthState;
-
     constructor(
         private router: Router,
-        private authService: AuthService
     ) {
-        this.authService.auth$.subscribe((authState: AuthState) => {
-            if (authState.isAuthenticated) {
+        Auth.currentAuthenticatedUser()
+            .then(() => {
                 this.router.navigate(['/home'], { replaceUrl: true });
-            }
-        });
+            })
+            .catch(() => {
+                // do nothing
+            });
     }
 }

@@ -1,17 +1,17 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 import { UserInfoSummary } from '../user/user.model';
-import { FriendshipService } from "../friendship/friendship.service";
+import { FriendshipService } from '../friendship/friendship.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationsService {
-    
+
     private friendRequestUserArr: UserInfoSummary[] = [];
     public notificationCntSubject = new BehaviorSubject<number>(0);
-    public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>(this.friendRequestUserArr); 
+    public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>(this.friendRequestUserArr);
 
     constructor(
         private friendshipService: FriendshipService
@@ -50,6 +50,4 @@ export class NotificationsService {
                 console.log(err);
             });
     }
-
-    
 }

@@ -146,6 +146,6 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
             err => {
                 console.log(err);
             }
-        )
+        );
     }
 }

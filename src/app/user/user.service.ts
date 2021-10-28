@@ -24,7 +24,6 @@ export class UserService {
     }
 
     public getCurrentUserInfo(): Promise<any> {
-        console.log('authService: calling /users/me');
         return this.http.get(`${USER_API_URL}/users/me`).toPromise();
     }
 

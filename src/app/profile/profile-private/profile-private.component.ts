@@ -333,10 +333,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         const imageExt = this.imageToUpload.type.split('/')[1];
         this.userService.getProfileImageUploadUrl(imageExt).toPromise()
             .then(res => {
-                console.log(res);
-                console.log(this.imageToUpload);
                 const uploadUrl = res;
-                console.log(uploadUrl);
                 const httpOptions = {
                     headers: {
                         'x-amz-acl': 'private',

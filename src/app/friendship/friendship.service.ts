@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { USER_API_URL } from '../shared/config';
 
@@ -13,7 +12,6 @@ export class FriendshipService {
     constructor(
         private http: HttpClient,
     ) {
-        console.log('friendship service constructor');
         this.httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json'

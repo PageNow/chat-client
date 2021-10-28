@@ -30,6 +30,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Output() backEvent = new EventEmitter<boolean>();
     @Output() deleteFriendRequestEvent = new EventEmitter<string>();
     @Output() acceptFriendRequestEvent = new EventEmitter<string>();
+    @Output() createFriendRequestEvent = new EventEmitter<string>();
 
     currUserId: string;
     currUserName: string;
@@ -43,7 +44,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     friendshipInfo: Friendship;
     isFriend: boolean;
     friendRequestSent: boolean; // true if there is a friend request sent
-    friendRequestReceived: boolean; // 
+    friendRequestReceived: boolean;
 
     // variable for mutual friends
     mutualFriendArr: UserInfoSummary[] = [];
@@ -61,7 +62,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.mutualFriendCount);
         this.spinnerMsg = SPINNER_PROFILE_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(
@@ -91,11 +91,10 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             .then(res => {
                 this.userProfileImgUrl = res;
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
                 this.userProfileImgUrl = USER_DEFAULT_IMG_ASSET;
             });
-        
+
         this.getFriendshipStatus(this.userId);
 
         this.getMutualFriends(this.userId, 0);
@@ -113,7 +112,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                     if (res.accepted_at) { // is friend
                         this.isFriend = true;
                         this.friendRequestSent = false;
-                    this.friendRequestReceived = false;
+                        this.friendRequestReceived = false;
                     } else if (this.currUserId === res.user_id1) { // not friend, friend request sent
                         this.isFriend = false;
                         this.friendRequestSent = true;
@@ -186,11 +185,11 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.spinner.show();
         this.friendshipService.addFriend(this.userInfo.user_id)
             .then(res => {
-                console.log(res);
                 if (res.success) {
                     this.isFriend = false;
                     this.friendRequestSent = true;
                     this.friendRequestReceived = false;
+                    this.createFriendRequestEvent.emit(this.userInfo.user_id);
                 }
                 this.spinnerMsg = '';
                 this.spinner.hide();
@@ -201,14 +200,13 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 this.spinner.hide();
             });
     }
-    
+
     acceptFriendRequest(): void {
         if (!this.userInfo) { return; }
         this.spinnerMsg = SPINNER_FRIENDSHIP_ACCEPT_MSG;
         this.spinner.show();
         this.friendshipService.acceptFriendRequest(this.userInfo.user_id)
             .then(res => {
-                console.log(res);
                 if (res.success) {
                     this.isFriend = true;
                     this.friendRequestSent = false;
@@ -253,7 +251,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
 
     deleteFriendRequest(): void {
         if (!this.userInfo) { return; }
-        this.spinnerMsg= SPINNER_FRIENDSHIP_REJECT_MSG;
+        this.spinnerMsg = SPINNER_FRIENDSHIP_REJECT_MSG;
         this.spinner.show();
         this.friendshipService.deleteFriendRequest(this.userId)
             .then(res => {
@@ -262,7 +260,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                     this.friendRequestSent = false;
                     this.friendRequestReceived = false;
                     const deleteUserId = this.friendshipInfo.user_id1 === this.currUserId ?
-                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1
+                        this.friendshipInfo.user_id2 : this.friendshipInfo.user_id1;
                     this.deleteFriendRequestEvent.emit(deleteUserId);
                     this.notificationsService.removeFriendRequest(deleteUserId);
                 }
@@ -273,7 +271,7 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 console.log(err);
                 this.spinnerMsg = '';
                 this.spinner.hide();
-            })
+            });
     }
 
     sendMessage(): void {
@@ -282,20 +280,17 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.spinner.show();
         this.chatService.getDirectConversation(this.userInfo.user_id)
             .then((res: any) => {
-                console.log(res);
-                if (res.conversationId === undefined || res.conversationId === null) {
+                if (res && res.conversationId) {
+                    return Promise.resolve({ conversationId: res.conversationId });
+                } else {
                     return this.chatService.createConversation(
                         [this.userInfo.user_id], false, '');
-                } else {
-                    return Promise.resolve({ conversationId: res.conversationId });
                 }
             })
             .then(res => {
                 console.log(res);
                 this.spinnerMsg = '';
                 this.spinner.hide();
-                // console.log(`/chat/conversation/${res.conversationId}?isGroup=false&title=&recipientId=${this.userInfo.user_id}&recipientName=${this.userFullName}&recipientImgUrl=${this.userProfileImgUrl}`);
-                // this.router.navigate([`/chat/conversation/${res.conversationId}?isGroup=false&recipientId=${this.userInfo.user_id}&recipientName=${this.userFullName}&recipientImgUrl=${this.userProfileImgUrl}`], { replaceUrl: true });
                 this.router.navigate([`/chat/conversation/${res.conversationId}`], { queryParams: {
                     isGroup: 'false', title: '', recipientId: this.userInfo.user_id,
                     recipientName: getFullName(this.userInfo.first_name, this.userInfo.last_name),

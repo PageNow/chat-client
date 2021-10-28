@@ -6,6 +6,15 @@ import {
     faSearch, faComment, faBell, faUserCircle, faFileAlt, faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import { Auth } from 'aws-amplify';
+import {
+    CognitoIdToken,
+    CognitoAccessToken,
+    CognitoRefreshToken,
+    CognitoUserSession,
+    CognitoUser,
+    CognitoUserPool
+} from 'amazon-cognito-identity-js';
+import awsmobile from '../../aws-exports';
 
 import { EXTENSION_ID } from '../shared/config';
 import { UserService } from '../user/user.service';
@@ -52,16 +61,12 @@ export class TabsComponent implements OnInit, OnDestroy {
         private userService: UserService,
         private chatService: ChatService,
         private notificationsService: NotificationsService
-    ) {
-        Auth.currentAuthenticatedUser()
-            .then(res => {
-                this.userId = res.username;
-                window.addEventListener('message',
-                    this.messageEventListener.bind(this));
-            });
+    ) { }
 
+    ngOnInit(): void {
         Auth.currentSession()
             .then(res => {
+                this.userId = res.getIdToken().payload['cognito:username'];
                 const message = {
                     type: 'update-jwt',
                     data: {
@@ -70,13 +75,12 @@ export class TabsComponent implements OnInit, OnDestroy {
                 };
                 chrome.runtime.sendMessage(EXTENSION_ID, message);
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
+                // "No current user" error - do nothing
             });
 
         this.userInfoSubscription = this.userService.currUserInfo.subscribe(
             (res: UserInfoPrivate | null) => {
-                console.log(res);
                 if (res) {
                     this.shareMode = res.share_mode;
                     this.domainAllowSet = new Set(res.domain_allow_array);
@@ -102,7 +106,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             }
         );
 
-        this.nUnreadConversations = chatService.unreadConversationIdSet.size;
+        this.nUnreadConversations = this.chatService.unreadConversationIdSet.size;
         this.unreadConversationCntSubscription = this.chatService.unreadConversationCntSubject.subscribe(
             (res: number) => {
                 this.nUnreadConversations = res;
@@ -119,11 +123,9 @@ export class TabsComponent implements OnInit, OnDestroy {
             err => {
                 console.log(err);
             }
-        )
-    }
+        );
 
-    ngOnInit(): void {
-        // do nothing
+        window.addEventListener('message', this.messageEventListener.bind(this));
     }
 
     ngOnDestroy(): void {
@@ -137,14 +139,17 @@ export class TabsComponent implements OnInit, OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         switch (event.data.type) {
-            case 'send-message':
-                console.log(event.data.data);
-                break;
             case 'read-messages':
                 if (event.data.data.userId === this.userId) {
                     this.chatService.unreadConversationIdSet.delete(event.data.data.conversationId);
                     this.chatService.publishUnreadConversationCnt();
                 }
+                break;
+            case 'auth-session':
+                this.setAuthSession(event.data.data);
+                break;
+            case 'auth-null':
+                Auth.signOut();
                 break;
             default:
                 break;
@@ -156,5 +161,39 @@ export class TabsComponent implements OnInit, OnDestroy {
             type: 'window-chatbox-close'
         };
         chrome.runtime.sendMessage(EXTENSION_ID, message);
+    }
+
+    private setAuthSession(session: any): void {
+        const idToken = new CognitoIdToken({
+            IdToken: session.idToken.jwtToken
+        });
+        const accessToken = new CognitoAccessToken({
+              AccessToken: session.accessToken.jwtToken
+        });
+        const refreshToken = new CognitoRefreshToken({
+              RefreshToken: session.refreshToken.token
+        });
+        const clockDrift = session.clockDrift;
+        const sessionData = {
+            IdToken: idToken,
+            AccessToken: accessToken,
+            RefreshToken: refreshToken,
+            ClockDrift: clockDrift
+        };
+
+        // Create the session
+        const userSession  = new CognitoUserSession(sessionData);
+        const userData = {
+            Username: userSession.getIdToken().payload['cognito:username'],
+            Pool: new CognitoUserPool({
+                UserPoolId: awsmobile.aws_user_pools_id,
+                ClientId: awsmobile.aws_user_pools_web_client_id
+            })
+        };
+
+        // Make a new cognito user
+        const cognitoUser = new CognitoUser(userData);
+        // Attach the session to the user
+        cognitoUser.setSignInUserSession(userSession);
     }
 }

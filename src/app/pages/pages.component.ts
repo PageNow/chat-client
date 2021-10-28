@@ -70,7 +70,6 @@ export class PagesComponent implements OnInit, OnDestroy {
 
         this.pagesService.getPresence()
             .then(res => {
-                console.log(res);
                 this.offlinePresenceArr = res.presenceArr.filter((x: Presence) => !x.page);
                 this.offlineUserIdSet = new Set(this.offlinePresenceArr.map((x: Presence) => x.userId));
                 this.onlinePresenceArr = res.presenceArr.filter((x: Presence) => x.page);
@@ -131,7 +130,6 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'update-presence') {
-            console.log(event.data);
             const presenceUserId = event.data.data.userId;
             const updatedPresence = {
                 userId: event.data.data.userId,
@@ -154,7 +152,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                         }
                     }
                     if (idxToRemove !== undefined && idxToRemove !== null) {
-                        this.offlinePresenceArr = [ 
+                        this.offlinePresenceArr = [
                             ...this.offlinePresenceArr.slice(0, idxToRemove),
                             ...this.offlinePresenceArr.slice(idxToRemove + 1)
                         ];
@@ -173,7 +171,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                         }
                     }
                     if (idxToRemove !== undefined && idxToRemove !== null) {
-                        this.onlinePresenceArr = [ 
+                        this.onlinePresenceArr = [
                             ...this.onlinePresenceArr.slice(0, idxToRemove),
                             ...this.onlinePresenceArr.slice(idxToRemove + 1)
                         ];
@@ -242,7 +240,7 @@ export class PagesComponent implements OnInit, OnDestroy {
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
 

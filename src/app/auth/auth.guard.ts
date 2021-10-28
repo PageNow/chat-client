@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     ): Observable<boolean> | Promise<boolean> | boolean {
 
         return Auth.currentAuthenticatedUser()
-            .then(res => {
+            .then(() => {
                 return true;
             })
             .catch(() => {

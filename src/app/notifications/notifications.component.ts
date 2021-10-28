@@ -40,7 +40,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.friendRequestUserArrSubscription = this.notificationsService.friendRequestUserArrSubject.subscribe(
             (res: UserInfoSummary[]) => {
-                console.log(res);
                 this.friendRequestUserArr = res;
                 this.updateUserProfileImgUrlMap(res);
                 this.isNotificationLoaded = true;

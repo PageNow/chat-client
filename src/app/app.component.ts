@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { INITIAL_TAB } from './shared/constants';
 import { Auth } from 'aws-amplify';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-root',
@@ -11,7 +12,7 @@ import { Auth } from 'aws-amplify';
 export class AppComponent implements OnDestroy {
     currTab = INITIAL_TAB;
 
-    constructor(location: Location) {
+    constructor(location: Location, private httpClient: HttpClient) {
         location.onUrlChange((res) => {
             switch (res.split('/')[1]) {
                 case 'pages':
@@ -29,6 +30,9 @@ export class AppComponent implements OnDestroy {
                 case 'chat':
                     this.currTab = 'chat';
                     break;
+                case 'auth':
+                    this.currTab = 'auth';
+                    break;
                 default:
                     break;
             }
@@ -45,7 +49,7 @@ export class AppComponent implements OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'auth-null') {
-            console.log('Auth signout');
+            console.log('app.component signout');
             Auth.signOut();
         }
     }
