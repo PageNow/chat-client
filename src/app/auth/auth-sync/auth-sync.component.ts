@@ -1,6 +1,5 @@
 /// <reference types="chrome" />
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -19,7 +18,6 @@ export class AuthSyncComponent {
         /* Sync browser auth session with extension auth session */
         Auth.currentSession()
             .then((session: any) => {
-                console.log(session);
                 const message = {
                     type: 'google-auth-session',
                     data: session

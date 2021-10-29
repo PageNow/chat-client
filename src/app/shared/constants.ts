@@ -1,3 +1,4 @@
+export const DESCRIPTION_MAX_LENGTH = 45;
 export const VALID_PROFILE_IMG_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 export const INITIAL_TAB = 'pages';

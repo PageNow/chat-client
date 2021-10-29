@@ -49,7 +49,6 @@ export class AppComponent implements OnDestroy {
 
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'auth-null') {
-            console.log('app.component signout');
             Auth.signOut();
         }
     }

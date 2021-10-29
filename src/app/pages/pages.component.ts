@@ -62,9 +62,6 @@ export class PagesComponent implements OnInit, OnDestroy {
                     this.domainAllowSet = new Set(res.domain_allow_array);
                     this.domainDenySet = new Set(res.domain_deny_array);
                 }
-            },
-            (err: any) => {
-                console.log(err);
             }
         );
 
@@ -98,7 +95,6 @@ export class PagesComponent implements OnInit, OnDestroy {
                             for (const userId of userIdArr) {
                                 this.userInfoMap[userId].profileImgUrl = profileImageUrlMap[userId];
                             }
-                            console.log(this.userInfoMap);
                         });
                 }
                 this.isPresenceLoaded = true;
@@ -112,9 +108,7 @@ export class PagesComponent implements OnInit, OnDestroy {
         const message = {
             type: 'get-curr-url'
         };
-        console.log('sending get-curr-url message');
         chrome.runtime.sendMessage(EXTENSION_ID, message, (response) => {
-            console.log(response);
             if (response.code === 'success') {
                 this.currUrl = response.data.url;
                 this.currDomain = response.data.domain;
@@ -206,7 +200,6 @@ export class PagesComponent implements OnInit, OnDestroy {
                 }
             }
         } else if (event.data.type === 'update-domain-array') {
-            console.log(event.data);
             this.domainAllowSet = new Set(event.data.data.domainAllowArray);
             this.domainDenySet = new Set(event.data.data.domainDenyArray);
         }

@@ -19,6 +19,9 @@
     <div class='name-div'>
         <strong>{{ userInfo?.first_name }} {{ userInfo?.last_name }}</strong>
     </div>
+    <div class='description-div'>
+        {{ userInfo?.description }}
+    </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false
                 && friendRequestSent === false && friendRequestReceived === false"
          class='profile-btn-div'>
@@ -50,8 +53,9 @@
     <div *ngIf="currUserId && userId === currUserId" class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="navigateToMyProfile()">Edit Profile</button>
     </div>
-    <div class='description-div'>
-        {{ userInfo?.description }}
+    <div class='additional-info-header-div'
+         *ngIf="userInfo?.school || userInfo?.work || userInfo?.location || userInfo?.gender">
+        <span><strong>User Information</strong></span>
     </div>
     <div class='additional-info-div'>
         <div *ngIf="userInfo?.school" class='additional-info-item-div'>

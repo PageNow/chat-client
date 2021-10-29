@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
 import { UserService } from 'src/app/user/user.service';
-import { getFullName } from '../../shared/user_utils';
+import { getFullName } from '../../shared/user-utils';
 import { UserInfoPublic } from 'src/app/user/user.model';
 import { USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
 import { Message } from '../models/message.model';

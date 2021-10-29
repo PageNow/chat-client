@@ -8,7 +8,7 @@ import { FriendshipService } from '../..//friendship/friendship.service';
 import { UserInfoPublic, UserInfoSummary } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
-import { getFullName } from '../../shared/user_utils';
+import { getFullName } from '../../shared/user-utils';
 import { LOAD_MUTUAL_FRIENDS_LIMIT, USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
 import { NotificationsService } from 'src/app/notifications/notifications.service';
 
@@ -288,7 +288,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 }
             })
             .then(res => {
-                console.log(res);
                 this.spinnerMsg = '';
                 this.spinner.hide();
                 this.router.navigate([`/chat/conversation/${res.conversationId}`], { queryParams: {

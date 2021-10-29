@@ -25,8 +25,8 @@ export class ChatService implements OnDestroy {
                 window.addEventListener('message',
                     this.messageEventListener.bind(this));
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
+                // do nothing
             });
 
         this.getUserConversations(null)
@@ -36,8 +36,8 @@ export class ChatService implements OnDestroy {
                     .forEach((x: string) => this.unreadConversationIdSet.add(x));
                 this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
+                // do nothing
             });
     }
 

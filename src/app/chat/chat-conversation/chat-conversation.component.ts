@@ -12,7 +12,7 @@ import { Message } from '../models/message.model';
 import { EXTENSION_ID } from '../../shared/config';
 import { UserService } from 'src/app/user/user.service';
 import { UserInfoPublic } from 'src/app/user/user.model';
-import { getFullName } from 'src/app/shared/user_utils';
+import { getFullName } from 'src/app/shared/user-utils';
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 

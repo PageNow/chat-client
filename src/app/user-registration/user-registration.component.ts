@@ -6,7 +6,7 @@ import { Auth } from 'aws-amplify';
 import {
     YEARS, MONTHS, DATES, CURR_YEAR, CURR_MONTH, CURR_DATE,
     isDateValid, MONTHS_STR_TO_NUM
-} from '../shared/time_utils';
+} from '../shared/time-utils';
 import { UserService } from '../user/user.service';
 import { UserCreate } from '../user/user.model';
 

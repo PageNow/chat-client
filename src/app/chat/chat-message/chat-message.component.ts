@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Message } from '../models/message.model';
-import { getDateDiffInMin } from '../../shared/time_utils';
+import { getDateDiffInMin } from '../../shared/time-utils';
 
 @Component({
     selector: 'app-chat-message',

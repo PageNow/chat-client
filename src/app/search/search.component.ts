@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { Component, OnInit } from '@angular/core';
 import { faSearch, faTimesCircle, faUserPlus, faUserClock } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -15,7 +16,7 @@ import { FriendshipService } from '../friendship/friendship.service';
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
     faSearch = faSearch;
     faTimesCircle = faTimesCircle;
     faUserPlus = faUserPlus;
@@ -50,7 +51,9 @@ export class SearchComponent {
         private searchService: SearchService,
         private userService: UserService,
         private friendshipService: FriendshipService,
-    ) {
+    ) { }
+
+    ngOnInit(): void {
         this.searchInputChanged.pipe(
             debounceTime(300),
             distinctUntilChanged()

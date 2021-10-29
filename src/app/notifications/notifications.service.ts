@@ -22,8 +22,8 @@ export class NotificationsService {
                 this.notificationCntSubject.next(res.length);
                 this.friendRequestUserArrSubject.next(res);
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
+                // do nothing
             });
     }
 

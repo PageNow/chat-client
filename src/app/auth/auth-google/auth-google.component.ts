@@ -9,8 +9,6 @@ import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth/lib/types';
 })
 export class AuthGoogleComponent {
     constructor( ) {
-        console.log(window.self);
-        console.log(window.top);
         Auth.federatedSignIn({
             provider: CognitoHostedUIIdentityProvider.Google
         });

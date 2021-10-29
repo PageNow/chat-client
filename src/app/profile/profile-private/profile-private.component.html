@@ -58,17 +58,16 @@
 
     <div class='section-header-div'>
         <span class='section-header-span'>
-            <strong>Description</strong>
+            <strong>Profile Header</strong>
         </span>
         <span class='section-header-save-span' (click)="saveDescription()">
             Save
         </span>
     </div>
 
-    <div class='description-textarea-div'>
-        <textarea class='description-textarea description-textarea'
-                  [(ngModel)]="descriptionInput">
-        </textarea>
+    <div class='description-input-div'>
+        <input class='description-input'
+               [(ngModel)]="descriptionInput" />
     </div>
 
     <div *ngIf='descriptionErrorMsg !== ""' class='error-div'>

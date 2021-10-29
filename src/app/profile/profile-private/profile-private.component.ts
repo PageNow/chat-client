@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpBackend, HttpClient } from '@angular/common/http';
@@ -9,7 +10,7 @@ import {
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
-import { USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
+import { DESCRIPTION_MAX_LENGTH, USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
 const SPINNER_FETCH_MSG = 'Fetching user data...';
 const SPINNER_UPLOAD_MSG = 'Uploading user data...';
@@ -120,6 +121,9 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
                     }
                     this.spinnerMsg = '';
                     this.spinner.hide();
+
+                    window.addEventListener('message',
+                        this.messageEventListener.bind(this));
                 }
             },
             err => {
@@ -133,6 +137,8 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
+        window.removeEventListener('message',
+            this.messageEventListener.bind(this));
     }
 
     saveName(): void {
@@ -176,6 +182,11 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     saveDescription(): void {
         if (!this.userInfo) { return; }
 
+        if (this.descriptionInput.length > DESCRIPTION_MAX_LENGTH) {
+            this.descriptionErrorMsg = `Profile header must be less than ${DESCRIPTION_MAX_LENGTH} characters`;
+            return;
+        }
+
         this.spinnerMsg = SPINNER_UPLOAD_MSG;
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
@@ -195,7 +206,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             })
             .catch(err => {
                 console.log(err);
-                this.descriptionErrorMsg = 'Saving description failed';
+                this.descriptionErrorMsg = 'Saving the profile header failed';
                 this.spinnerMsg = '';
                 this.spinner.hide();
             });
@@ -357,8 +368,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     deleteProfileImage(): void {
         this.userService.deleteProfileIamge().toPromise()
-            .then(res => {
-                console.log(res);
+            .then(() => {
                 this.profileImageUrl = '/assets/user.png';
             })
             .catch(err => {
@@ -372,5 +382,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     viewFriends(): void {
         //
+    }
+
+    private messageEventListener(event: MessageEvent): void {
+        if (event.data.type === 'update-domain-array') {
+            this.domainAllowArr = (event.data.data.domainAllowArray as string[]).sort();
+            this.domainDenyArr = (event.data.data.domainDenyArray as string[]).sort();
+        }
     }
 }
