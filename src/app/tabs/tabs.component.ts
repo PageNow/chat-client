@@ -129,6 +129,7 @@ export class TabsComponent implements OnInit, OnDestroy {
     }
 
     private messageEventListener(event: MessageEvent): void {
+        console.log('tabs.component.ts', event.data);
         switch (event.data.type) {
             case 'read-messages':
                 if (event.data.data.userId === this.userId) {

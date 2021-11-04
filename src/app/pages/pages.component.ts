@@ -109,7 +109,7 @@ export class PagesComponent implements OnInit, OnDestroy {
             type: 'get-curr-url'
         };
         chrome.runtime.sendMessage(EXTENSION_ID, message, (response) => {
-            if (response.code === 'success') {
+            if (response && response.code === 'success') {
                 this.currUrl = response.data.url;
                 this.currDomain = response.data.domain;
             }

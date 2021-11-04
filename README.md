@@ -1,5 +1,14 @@
 # chat-client
 
+## Deployment
+
+To set up hosting, run `amplify update hosting`.
+To deploy to host, run `amplify publish`.
+
+## Changing
+
+If "access denied" error occurs for non-index pages, follow this [post](https://victorleungtw.medium.com/fix-aws-amplify-angular-app-error-on-access-denied-error-73c9476f9552).
+
 ## Work Flow
 
 * Tabs
