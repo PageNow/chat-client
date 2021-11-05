@@ -7,7 +7,7 @@ import {
     CognitoUser,
     CognitoUserPool,
 } from 'amazon-cognito-identity-js';
-import awsmobile from '../../aws-exports';
+import { AWS_USER_POOLS_ID, AWS_USER_POOLS_WEB_CLIENT_ID } from './config';
 
 export const setAuthSession = (session: any): void => {
     const idToken = new CognitoIdToken({
@@ -32,8 +32,8 @@ export const setAuthSession = (session: any): void => {
     const userData = {
         Username: userSession.getIdToken().payload['cognito:username'],
         Pool: new CognitoUserPool({
-            UserPoolId: awsmobile.aws_user_pools_id,
-            ClientId: awsmobile.aws_user_pools_web_client_id
+            UserPoolId: AWS_USER_POOLS_ID,
+            ClientId: AWS_USER_POOLS_WEB_CLIENT_ID
         })
     };
 
