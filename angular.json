@@ -36,6 +36,7 @@
                 "zen-observable",
                 "isomorphic-unfetch",
                 "ulid",
+                "url",
                 "@aws-crypto/sha256-js",
                 "@aws-crypto/sha256-browser",
                 "@aws-crypto/crc32",
@@ -116,7 +117,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "codeCoverage": true
           }
         },
         "lint": {
