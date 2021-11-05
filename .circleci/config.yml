@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  codecov: codecov/codecov@3.1.1
+  codecov: codecov/codecov@3.2.0
 jobs:
   build:
     working_directory: ~/chat-client
@@ -17,4 +17,4 @@ jobs:
             - "node_modules"
       - run: npm run test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadlessCI
       - codecov/upload:
-          file: {{ ./coverage/chat-client/lcov.info }}
+          file: ./coverage/chat-client/lcov.info
