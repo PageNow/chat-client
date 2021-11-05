@@ -34,7 +34,12 @@
                 "axios",
                 "aws-amplify",
                 "zen-observable",
-                "isomorphic-unfetch"
+                "isomorphic-unfetch",
+                "ulid",
+                "@aws-crypto/sha256-js",
+                "@aws-crypto/sha256-browser",
+                "@aws-crypto/crc32",
+                "@aws-amplify/auth/lib/types"
             ],
             "outputPath": "dist/chat-client",
             "index": "src/index.html",
