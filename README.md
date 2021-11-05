@@ -1,4 +1,6 @@
-# chat-client
+# PageNow Chat Client
+
+[![CircleCI](https://circleci.com/gh/PageNow/chat-client.svg?style=svg&circle-token=d9d24a3c9faf5c9b39718dc6a2eba2d0f88da260)](https://app.circleci.com/pipelines/github/PageNow/chat-client)
 
 ## Deployment
 
