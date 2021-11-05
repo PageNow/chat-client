@@ -64,3 +64,7 @@ If "access denied" error occurs for non-index pages, follow this [post](https://
 
 * https://aws.amazon.com/blogs/mobile/building-a-serverless-real-time-chat-application-with-aws-appsync/
 * https://github.com/aws-samples/aws-mobile-appsync-chat-starter-angular
+
+### Testing
+
+* https://pretagteam.com/question/thismobilityservicecurrentmessagesubscribe-is-not-a-function-in-angular-unit-testing
