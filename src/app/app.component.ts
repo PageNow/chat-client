@@ -2,7 +2,9 @@ import { Component, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { INITIAL_TAB } from './shared/constants';
 import { Auth } from 'aws-amplify';
-import { HttpClient } from '@angular/common/http';
+import { NavigationEnd, Router } from '@angular/router';
+
+declare let gtag: any;
 
 @Component({
     selector: 'app-root',
@@ -12,7 +14,10 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements OnDestroy {
     currTab = INITIAL_TAB;
 
-    constructor(location: Location, private httpClient: HttpClient) {
+    constructor(
+        location: Location,
+        private router: Router
+    ) {
         location.onUrlChange((res) => {
             switch (res.split('/')[1]) {
                 case 'pages':
@@ -35,6 +40,14 @@ export class AppComponent implements OnDestroy {
                     break;
                 default:
                     break;
+            }
+        });
+
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationEnd) {
+                gtag('config', 'G-ZRRM5WQPV6', {
+                    page_path: event.urlAfterRedirects
+                });
             }
         });
 

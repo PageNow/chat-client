@@ -151,10 +151,8 @@ export class PagesComponent implements OnInit, OnDestroy {
                             ...this.offlinePresenceArr.slice(idxToRemove + 1)
                         ];
                         this.onlinePresenceArr = [ updatedPresence, ...this.onlinePresenceArr ];
-                        console.log(this.offlineUserIdSet, this.onlineUserIdSet);
                         this.offlineUserIdSet.delete(presenceUserId);
                         this.onlineUserIdSet.add(presenceUserId);
-                        console.log(this.offlineUserIdSet, this.onlineUserIdSet);
                     }
                 } else if (this.onlineUserIdSet.has(event.data.data.userId)) {
                     // move to the front of onlinePresenceArr
