@@ -13,6 +13,20 @@
             {{ recipientName }}
         </a>
         <span *ngIf="conversationIsGroup" style="font-size: 15px;">{{ conversationTitle }}</span>
+        <span *ngIf="recipientPresence === undefined || recipientPresence === null"
+            class="activity-hidden-span">
+            <i>Offline</i>
+        </span>
+        <span *ngIf="recipientPresence !== undefined && recipientPresence !== null && recipientPresence.url === ''"
+            class="activity-hidden-span">
+            <i>Activity Hidden</i>
+        </span>
+        <span *ngIf="recipientPresence !== undefined && recipientPresence !== null && recipientPresence.url !== ''"
+            class='presence-url-span'>
+            <a class="presence-url-a" [href]="recipientPresence.url" target="_blank">
+                <i>{{ recipientPresence.domain + ' -' }} {{ recipientPresence.title }}</i>
+            </a>
+        </span>
     </div>
 </div>
 <div class='chat-div' #conversationContainer [scrollTop]="scrollTop">
@@ -36,12 +50,9 @@
     ></app-chat-message>
 </div>
 <div class='chat-input-div'>
-    <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' (keydown.enter)="sendMessage()"/>
+    <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' (keyup.enter)="sendMessage()"/>
     <button (click)="sendMessage()" class='message-send-button'
         [disabled]="newMessageContent === ''">
         <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>
     </button>
-    <!-- <button *ngIf="isSending" class='message-sending-button' [disabled]="true">
-        <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
-    </button> -->
 </div>

@@ -213,9 +213,9 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     }
 
     removeDomain(domainIdx: number): void {
-        if (this.activitySettings === 'share') {
+        if (this.activitySettings === 'hide') {
             this.domainDenyArr.splice(domainIdx, 1);
-        } else if (this.activitySettings === 'hide') {
+        } else if (this.activitySettings === 'share') {
             this.domainAllowArr.splice(domainIdx, 1);
         } else {
             return;
@@ -224,11 +224,15 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     addDomain(): void {
         if (this.activitySettings === 'hide') {
-            this.domainDenyArr.push(this.domainInput);
-            this.domainDenyArr.sort();
+            if (!this.domainDenyArr.includes(this.domainInput)) {
+                this.domainDenyArr.push(this.domainInput);
+                this.domainDenyArr.sort();
+            }
         } else if (this.activitySettings === 'share') {
-            this.domainAllowArr.push(this.domainInput);
-            this.domainAllowArr.sort();
+            if (!this.domainAllowArr.includes(this.domainInput)) {
+                this.domainAllowArr.push(this.domainInput);
+                this.domainAllowArr.sort();
+            }
         } else {
             return;
         }
@@ -242,7 +246,6 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         this.spinner.show();
         const updatedUserInfo: UserInfoUpdate = {
             ...this.userInfo,
-
             share_mode: this.activitySettings === 'share' ? 'default_none' : 'default_all',
             domain_allow_arr: this.domainAllowArr,
             domain_deny_arr: this.domainDenyArr

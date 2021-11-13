@@ -5,14 +5,16 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { Auth } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
+import psl from 'psl';
 
 import { INITIAL_MESSAGE_LIMIT, INITIAL_MESSAGE_OFFSET, LOAD_MESSAGE_LIMIT } from 'src/app/shared/constants';
 import { ChatService } from '../chat.service';
 import { Message } from '../models/message.model';
 import { EXTENSION_ID } from '../../shared/config';
-import { UserService } from 'src/app/user/user.service';
-import { UserInfoPublic } from 'src/app/user/user.model';
-import { getFullName } from 'src/app/shared/user-utils';
+import { UserService } from '../../user/user.service';
+import { UserInfoPublic } from '../../user/user.model';
+import { getFullName } from '../../shared/user-utils';
+import { PagesService } from '../../pages/pages.service'
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 
@@ -42,6 +44,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     recipientId: string;
     recipientName: string; // for direct conversation
     recipientImgUrl: string; // for direct conversation
+    recipientPresence: {[key: string]: string} | null;
 
     // variables related to user information
     userNameMap: {[key: string]: string} = {};
@@ -58,7 +61,8 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private chatService: ChatService
+        private chatService: ChatService,
+        private pagesService: PagesService
     ) { }
 
     ngOnInit(): void {
@@ -117,6 +121,32 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 .catch(err => {
                     console.log(err);
                 });
+            
+            // get current recipient presence
+            this.pagesService.getUserPresence(this.recipientId)
+                .then(res => {
+                    if (res) {
+                        let domain = '';
+                        if (res.url !== '') {
+                            try {
+                                const urlObj = new URL(res.url);
+                                domain = (psl.parse(urlObj.hostname) as any).domain;
+                            } catch (err) {
+                                domain = '(Unrecognized Domain)'
+                            }
+                        }
+                        this.recipientPresence = {
+                            url: res.url,
+                            title: res.title,
+                            domain: domain ? domain : '(Unrecognized Domain)'
+                        };
+                    } else {
+                        this.recipientPresence = res;
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         });
 
         this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
@@ -138,6 +168,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                             ...this.sendingMessageArr.slice(delIdx + 1, )
                         ];
                     }
+                    setTimeout(() => this.scrollToBottom(), 200);
                     // set message as read
                     const message = {
                         type: 'read-messages',
@@ -182,15 +213,41 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 this.spinnerMsg = '';
                 this.spinner.hide();
             });
+        window.addEventListener('message',
+            this.messageEventListener.bind(this));
     }
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
         this.newMessageSubscription?.unsubscribe();
+        window.removeEventListener('message',
+            this.messageEventListener.bind(this));
+    }
+
+    private messageEventListener(event: MessageEvent): void {
+        // listen to presence update of the recipientId
+        if (event.data.type === 'update-presence' && event.data.data.userId === this.recipientId) {
+            let domain = '';
+            if (event.data.data.url !== '') {
+                try {
+                    const urlObj = new URL(event.data.data.url);
+                    domain = (psl.parse(urlObj.hostname) as any).domain;
+                } catch (err) {
+                    domain = '(Unrecognized Domain)'
+                }
+            }
+            this.recipientPresence = {
+                url: event.data.data.url,
+                title: event.data.data.title,
+                domain: domain ? domain : '(Unrecognized Domain)'
+            };
+        } else if (event.data.type === 'presence-timeout' && event.data.data.userId === this.recipientId) {
+            this.recipientPresence = null;
+        }
     }
 
     sendMessage(): void {
-        if (!this.conversationId || !this.newMessageContent || this.newMessageContent === '') {
+        if (!this.conversationId || !this.newMessageContent || this.newMessageContent.trim() === '') {
             return;
         }
         const tempMessageId = uuidv4();
@@ -199,7 +256,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             conversationId: this.conversationId,
             sentAt: '',
             senderId: this.currUserId,
-            content: this.newMessageContent,
+            content: this.newMessageContent.trimEnd(),
             tempMessageId
         };
 
@@ -210,7 +267,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
             type: 'send-message',
             data: {
                 tempMessageId,
-                content: this.newMessageContent,
+                content: this.newMessageContent.trimEnd(),
                 conversationId: this.conversationId
             }
         };

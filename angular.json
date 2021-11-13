@@ -37,6 +37,7 @@
                 "isomorphic-unfetch",
                 "ulid",
                 "url",
+                "psl",
                 "@aws-crypto/sha256-js",
                 "@aws-crypto/sha256-browser",
                 "@aws-crypto/crc32",

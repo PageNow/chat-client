@@ -173,7 +173,6 @@ export class PagesComponent implements OnInit, OnDestroy {
                 }
             }
         } else if (event.data.type === 'presence-timeout') {
-            console.log(event.data);
             const presenceUserId = event.data.data.userId;
             if (this.onlineUserIdSet.has(presenceUserId)) {
                 let idxToRemove;

@@ -40,10 +40,10 @@ $chat-input-height: 30px;
 }
 
 .back-div {
-    margin-right: 15px;
     height: 100%;
     display: flex;
     align-items: center;
+    width: 60px;
 }
 
 .back-a {
@@ -76,6 +76,8 @@ $chat-input-height: 30px;
     height: 100%;
     display: flex;
     align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .user-name-a {
@@ -102,8 +104,32 @@ $chat-input-height: 30px;
     object-fit: cover;
 }
 
+.activity-hidden-span {
+    font-size: 12px;
+    color: $tabs-color;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+
+.presence-url-span {
+    margin-left: 8px;
+}
+
+.presence-url-a {
+    width: max-content;
+    text-decoration: none;
+    color: $link-color;
+    font-size: 12px;
+}
+
+.presence-url-a:hover {
+    color: $link-hover-color;
+    cursor: pointer;
+}
+
 .chat-input {
     flex-grow: 1;
+    font-size: 13px;
 }
 
 .message-send-button {
