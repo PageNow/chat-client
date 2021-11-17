@@ -1,3 +1,7 @@
+/**
+ * Currently, NotificationsComponent only displays friend requests received
+ */
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
@@ -55,6 +59,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this.friendRequestUserArrSubscription?.unsubscribe();
     }
 
+    // Update the map of user id to profile image url by calling the backend
+    // only for user ids that are not already in the map
     updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
         let requestUserInfoArr = userInfoArr.filter((x: UserInfoSummary) =>
             !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));

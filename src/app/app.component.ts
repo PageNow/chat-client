@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { INITIAL_TAB } from './shared/constants';
 import { Auth } from 'aws-amplify';
@@ -11,14 +11,16 @@ declare let gtag: any;
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
     currTab = INITIAL_TAB;
 
     constructor(
-        location: Location,
+        private location: Location,
         private router: Router
-    ) {
-        location.onUrlChange((res) => {
+    ) { }
+
+    ngOnInit(): void {
+        this.location.onUrlChange((res) => {
             switch (res.split('/')[1]) {
                 case 'pages':
                     this.currTab = 'pages';

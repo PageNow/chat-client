@@ -67,6 +67,7 @@ export class PagesComponent implements OnInit, OnDestroy {
 
         this.pagesService.getPresence()
             .then(res => {
+                // separate online and offline presence of friends
                 this.offlinePresenceArr = res.presenceArr.filter((x: Presence) => !x.page);
                 this.offlineUserIdSet = new Set(this.offlinePresenceArr.map((x: Presence) => x.userId));
                 this.onlinePresenceArr = res.presenceArr.filter((x: Presence) => x.page);
@@ -105,6 +106,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.spinner.hide();
             });
 
+        // since the client is injected in an iframe, get the current url from background.js
         const message = {
             type: 'get-curr-url'
         };
@@ -123,7 +125,7 @@ export class PagesComponent implements OnInit, OnDestroy {
     }
 
     private messageEventListener(event: MessageEvent): void {
-        if (event.data.type === 'update-presence') {
+        if (event.data.type === 'update-presence') { // when a friend's presence information is updated
             const presenceUserId = event.data.data.userId;
             const updatedPresence = {
                 userId: event.data.data.userId,
@@ -172,7 +174,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                     }
                 }
             }
-        } else if (event.data.type === 'presence-timeout') {
+        } else if (event.data.type === 'presence-timeout') { // when a friend goes offline
             const presenceUserId = event.data.data.userId;
             if (this.onlineUserIdSet.has(presenceUserId)) {
                 let idxToRemove;
@@ -196,7 +198,8 @@ export class PagesComponent implements OnInit, OnDestroy {
                     this.offlineUserIdSet.add(presenceUserId);
                 }
             }
-        } else if (event.data.type === 'update-domain-array') {
+        } else if (event.data.type === 'update-domain-array') { // when user sharing setting is updated
+            // if a user changes the sharing setting for a domain through popup, apply the change directly to client
             this.domainAllowSet = new Set(event.data.data.domainAllowArray);
             this.domainDenySet = new Set(event.data.data.domainDenyArray);
         }

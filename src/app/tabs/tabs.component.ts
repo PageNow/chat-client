@@ -55,9 +55,11 @@ export class TabsComponent implements OnInit, OnDestroy {
         private notificationsService: NotificationsService
     ) { }
 
+    // TabsComponent is initialized whenever the client is updated (when a new tab is selected)
     ngOnInit(): void {
         Auth.currentSession()
             .then(res => {
+                // sync jwt with extension background.js frequently to prevent expiration
                 this.userId = res.getIdToken().payload['cognito:username'];
                 const message = {
                     type: 'update-jwt',
@@ -77,6 +79,7 @@ export class TabsComponent implements OnInit, OnDestroy {
                     this.shareMode = res.share_mode;
                     this.domainAllowSet = new Set(res.domain_allow_array);
                     this.domainDenySet = new Set(res.domain_deny_array);
+                    // sync user sharing setting with extension background.js frequently
                     const message = {
                         type: 'update-user-info',
                         data: {
@@ -97,6 +100,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             }
         );
 
+        // listen to new messages to update the tab badge number
         this.nUnreadConversations = this.chatService.unreadConversationIdSet.size;
         this.unreadConversationCntSubscription = this.chatService.unreadConversationCntSubject.subscribe(
             (res: number) => {
@@ -107,6 +111,7 @@ export class TabsComponent implements OnInit, OnDestroy {
             }
         );
 
+        // listen to new notifications to update the tab badge number
         this.notificationCntSubscription = this.notificationsService.notificationCntSubject.subscribe(
             (res: number) => {
                 this.nNotifications = res;
@@ -147,6 +152,7 @@ export class TabsComponent implements OnInit, OnDestroy {
         }
     }
 
+    // When chatbox is closed by clicking on 'X'
     onCloseChatbox(): void {
         const message = {
             type: 'window-chatbox-close'

@@ -212,6 +212,11 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
             });
     }
 
+    /**
+     * In activitySettings 'hide', we set domains denied to be shared (share_mode default_all)
+     * In activitySettings 'share', we set domain allowed to be shared (share_mode default_none)
+     */
+
     removeDomain(domainIdx: number): void {
         if (this.activitySettings === 'hide') {
             this.domainDenyArr.splice(domainIdx, 1);

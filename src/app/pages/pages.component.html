@@ -4,6 +4,7 @@
     </p>
 </ngx-spinner>
 <div class='main-div' *ngIf="!showProfile">
+    <!-- Url of the website you are currently sharing -->
     <div *ngIf="userPresence && userPresence.page && userPresence.page.url !== ''" class='user-share-div'>
         <span class='user-sharing-intro-span'>
             Now sharing
@@ -12,12 +13,14 @@
             {{ userPresence.page.url }}
         </span>
     </div>
+    <!-- A header that allows user to quickly enable sharing on the domain -->
     <div *ngIf="(shareMode === 'default_all' && domainDenySet.has(currDomain)) || (shareMode === 'default_none' && !domainAllowSet.has(currDomain))"
         class='url-block-div'
     >
         Click <span class='click-span' (click)="allowCurrDomain()">here</span> to allow <strong>{{ currDomain }}</strong> to be shared
     </div>
 
+    <!-- Message that is displayed when you have no friend -->
     <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlinePresenceArr.length === 0"
          class='text-center'>
         <span>Search friends to share your activity with!</span>

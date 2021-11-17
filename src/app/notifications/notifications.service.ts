@@ -49,6 +49,7 @@ export class NotificationsService {
             });
     }
 
+    // Send the updated count to background.js to udpate the extension badge text
     private sendUpdateCntMessage(cnt: number): void {
         chrome.runtime.sendMessage(EXTENSION_ID, {
             type: 'update-notification-cnt',

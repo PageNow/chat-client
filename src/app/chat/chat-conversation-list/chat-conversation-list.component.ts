@@ -49,6 +49,7 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
             })
             .then(res => {
                 this.conversationArr = res;
+                // need participant names to display the title of each conversation
                 const participantIdArr = this.conversationArr.map(x => x.participantId);
                 if (res.length > 0) {
                     return this.userService.getUsersPublicInfo(Array.from(new Set(participantIdArr)));
@@ -121,6 +122,7 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
                             }
                         })
                         .then((resp: UserInfoPublic) => {
+                            // need the user profile image to display (since the conversation is new, assume we don't have the url)
                             this.userInfoMap[participantId] = resp;
                             this.userInfoMap[participantId].full_name = getFullName(resp.first_name, resp.last_name);
                             this.conversationArr = [ newConversation, ...this.conversationArr ];

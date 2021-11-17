@@ -250,6 +250,9 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
         if (!this.conversationId || !this.newMessageContent || this.newMessageContent.trim() === '') {
             return;
         }
+        // tempMessageId is used to display the message in sending state while it is sending
+        // and match the message with the incoming 'new message' that the user just sent
+        // i.e. to match the local message with the messae saved in the server for confirmation
         const tempMessageId = uuidv4();
         const newMessage: Message = {
             messageId: '',

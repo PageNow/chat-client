@@ -20,6 +20,8 @@ export class ChatMessageComponent implements OnInit{
     sentAt: string;
 
     ngOnInit(): void {
+        // Only display the message sentAt time if it is not the message sent by a user
+        // and the time difference between the previous message is greater than 2 minutes
         if (this.nextMessage === null) {
             this.sentAt = this.message.sentAt;
         } else if (this.nextMessage.senderId !== this.message.senderId) {

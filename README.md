@@ -14,54 +14,23 @@ To deploy to host, run `amplify publish`.
 
 * Update `shared/config.js`
 * Update `aws-exports.js` redirect urls.
+* Remove localhost from the redirect urls on aws console and Google developer console.
 
-## Changing
+### Issue
 
-If "access denied" error occurs for non-index pages, follow this [post](https://victorleungtw.medium.com/fix-aws-amplify-angular-app-error-on-access-denied-error-73c9476f9552).
-
-## Work Flow
-
-* Tabs
-- Call http endpoint to get current user info
-- If current user info is null, navigate to /user-registration
-- Publish current user info
-
-* Ohter components
-- Subscribe to userService behaviorsubject
-- Show content only when they receive 
+* If "access denied" error occurs for non-index pages, follow this [post](https://victorleungtw.medium.com/fix-aws-amplify-angular-app-error-on-access-denied-error-73c9476f9552).
 
 ## TODO
 
-### Auth
-
-* Change to Auth.currentUser() from currentSession() since we are using jwt interceptor now
-* In first sign in - fetch user spinner is displayed forever
-* First sign-in process is not smooth
-* External provider - check if the same email exists
-
-### Pages
-
-* Better UI on displaying offline and current page
-
 ### Cache
 
-* Use cache for profile images
-* Use cache for friend requests
+* Use cache for profile images.
 
 ### Profile
 
-* Validate or convert domain input by user
-
-### License
-
-* Link to simpleicon.com
-* Link to fontawesome
+*  Make public profile as an independent page.
 
 ## References
-
-### AppSync
-
-* https://github.com/arjunsk/amplify-appsync-app
 
 ### Amplify Authentication
 

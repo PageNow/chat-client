@@ -1,11 +1,13 @@
 <div class='tabs-main-div' [ngStyle]="{'display': tabsHidden ? 'none' : 'flex'}">
     <div class='d-flex flex-row align-items-center h-100' style="font-size: 19px;">
+        <!-- pages tab -->
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'pages'}">
             <fa-icon [icon]="faFileAlt" [routerLink]="['/pages']"
                 [ngClass]="{'selected-fa-icon': currTab === 'pages',
                             'default-fa-icon': currTab !== 'pages'}">
             </fa-icon>
         </div>
+        <!-- conversation tab -->
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'chat'}">
             <fa-icon [icon]="faComment" [routerLink]="['/chat']"
                 [ngClass]="{'selected-fa-icon': currTab === 'chat',
@@ -15,12 +17,14 @@
                 <strong>{{ nUnreadConversations }}</strong>
             </span>
         </div>
+        <!-- search tab -->
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'search'}">
             <fa-icon [icon]="faSearch" [routerLink]="['/search']"
                 [ngClass]="{'selected-fa-icon': currTab === 'search',
                             'default-fa-icon': currTab !== 'search'}">
             </fa-icon>
         </div>
+        <!-- notification tab -->
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'notifications'}">
             <fa-icon [icon]="faBell" [routerLink]="['/notifications']"
                 [ngClass]="{'selected-fa-icon': currTab === 'notifications',
@@ -30,6 +34,7 @@
                 <strong>{{ nNotifications }}</strong>
             </span>
         </div>
+        <!-- profile tab -->
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'profile-me'}">
             <fa-icon [icon]="faUserCircle" [routerLink]="['/profile', 'me']"
                 [ngClass]="{'selected-fa-icon': currTab === 'profile-me',
@@ -37,6 +42,7 @@
             </fa-icon>
         </div>
     </div>
+    <!-- button to close chatbox -->
     <div class='close-div'>
         <fa-icon [icon]="faTimes" (click)="onCloseChatbox()">
         </fa-icon>

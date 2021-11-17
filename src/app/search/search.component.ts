@@ -54,6 +54,7 @@ export class SearchComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        // debounce search input
         this.searchInputChanged.pipe(
             debounceTime(300),
             distinctUntilChanged()
@@ -146,6 +147,7 @@ export class SearchComponent implements OnInit {
     }
 
     updateUserProfileImgUrlMap(userInfoArr: UserInfoSummary[]): void {
+        // fetch image urls for users whose profile images we have not fetched yet
         let requestUserInfoArr = userInfoArr.filter(x =>
             !Object.prototype.hasOwnProperty.call(this.userProfileImgUrlMap, x.user_id));
         requestUserInfoArr.filter(x => x.profile_image_extension === null).forEach(x => {

@@ -359,7 +359,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     }
 
     addFriendFromList(idx: number): void {
-        // do nothing
         this.friendshipService.addFriend(this.friendArr[idx].user_id)
             .then(res => {
                 if (res.success) {

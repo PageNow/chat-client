@@ -20,6 +20,7 @@ export class AuthSyncComponent implements OnInit {
         /* Sync browser auth session with extension auth session */
         Auth.currentSession()
             .then((session: any) => {
+                // send the google authentication session info to background.js
                 const message = {
                     type: 'google-auth-session',
                     data: session

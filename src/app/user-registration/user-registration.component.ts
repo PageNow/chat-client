@@ -49,7 +49,6 @@ export class UserRegistrationComponent implements OnInit {
                 window.location.reload();
             })
             .catch(err => {
-                console.log(err);
                 if (err.status !== 404) {
                     this.router.navigate(['/auth/gate'], { replaceUrl: true });
                 }
