@@ -3,7 +3,9 @@
         <strong>{{ spinnerMsg }}</strong>
     </p>
 </ngx-spinner>
+
 <div class='main-div'>
+    <!-- Public profile header (back button and unfriend button) -->
     <div class='back-div'>
         <span class='back-span' (click)="onClickBack()">&lt; Back</span>
         <span *ngIf="currUserId && userId !== currUserId && isFriend === true"
@@ -11,6 +13,7 @@
             Unfriend
         </span>
     </div>
+    <!-- Public profile user image and user name -->
     <div class='profile-image-div'>
         <img [src]="userProfileImgUrl"
              class='profile-img' onerror="this.src='/assets/user.png'"
@@ -31,6 +34,8 @@
          class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="sendMessage()">Message</button>
     </div>
+    <!-- Action button: action on friend request, edit profile if own profile, 
+        and send message if already friend -->
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
          class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="acceptFriendRequest()">
@@ -49,10 +54,10 @@
             Cancel Friend Request
         </button>
     </div>
-    <!-- <div><button>Pending Friend Request</button></div> -->
     <div *ngIf="currUserId && userId === currUserId" class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="navigateToMyProfile()">Edit Profile</button>
     </div>
+    <!-- Additional user information -->
     <div class='additional-info-header-div'
          *ngIf="userInfo?.school || userInfo?.work || userInfo?.location || userInfo?.gender">
         <span><strong>User Information</strong></span>
@@ -75,34 +80,79 @@
             <div class='additional-info-content-div'>{{ userInfo?.gender }}</div>
         </div>
     </div>
-    <div class='mutual-friends-div' *ngIf="mutualFriendArr.length > 0">
-        <div class='mutual-friends-header-div'>
-            <strong>Mutual Friends </strong>
-            <span *ngIf="mutualFriendCount !== null && mutualFriendCount !== undefined">
-                ({{ mutualFriendCount }})
-            </span>
-        </div>
-        <div *ngFor="let user of mutualFriendArr" class='mutual-friend-user-div'>
-            <div class='user-profile-image-div'>
-                <img [src]="userProfileImgUrlMap[user.user_id]"
-                    class="user-profile-image" onerror="this.src='/assets/user.png'">
+    <!-- Friend and mutual friend list -->
+    <div class='d-flex flex-row justify-content-between'>
+        <!-- Friend list section -->
+        <div class='friends-div' *ngIf="friendArr.length > 0">
+            <div class='friends-section-header-div'>
+                <strong>Friends</strong>
+                <span *ngIf="friendCount !== null && friendCount !== undefined">
+                    ({{ friendCount }})
+                </span>
             </div>
-            <div class='user-info-div'>
-                <div class='user-name-div'>
-                    <span class='user-name-span'>
-                        {{ user.first_name }} {{ user.last_name }}
-                    </span>
+            <div *ngFor="let user of friendArr; let idx = index" class='d-flex flex-row align-items-center mb-1'>
+                <div class='user-profile-image-div'>
+                    <img [src]="userProfileImgUrlMap[user.user_id]"
+                        class="user-profile-image" onerror="this.src='/assets/user.png'">
                 </div>
-                <div class='user-description-div'>
-                    <span *ngIf="user.description !== ''">{{ user.description }}</span>
-                    <span *ngIf="user.description === ''">&nbsp;</span>
+                <div class='user-info-div'>
+                    <div class='user-name-div'>
+                        <span class='user-name-span'>
+                            {{ user.first_name }} {{ user.last_name }}
+                        </span>
+                    </div>
+                    <div class='user-description-div'>
+                        <span *ngIf="user.user_id === currUserId">Me</span>
+                        <span *ngIf="user.user_id !== currUserId && user.friendship_state === 2">Friend</span>
+                        <span *ngIf="user.user_id !== currUserId && user.friendship_state !== 2 && user.description !== ''">{{ user.description }}</span>
+                        <span *ngIf="user.user_id !== currUserId && user.friendship_state !== 2 && user.description === ''">&nbsp;</span>
+                    </div>
+                </div>
+                <div class='friend-action-div'>
+                    <div class='user-icon-div' *ngIf="user.user_id !== currUserId && user.friendship_state === FRIENDSHIP_NONE">
+                        <fa-icon [icon]="faUserPlus" class='add-friend-icon' (click)="addFriendFromList(idx)"></fa-icon>
+                    </div>
+                    <div class='user-icon-div' *ngIf="user.user_id !== currUserId && user.friendship_state === FRIENDSHIP_PENDING">
+                        <fa-icon [icon]="faUserClock" class='pending-friend-icon'></fa-icon>
+                    </div>
                 </div>
             </div>
+            <div class='load-more-div' *ngIf="!endOfFriendLoad">
+                <span class='load-more-span' (click)="getFriends(userId, friendArr.length)">
+                    Load More Friends
+                </span>
+            </div>
         </div>
-        <div class='load-more-div' *ngIf="!endOfLoad">
-            <span class='load-more-span' (click)="getMutualFriends(userId, mutualFriendArr.length)">
-                Load More Mutual Friends
-            </span>
+        <!-- Mutual friend list section -->
+        <div class='friends-div' *ngIf="mutualFriendArr.length > 0">
+            <div class='friends-section-header-div'>
+                <strong>Mutual Friends </strong>
+                <span *ngIf="mutualFriendCount !== null && mutualFriendCount !== undefined">
+                    ({{ mutualFriendCount }})
+                </span>
+            </div>
+            <div *ngFor="let user of mutualFriendArr" class='d-flex flex-row align-items-center mb-1'>
+                <div class='user-profile-image-div'>
+                    <img [src]="userProfileImgUrlMap[user.user_id]"
+                        class="user-profile-image" onerror="this.src='/assets/user.png'">
+                </div>
+                <div class='user-info-div'>
+                    <div class='user-name-div'>
+                        <span class='user-name-span'>
+                            {{ user.first_name }} {{ user.last_name }}
+                        </span>
+                    </div>
+                    <div class='user-description-div'>
+                        <span *ngIf="user.description !== ''">{{ user.description }}</span>
+                        <span *ngIf="user.description === ''">&nbsp;</span>
+                    </div>
+                </div>
+            </div>
+            <div class='load-more-div' *ngIf="!endOfMutualFriendLoad">
+                <span class='load-more-span' (click)="getMutualFriends(userId, mutualFriendArr.length)">
+                    Load More Mutual Friends
+                </span>
+            </div>
         </div>
     </div>
 </div>

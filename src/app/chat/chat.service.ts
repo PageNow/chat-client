@@ -4,7 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Auth } from 'aws-amplify';
 
 import { Message } from './models/message.model';
-import { CHAT_API_URL } from '../shared/config';
+import { CHAT_API_URL, EXTENSION_ID } from '../shared/config';
 import { Conversation } from './models/conversation.model';
 
 @Injectable({
@@ -49,6 +49,7 @@ export class ChatService implements OnDestroy {
             ) {
                 this.unreadConversationIdSet.add(event.data.data.conversationId);
                 this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
+                this.sendUpdateCntMessage(this.unreadConversationIdSet.size);
             }
         }
     }
@@ -101,5 +102,15 @@ export class ChatService implements OnDestroy {
 
     public publishUnreadConversationCnt(): void {
         this.unreadConversationCntSubject.next(this.unreadConversationIdSet.size);
+        this.sendUpdateCntMessage(this.unreadConversationIdSet.size);
+    }
+
+    private sendUpdateCntMessage(cnt: number) {
+        chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'update-unread-conversation-cnt',
+            data: {
+                unreadConversationCnt: cnt
+            }
+        });
     }
 }

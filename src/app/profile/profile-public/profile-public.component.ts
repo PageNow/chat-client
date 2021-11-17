@@ -2,14 +2,15 @@ import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angu
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
+import { faUserPlus, faUserClock } from '@fortawesome/free-solid-svg-icons';
 
-import { Friendship } from '../../friendship/friendship.model';
+import { Friendship, FriendshipState } from '../../friendship/friendship.model';
 import { FriendshipService } from '../..//friendship/friendship.service';
 import { UserInfoPublic, UserInfoSummary } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { ChatService } from 'src/app/chat/chat.service';
 import { getFullName } from '../../shared/user-utils';
-import { LOAD_MUTUAL_FRIENDS_LIMIT, USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
+import { LOAD_FRIENDS_LIMIT, LOAD_MUTUAL_FRIENDS_LIMIT, USER_DEFAULT_IMG_ASSET } from '../../shared/constants';
 import { NotificationsService } from 'src/app/notifications/notifications.service';
 
 const SPINNER_PROFILE_FETCH_MSG = 'Fetching profile...';
@@ -26,11 +27,14 @@ const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 })
 export class ProfilePublicComponent implements OnInit, OnDestroy {
     @Input() userId: string;
-    @Input() mutualFriendCount: number;
     @Output() backEvent = new EventEmitter<boolean>();
     @Output() deleteFriendRequestEvent = new EventEmitter<string>();
     @Output() acceptFriendRequestEvent = new EventEmitter<string>();
     @Output() createFriendRequestEvent = new EventEmitter<string>();
+
+    // font-awesome icons
+    faUserPlus = faUserPlus;
+    faUserClock = faUserClock;
 
     currUserId: string;
     currUserName: string;
@@ -46,9 +50,20 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
     friendRequestSent: boolean; // true if there is a friend request sent
     friendRequestReceived: boolean;
 
-    // variable for mutual friends
+    // variable for mutual friends array
     mutualFriendArr: UserInfoSummary[] = [];
-    endOfLoad = false;
+    endOfMutualFriendLoad = false;
+    mutualFriendCount: number;
+
+    // variable for friends array
+    friendArr: UserInfoSummary[] = [];
+    endOfFriendLoad = false;
+    friendCount: number;
+
+    // friendship_state constants
+    FRIENDSHIP_ACCEPTED = FriendshipState.ACCEPTED;
+    FRIENDSHIP_PENDING = FriendshipState.PENDING;
+    FRIENDSHIP_NONE = FriendshipState.NONE;
 
     spinnerMsg = '';
 
@@ -96,8 +111,10 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
             });
 
         this.getFriendshipStatus(this.userId);
-
         this.getMutualFriends(this.userId, 0);
+        this.getMutualFriendCount(this.userId);
+        this.getFriends(this.userId, 0);
+        this.getFriendCount(this.userId);
     }
 
     ngOnDestroy(): void {
@@ -141,10 +158,45 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
         this.userService.getUserMutualFriends(userId, LOAD_MUTUAL_FRIENDS_LIMIT, offset)
             .then((res: UserInfoSummary[]) => {
                 if (res.length < LOAD_MUTUAL_FRIENDS_LIMIT) {
-                    this.endOfLoad = true;
+                    this.endOfMutualFriendLoad = true;
                 }
                 this.mutualFriendArr = [ ...this.mutualFriendArr, ...res ];
                 this.updateUserProfileImgUrlMap(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    getMutualFriendCount(userId: string): void {
+        this.userService.getUserMutualFriendCount(userId)
+            .then(res => {
+                this.mutualFriendCount = res['count_1'];
+
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    getFriends(userId: string, offset: number): void {
+        this.userService.getUserFriends(userId, LOAD_FRIENDS_LIMIT, offset)
+            .then((res: UserInfoSummary[]) => {
+                if (res.length < LOAD_FRIENDS_LIMIT) {
+                    this.endOfFriendLoad = true;
+                }
+                this.friendArr = [ ...this.friendArr, ...res ];
+                this.updateUserProfileImgUrlMap(res);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    getFriendCount(userId: string): void {
+        this.userService.getUserFriendCnt(userId)
+            .then(res => {
+                this.friendCount = res['count_1'];
             })
             .catch(err => {
                 console.log(err);
@@ -163,7 +215,6 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
                 requestUserInfoArr.map(x => x.user_id),
                 requestUserInfoArr.map(x => x.profile_image_extension)
             ).then(res => {
-                console.log(res);
                 this.userProfileImgUrlMap = {
                     ...this.userProfileImgUrlMap,
                     ...res
@@ -305,5 +356,18 @@ export class ProfilePublicComponent implements OnInit, OnDestroy {
 
     navigateToMyProfile(): void {
         this.router.navigate(['/profile/me']);
+    }
+
+    addFriendFromList(idx: number): void {
+        // do nothing
+        this.friendshipService.addFriend(this.friendArr[idx].user_id)
+            .then(res => {
+                if (res.success) {
+                    this.friendArr[idx].friendship_state = this.FRIENDSHIP_PENDING;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 }

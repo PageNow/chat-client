@@ -87,6 +87,24 @@ export class UserService {
         ).toPromise();
     }
 
+    public getUserMutualFriendCount(userId: string): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/id/${userId}/mutual-friends/count`
+        ).toPromise();
+    }
+
+    public getUserFriends(userId: string, limit: number, offset: number): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/id/${userId}/friends?limit=${limit}&offset=${offset}`
+        ).toPromise();
+    }
+
+    public getUserFriendCnt(userId: string): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/users/id/${userId}/friends/count`
+        ).toPromise();
+    }
+
     public updateUserDomainAllowArray(domainAllowArray: string[]): Promise<any> {
         return this.http.put(
             `${USER_API_URL}/users/me/domain_array/allow`,

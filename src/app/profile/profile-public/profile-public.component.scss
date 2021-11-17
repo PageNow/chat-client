@@ -84,17 +84,14 @@
     width: 80px;
 }
 
-.mutual-friends-header-div {
-    font-size: 15px;
-    margin-bottom: 5px;
-    margin: 10px 5px 10px 0;
+.friends-div {
+    width: 48%;
 }
 
-.mutual-friend-user-div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.friends-section-header-div {
+    font-size: 15px;
     margin-bottom: 5px;
+    margin: 5px 5px 5px 0;
 }
 
 .user-profile-image-div {
@@ -111,6 +108,15 @@
 .user-info-div {
     display: flex;
     flex-direction: column;
+    white-space: nowrap;
+    overflow: hidden;
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+.user-name-div {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .user-name-span {
@@ -138,4 +144,19 @@
 .load-more-span:hover {
     cursor: pointer;
     color: $link-hover-color;
+}
+
+.pending-friend-icon {
+    color: $tabs-color;
+    font-size: 15px;
+}
+
+.add-friend-icon {
+    color: $tabs-color;
+    font-size: 15px;
+}
+
+.add-friend-icon:hover {
+    color: black;
+    cursor: pointer;
 }

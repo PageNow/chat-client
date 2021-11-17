@@ -17,10 +17,10 @@
               role="status" aria-hidden="true">
         </span>
     </div>
-    <div class='search-output-div' *ngIf="!isSearching">
+    <div class='mt-3' *ngIf="!isSearching">
         <div *ngFor="let user of searchedUserArr; let idx = index"
-            class='search-output-item-div'>
-            <div class='user-profile-image-div'>
+            class='d-flex flex-row align-items-center mb-1'>
+            <div class='me-2'>
                 <a [routerLink]="['/profile', user.user_id]" class="profile-a">
                     <img [src]="userProfileImgUrlMap[user.user_id]"
                         class="profile-image" onerror="this.src='/assets/user.png'">
@@ -73,7 +73,6 @@
     </div>
 </div>
 <app-profile-public *ngIf="showProfile" [userId]="profileId" (backEvent)="onClickBack()"
-    [mutualFriendCount]="profileMutualFriendCount"
     (deleteFriendRequestEvent)="onDeleteFriendRequest($event)"
     (acceptFriendRequestEvent)="onAcceptFriendRequest($event)"
     (createFriendRequestEvent)="onCreateFriendRequest($event)">

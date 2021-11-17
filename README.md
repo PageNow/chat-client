@@ -5,8 +5,15 @@
 
 ## Deployment
 
+### Dev
+
 To set up hosting, run `amplify update hosting`.
 To deploy to host, run `amplify publish`.
+
+### Prod
+
+* Update `shared/config.js`
+* Update `aws-exports.js` redirect urls.
 
 ## Changing
 

@@ -85,10 +85,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this.friendshipService.acceptFriendRequest(userId)
             .then(res => {
                 if (res.success) {
-                    // this.friendRequestUserArr = this.friendRequestUserArr.filter(
-                    //     (x: UserInfoSummary) => x.user_id !== userId);
-                    // this.notificationsService.decrementNotificationCnt();
-                    // this.notificationsService.publishFriendRequestUserArr(this.friendRequestUserArr);
                     this.notificationsService.removeFriendRequest(userId);
                 }
                 this.spinnerMsg = '';
@@ -107,10 +103,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this.friendshipService.deleteFriendRequest(userId)
             .then(res => {
                 if (res.success) {
-                    // this.friendRequestUserArr = this.friendRequestUserArr.filter(
-                    //     (x: UserInfoSummary) => x.user_id !== userId);
-                    // this.notificationsService.decrementNotificationCnt();
-                    // this.notificationsService.publishFriendRequestUserArr(this.friendRequestUserArr);
                     this.notificationsService.removeFriendRequest(userId);
                 }
                 this.spinnerMsg = '';

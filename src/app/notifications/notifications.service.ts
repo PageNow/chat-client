@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { UserInfoSummary } from '../user/user.model';
 import { FriendshipService } from '../friendship/friendship.service';
+import { EXTENSION_ID } from '../shared/config';
 
 @Injectable({
     providedIn: 'root'
@@ -32,11 +33,7 @@ export class NotificationsService {
             .filter((x: UserInfoSummary) => x.user_id !== userId);
         this.notificationCntSubject.next(this.friendRequestUserArr.length);
         this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
-    }
-
-    public publishFriendRequestUserArr(friendRequestUserArr: UserInfoSummary[]): void {
-        this.friendRequestUserArr = friendRequestUserArr;
-        this.friendRequestUserArrSubject.next(friendRequestUserArr);
+        this.sendUpdateCntMessage(this.friendRequestUserArr.length);
     }
 
     public refreshFriendRequests(): void {
@@ -45,9 +42,19 @@ export class NotificationsService {
                 this.friendRequestUserArr = res;
                 this.notificationCntSubject.next(res.length);
                 this.friendRequestUserArrSubject.next(res);
+                this.sendUpdateCntMessage(res.length);
             })
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    private sendUpdateCntMessage(cnt: number) {
+        chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'update-notification-cnt',
+            data: {
+                notificationCnt: cnt
+            }
+        });
     }
 }
