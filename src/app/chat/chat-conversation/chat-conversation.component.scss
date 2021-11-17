@@ -39,13 +39,6 @@ $chat-input-height: 30px;
     padding-bottom: 5px;
 }
 
-.back-div {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    width: 60px;
-}
-
 .back-a {
     text-decoration: none;
     color: $link-color;
@@ -57,12 +50,6 @@ $chat-input-height: 30px;
     color: $link-hover-color;
 }
 
-.load-prev-messages-div {
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-}
-
 .load-prev-messages-span {
     color: $link-color;
 }
@@ -70,14 +57,6 @@ $chat-input-height: 30px;
 .load-prev-messages-span:hover {
     color: $link-hover-color;
     cursor: pointer;
-}
-
-.user-name-div {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 .user-name-a {
@@ -88,13 +67,6 @@ $chat-input-height: 30px;
 
 .user-name-a:hover {
     color: $link-hover-color;
-}
-
-.profile-img-div {
-    margin-right: 5px;
-    height: 100%;
-    display: flex;
-    align-items: center;
 }
 
 .profile-img {
@@ -125,11 +97,6 @@ $chat-input-height: 30px;
 .presence-url-a:hover {
     color: $link-hover-color;
     cursor: pointer;
-}
-
-.chat-input {
-    flex-grow: 1;
-    font-size: 13px;
 }
 
 .message-send-button {

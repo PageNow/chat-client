@@ -1,14 +1,14 @@
 <div class='header-div'>
-    <div class='back-div'>
+    <div class='d-flex align-items-center h-100' style="width: 60px;">
         <a class='back-a' [routerLink]="['/chat', 'conversations']">
             &lt; Back
         </a>           
     </div>
-    <div class='profile-img-div'>
+    <div class='d-flex align-items-center me-1 h-100'>
         <img [src]="recipientImgUrl" class='profile-img'
             onerror="this.src='/assets/user.png'">
     </div>
-    <div class='user-name-div'>
+    <div class='d-flex align-items-center text-nowrap overflow-hidden h-100'>
         <a *ngIf="!conversationIsGroup" class='user-name-a' [routerLink]="['/profile', recipientId]">
             {{ recipientName }}
         </a>
@@ -30,7 +30,7 @@
     </div>
 </div>
 <div class='chat-div' #conversationContainer [scrollTop]="scrollTop">
-    <div class='load-prev-messages-div' *ngIf="!messagesAllLoaded && !isLoadingMoreMessages">
+    <div *ngIf="!messagesAllLoaded && !isLoadingMoreMessages" class='text-center w-100' style="font-size: 11px;">
         <span (click)="loadPreviousMessages()" class='load-prev-messages-span'>
             Load Previous Messages
         </span>
@@ -50,7 +50,8 @@
     ></app-chat-message>
 </div>
 <div class='chat-input-div'>
-    <input class='chat-input' [(ngModel)]="newMessageContent" placeholder='Enter message' (keyup.enter)="sendMessage()"/>
+    <input [(ngModel)]="newMessageContent" placeholder='Enter message' (keyup.enter)="sendMessage()"
+           class='flex-grow-1' style="font-size: 13px;"/>
     <button (click)="sendMessage()" class='message-send-button'
         [disabled]="newMessageContent === ''">
         <fa-icon [icon]="faPaperPlane" class='fa-icon-send'></fa-icon>

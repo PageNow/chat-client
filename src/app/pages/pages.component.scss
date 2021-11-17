@@ -4,7 +4,7 @@ $share-div-height: 25px;
 $share-div-margin-bottom: 5px;
 
 .main-div {
-    padding: 0 10px 5px 10px;
+    padding: 0 $main-lr-padding 5px $main-lr-padding;
 }
 
 .user-share-div {
@@ -25,12 +25,6 @@ $share-div-margin-bottom: 5px;
     margin-right: 10px;
 }
 
-.user-sharing-url-span {
-    font-size: 15px;
-    color: black;
-    vertical-align: middle;
-}
-
 .url-block-div {
     font-size: 15px;
     text-align: center;
@@ -48,10 +42,6 @@ $share-div-margin-bottom: 5px;
 .click-span:hover {
     color: $link-hover-color;
     cursor: pointer;
-}
-
-.presence-intro-div {
-    text-align: center;
 }
 
 .presence-div {
@@ -141,23 +131,10 @@ $share-div-margin-bottom: 5px;
     color: $tabs-color;
 }
 
-.offline-span {
-    font-size: 12px;
-}
-
 .dot {
     height: 10px;
     width: 10px;
     border-radius: 50%;
     display: inline-block;
     margin-right: 8px;
-}
-
-.sharing-dot {
-    background-color: green;
-}
-
-.hiding-dot {
-    background-color: white;
-    border: 1px solid black;
 }

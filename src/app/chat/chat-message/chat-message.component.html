@@ -1,23 +1,26 @@
 
-<!-- curr user is sender -->
-<div *ngIf="currUserId === message.senderId" class='sender-message-div'>
+<!-- when curr user is sender -->
+<div *ngIf="currUserId === message.senderId"
+     class='d-flex flex-row justify-content-end align-items-end text-end'>
     <div *ngIf="!isSending" class='message-date-send-div'>
         {{ sentAt | dateFormat }}
     </div>
     <div *ngIf="isSending" class='spinner-div'>
         <span class="spinner-border spinner-border-sm spinner-span" role="status" aria-hidden="true"></span>
     </div>
-    <div class='message-content-div message-content-send-div'> {{ message.content }} </div>
+    <div class='message-content-div' style="background-color: #ffdf9e;">
+        {{ message.content }}
+    </div>
 </div>
-<!-- curr user is recipient -->
+<!-- when curr user is recipient -->
 <div *ngIf="currUserId !== message.senderId" class='recipient-message-div'>
-    <div *ngIf="!prevSenderId || prevSenderId === currUserId" class='user-header-div'>
+    <div *ngIf="!prevSenderId || prevSenderId === currUserId" class='d-flex flex-row align-items-center'>
         <img [src]="senderProfileImgSrc" class="profile-img"
             onerror="this.src='/assets/user.png'">
-        <span class='user-name-span'>{{ senderName }}</span>
+        <span class='ps-1' style="font-size: 15px;">{{ senderName }}</span>
     </div>
-    <div class='message-rec-div'>
-        <div class='message-content-div message-content-rec-div'>
+    <div class='d-flex flex-row align-items-end'>
+        <div class='message-content-div' style="background-color: #dedede;">
             {{ message.content }}
         </div>
         <div class='message-date-rec-div'>

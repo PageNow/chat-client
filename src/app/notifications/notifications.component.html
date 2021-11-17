@@ -4,20 +4,23 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
-    <div *ngIf="friendRequestUserArr.length > 0" class='subheader-div'>
+    <div *ngIf="friendRequestUserArr.length > 0"
+         class='text-center mb-2' style="font-size: 15px;">
         <strong>Friend Requests</strong>
     </div>
-    <div *ngIf="isNotificationLoaded && friendRequestUserArr.length === 0" class='subheader-div'>
+    <div *ngIf="isNotificationLoaded && friendRequestUserArr.length === 0"
+         class='text-center' style="font-size: 15px;">
         There is no notification.
     </div>
-    <div *ngFor='let user of friendRequestUserArr; let idx = index' class='notification-item-div'>
-        <div class='profile-image-div'>
+    <div *ngFor='let user of friendRequestUserArr; let idx = index'
+         class='d-flex flex-row align-items-center mb-1'>
+        <div class='me-2'>
             <a [routerLink]="['/profile', user.user_id]" class="profile-a">
                 <img [src]="userProfileImgUrlMap[user.user_id]"
                  class="profile-image" onerror="this.src='/assets/user.png'">
             </a>
         </div>
-        <div class='user-info-div'>
+        <div class='flex-grow-1'>
             <div class='profile-link-div'>
                 <span class='profile-link' (click)="onClickProfile(user)">
                     {{ user.first_name }} {{ user.last_name }}
@@ -32,18 +35,18 @@
                 <span>{{ user.description }}</span>
             </div>
         </div>
-        <div class='accept-button-div'>
+        <div class='me-1'>
             <button class='btn btn-outline-primary btn-sm' (click)="acceptFriendRequest(user.user_id)">
                 Accept
             </button>
         </div>
-        <div class='decline-button-div'>
+        <div>
             <button class='btn btn-outline-secondary btn-sm' (click)="deleteFriendRequest(user.user_id)">
                 Decline
             </button>
         </div>
     </div>
-    <div class="refresh-div">
+    <div class="mt-3 text-center">
         <span class="refresh-span" (click)="refreshFriendRequests()">
             Refresh Friend Requests
         </span>

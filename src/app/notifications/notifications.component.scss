@@ -4,31 +4,11 @@
     padding: 10px $main-lr-padding 0 $main-lr-padding;
 }
 
-.subheader-div {
-    text-align: center;
-    font-size: 15px;
-}
-
-.notification-item-div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.profile-image-div {
-    margin-right: 10px;
-}
-
 .profile-image {
     width: 35px;
     height: 35px;
     border-radius: 100%;
     object-fit: cover;
-}
-
-.user-info-div {
-    flex-grow: 1;
 }
 
 .profile-link {
@@ -46,15 +26,6 @@
     color: $date-color;
     font-size: 13px;
     margin-top: -2px;
-}
-
-.accept-button-div {
-    margin-right: 5px;
-}
-
-.refresh-div {
-    margin-top: 15px;
-    text-align: center;
 }
 
 .refresh-span {

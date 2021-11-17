@@ -12,8 +12,8 @@ import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { DESCRIPTION_MAX_LENGTH, USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
-const SPINNER_FETCH_MSG = 'Fetching user data...';
-const SPINNER_UPLOAD_MSG = 'Uploading user data...';
+const SPINNER_FETCH_MSG = 'Fetching user profile...';
+const SPINNER_UPLOAD_MSG = 'Updating user profile...';
 const SPINNER_IMAGE_UPLOAD_MSG = 'Uploading profile image...';
 
 @Component({

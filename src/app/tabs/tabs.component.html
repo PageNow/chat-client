@@ -1,5 +1,5 @@
 <div class='tabs-main-div' [ngStyle]="{'display': tabsHidden ? 'none' : 'flex'}">
-    <div class='tab-list-div'>
+    <div class='d-flex flex-row align-items-center h-100' style="font-size: 19px;">
         <div class='tab-div' [ngClass]="{'selected-tab-div': currTab === 'pages'}">
             <fa-icon [icon]="faFileAlt" [routerLink]="['/pages']"
                 [ngClass]="{'selected-fa-icon': currTab === 'pages',

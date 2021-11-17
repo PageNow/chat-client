@@ -1,5 +1,5 @@
 /// <reference types="chrome" />
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Auth } from 'aws-amplify';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -10,10 +10,12 @@ import { EXTENSION_ID } from '../../shared/config';
     templateUrl: './auth-sync.component.html',
     styleUrls: ['./auth-sync.component.scss']
 })
-export class AuthSyncComponent {
+export class AuthSyncComponent implements OnInit {
     constructor(
         private spinner: NgxSpinnerService,
-    ) {
+    ) { }
+
+    ngOnInit(): void {
         this.spinner.show();
         /* Sync browser auth session with extension auth session */
         Auth.currentSession()

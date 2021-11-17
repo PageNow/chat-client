@@ -18,7 +18,7 @@
     </div>
 
     <div *ngIf="profileImageUploaderOn" class='profile-image-upload-div'>
-        <div class="profile-image-upload-header">
+        <div class="d-flex flex-row justify-content-between align-items-center">
             <input class='file-input' type="file" (change)="onSelectFile($event)"/>
             <span *ngIf="imageSelectUrl !== ''" class='profile-image-action-span'
                   (click)="uploadProfileImage()">
@@ -47,9 +47,9 @@
         </span>
     </div>
 
-    <div class='name-div'>
-        <input [(ngModel)]='firstNameInput' placeholder="First Name" class='name-input' />
-        <input [(ngModel)]='lastNameInput' placeholder="Last Name" class='name-input' />
+    <div class='d-flex justify-content-between align-items-center w-100'>
+        <input [(ngModel)]='firstNameInput' placeholder="First Name" style="width: 49%;" />
+        <input [(ngModel)]='lastNameInput' placeholder="Last Name" style="width: 49%;" />
     </div>
 
     <div *ngIf='nameErrorMsg !== ""' class='error-div'>
@@ -65,8 +65,8 @@
         </span>
     </div>
 
-    <div class='description-input-div'>
-        <input class='description-input'
+    <div>
+        <input class='d-block w-100' style="resize: none;"
                [(ngModel)]="descriptionInput" />
     </div>
 
@@ -83,8 +83,8 @@
         </span>
     </div>
 
-    <div class='activity-settings-select-div'>
-        <select class="form-select form-select-sm activity-settings-select"
+    <div class='d-flex flex-row align-items-center mb-2'>
+        <select class="form-select form-select-sm me-2" style="width: 95px;"
                 [(ngModel)]="activitySettings" aria-label=".form-select-sm">
             <option value="share">Share</option>
             <option value="hide">Hide</option>
@@ -94,8 +94,7 @@
 
     <div class='domain-list-div'>
         <div *ngIf="activitySettings === 'hide'">
-            <div *ngFor="let domain of domainDenyArr; let domainIdx=index"
-                 class='domain-div'>
+            <div *ngFor="let domain of domainDenyArr; let domainIdx=index" class='domain-div'>
                 <span>{{ domain }}</span>
                 <fa-icon [icon]="faMinus" class='minus-icon'
                          (click)="removeDomain(domainIdx)">
@@ -112,10 +111,10 @@
         </div>
     </div>
 
-    <div class='domain-input-div'>
-        <input [(ngModel)]="domainInput" class='domain-input'
+    <div class='d-flex flex-row align-items-center'>
+        <input [(ngModel)]="domainInput" class='flex-grow-1 me-1' style="font-size: 15px;"
                placeholder="Enter website address (ex. facebook.com)"/>
-        <span class='domain-add-span'>
+        <span class='text-center' style="width: 45px;">
             <fa-icon class='domain-add-icon' [icon]="faPlus"
                  (click)="addDomain()">
             </fa-icon>

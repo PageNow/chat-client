@@ -8,7 +8,7 @@
         <span class='user-sharing-intro-span'>
             Now sharing
         </span>
-        <span class='user-sharing-url-span'>
+        <span class='align-middle' style="font-size: 15px; color: black;">
             {{ userPresence.page.url }}
         </span>
     </div>
@@ -19,12 +19,13 @@
     </div>
 
     <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlinePresenceArr.length === 0"
-         class='presence-intro-div'>
+         class='text-center'>
         <span>Search friends to share your activity with!</span>
     </div>
 
+    <!-- Live presence information for online friends -->
     <div class='presence-subheader-div'>
-        <span class='dot sharing-dot'></span>
+        <span class='dot' style="background-color: green;"></span>
         <span>Online Friends ({{ onlinePresenceArr.length }})</span>
     </div>
     <div class='presence-div' *ngFor="let presence of onlinePresenceArr">
@@ -54,8 +55,9 @@
         </div>
     </div>
 
+    <!-- List of offline friends -->
     <div class='presence-subheader-div'>
-        <span class='dot hiding-dot'></span>
+        <span class='dot' style="background-color: white; border: 1px solid black;"></span>
         <span class='presence-subheader-offline-span'>
             Offline Friends ({{ offlinePresenceArr.length }})
         </span>
@@ -73,7 +75,7 @@
                 {{ userInfoMap[presence.userId].first_name }}
                 {{ userInfoMap[presence.userId].last_name }}
             </span>
-            <span class='offline-span'>
+            <span style="font-size: 12px;">
                 Offline
             </span>
         </div>

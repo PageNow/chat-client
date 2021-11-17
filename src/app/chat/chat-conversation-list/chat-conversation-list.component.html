@@ -4,13 +4,19 @@
     </p>
 </ngx-spinner>
 <div class='main-div'>
-    <div class='chat-header-div'><strong>Conversations</strong></div>
-    <div *ngFor="let conversation of conversationArr" class='conversation-div'>
-        <div class='profile-img-div'>
+    <!-- Conversation page header -->
+    <div class='text-center pt-2' style="font-size: 15px;">
+        <strong>Conversations</strong>
+    </div>
+    <!-- For each conversation -->
+    <div *ngFor="let conversation of conversationArr" class='d-flex flex-row pb-1'>
+        <!-- User profile image -->
+        <div class='me-2'>
             <img [src]="userInfoMap[conversation.participantId]?.profile_image_url" class="profile-img"
                 onerror="this.src='/assets/user.png'">
         </div>
-        <div class='conversation-preview-div'>
+        <div class='d-flex flex-column justify-content-center flex-grow-1' style="height: 50px;">
+            <!-- Conversation title (user name if not group chat) -->
             <div class='conversation-header-div'>
                 <a class='conversation-header-a' [routerLink]="['/chat', 'conversation', conversation.conversationId]"
                     [queryParams]="{
@@ -21,7 +27,8 @@
                        {{ conversation.isGroup ? conversation.title : userInfoMap[conversation.participantId]?.full_name }}
                 </a>
             </div>
-            <div class='conversation-message-div'>
+            <!-- Latest message preview and sent time -->
+            <div class='d-flex flex-row align-items-end text-nowrap overflow-hidden mb-1'>
                 <div class='conversation-content-div'>
                     <span *ngIf="conversation.senderId === currUserId">You:</span>
                     {{ conversation.latestContent.split('\n')[0].slice(0, 32) }}
