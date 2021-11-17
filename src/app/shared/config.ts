@@ -1,6 +1,6 @@
 // AWS COGNITO IDs
-export const AWS_USER_POOLS_ID = "us-west-2_32JgtVKUN";
-export const AWS_USER_POOLS_WEB_CLIENT_ID = "350c3cp4a68op3kp08parkib2l";
+export const AWS_USER_POOLS_ID = 'us-west-2_32JgtVKUN';
+export const AWS_USER_POOLS_WEB_CLIENT_ID = '350c3cp4a68op3kp08parkib2l';
 
 export const EXTENSION_ID = 'lplobiaakhgkjcldopgkbcibeilddbmc';
 // export const EXTENSION_ID = 'lblmbljddmmblccgdabmmfmhaokfcfff';

@@ -49,7 +49,7 @@ export class NotificationsService {
             });
     }
 
-    private sendUpdateCntMessage(cnt: number) {
+    private sendUpdateCntMessage(cnt: number): void {
         chrome.runtime.sendMessage(EXTENSION_ID, {
             type: 'update-notification-cnt',
             data: {

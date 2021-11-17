@@ -14,7 +14,7 @@ import { EXTENSION_ID } from '../../shared/config';
 import { UserService } from '../../user/user.service';
 import { UserInfoPublic } from '../../user/user.model';
 import { getFullName } from '../../shared/user-utils';
-import { PagesService } from '../../pages/pages.service'
+import { PagesService } from '../../pages/pages.service';
 
 const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
 
@@ -121,7 +121,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 .catch(err => {
                     console.log(err);
                 });
-            
+
             // get current recipient presence
             this.pagesService.getUserPresence(this.recipientId)
                 .then(res => {
@@ -132,7 +132,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                                 const urlObj = new URL(res.url);
                                 domain = (psl.parse(urlObj.hostname) as any).domain;
                             } catch (err) {
-                                domain = '(Unrecognized Domain)'
+                                domain = '(Unrecognized Domain)';
                             }
                         }
                         this.recipientPresence = {
@@ -233,7 +233,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                     const urlObj = new URL(event.data.data.url);
                     domain = (psl.parse(urlObj.hostname) as any).domain;
                 } catch (err) {
-                    domain = '(Unrecognized Domain)'
+                    domain = '(Unrecognized Domain)';
                 }
             }
             this.recipientPresence = {
