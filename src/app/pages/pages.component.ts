@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
 
-import { EMAIL_API_URL, EXTENSION_ID } from '../shared/config';
+import { EXTENSION_ID } from '../shared/config';
 import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
 import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
@@ -48,15 +47,15 @@ export class PagesComponent implements OnInit, OnDestroy {
     currDomain: string;
 
     // variables for invitation email
-    inviteEmailInput = '';
-    inviteEmailSending = false;
-    inviteEmailError = '';
-    inviteEmailSuccess = '';
+    // inviteEmailInput = '';
+    // inviteEmailSending = false;
+    // inviteEmailError = '';
+    // inviteEmailSuccess = '';
 
     spinnerMsg = '';
 
     constructor(
-        private http: HttpClient,
+        // private http: HttpClient,
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private pagesService: PagesService
@@ -248,25 +247,25 @@ export class PagesComponent implements OnInit, OnDestroy {
             });
     }
 
-    sendInvitationEmail(): void {
-        this.inviteEmailSending = true;
-        const body = {
-            senderFirstName: this.currUserInfo.first_name,
-            senderLastName: this.currUserInfo.last_name,
-            recipientEmail: this.inviteEmailInput
-        };
-        this.http.post(`${EMAIL_API_URL}/email`, body).toPromise()
-            .then(() => {
-                this.inviteEmailInput = '';
-                this.inviteEmailError = '';
-                this.inviteEmailSuccess = 'Invitation email sent!'
-                this.inviteEmailSending = false;
-            })
-            .catch(err => {
-                console.log(err);
-                this.inviteEmailError = 'Something went wrong...';
-                this.inviteEmailSuccess = '';
-                this.inviteEmailSending = false;
-            });
-    }
+    // sendInvitationEmail(): void {
+    //     this.inviteEmailSending = true;
+    //     const body = {
+    //         senderFirstName: this.currUserInfo.first_name,
+    //         senderLastName: this.currUserInfo.last_name,
+    //         recipientEmail: this.inviteEmailInput
+    //     };
+    //     this.http.post(`${EMAIL_API_URL}/email`, body).toPromise()
+    //         .then(() => {
+    //             this.inviteEmailInput = '';
+    //             this.inviteEmailError = '';
+    //             this.inviteEmailSuccess = 'Invitation email sent!'
+    //             this.inviteEmailSending = false;
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //             this.inviteEmailError = 'Something went wrong...';
+    //             this.inviteEmailSuccess = '';
+    //             this.inviteEmailSending = false;
+    //         });
+    // }
 }

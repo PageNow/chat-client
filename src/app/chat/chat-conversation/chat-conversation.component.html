@@ -1,14 +1,14 @@
-<div class='header-div'>
-    <div class='d-flex align-items-center h-100' style="width: 60px;">
+<div class='text-nowrap overflow-hidden header-div'>
+    <div class='d-flex align-items-center h-100'>
         <a class='back-a' [routerLink]="['/chat', 'conversations']">
             &lt; Back
         </a>           
     </div>
-    <div class='d-flex align-items-center me-1 h-100'>
+    <div class='ms-2 me-1 h-100'>
         <img [src]="recipientImgUrl" class='profile-img'
             onerror="this.src='/assets/user.png'">
     </div>
-    <div class='d-flex align-items-center text-nowrap overflow-hidden h-100'>
+    <div class='d-flex align-items-center h-100'>
         <a *ngIf="!conversationIsGroup" class='user-name-a' [routerLink]="['/profile', recipientId]">
             {{ recipientName }}
         </a>
