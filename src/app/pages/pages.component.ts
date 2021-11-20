@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { EXTENSION_ID } from '../shared/config';
+import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
+
+import { EMAIL_API_URL, EXTENSION_ID } from '../shared/config';
 import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
 import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { Presence } from './pages.model';
-
 import { PagesService } from './pages.service';
 
 const SPINNER_PAGES_INIT_MSG = 'Fetching data...';
@@ -24,6 +26,7 @@ export class PagesComponent implements OnInit, OnDestroy {
     shareMode: string;
     domainAllowSet: Set<string>;
     domainDenySet: Set<string>;
+    currUserInfo: UserInfoPrivate;
 
     // variables related to presence
     offlinePresenceArr: Presence[] = [];
@@ -33,7 +36,8 @@ export class PagesComponent implements OnInit, OnDestroy {
     userPresence: Presence;
     isPresenceLoaded = false;
 
-    // userNameInput = '';
+    // fontawesome icon
+    faEnvelope = faEnvelope;    
 
     // variables for public profile component
     showProfile = false;
@@ -43,9 +47,16 @@ export class PagesComponent implements OnInit, OnDestroy {
     currUrl: string;
     currDomain: string;
 
+    // variables for invitation email
+    inviteEmailInput = '';
+    inviteEmailSending = false;
+    inviteEmailError = '';
+    inviteEmailSuccess = '';
+
     spinnerMsg = '';
 
     constructor(
+        private http: HttpClient,
         private spinner: NgxSpinnerService,
         private userService: UserService,
         private pagesService: PagesService
@@ -61,6 +72,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                     this.shareMode = res.share_mode;
                     this.domainAllowSet = new Set(res.domain_allow_array);
                     this.domainDenySet = new Set(res.domain_deny_array);
+                    this.currUserInfo = res;
                 }
             }
         );
@@ -236,5 +248,25 @@ export class PagesComponent implements OnInit, OnDestroy {
             });
     }
 
-
+    sendInvitationEmail(): void {
+        this.inviteEmailSending = true;
+        const body = {
+            senderFirstName: this.currUserInfo.first_name,
+            senderLastName: this.currUserInfo.last_name,
+            recipientEmail: this.inviteEmailInput
+        };
+        this.http.post(`${EMAIL_API_URL}/email`, body).toPromise()
+            .then(() => {
+                this.inviteEmailInput = '';
+                this.inviteEmailError = '';
+                this.inviteEmailSuccess = 'Invitation email sent!'
+                this.inviteEmailSending = false;
+            })
+            .catch(err => {
+                console.log(err);
+                this.inviteEmailError = 'Something went wrong...';
+                this.inviteEmailSuccess = '';
+                this.inviteEmailSending = false;
+            });
+    }
 }

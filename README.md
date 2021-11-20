@@ -12,9 +12,10 @@ To deploy to host, run `amplify publish`.
 
 ### Prod
 
-* Update `shared/config.js`
+* Update `shared/config.ts`
 * Update `aws-exports.js` redirect urls.
 * Remove localhost from the redirect urls on aws console and Google developer console.
+* Run `ng build`.
 
 ### Issue
 
