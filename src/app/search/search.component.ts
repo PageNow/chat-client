@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { faSearch, faTimesCircle, faUserPlus, faUserClock } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 import { SearchService } from './search.service';
 import { UserInfoSummary } from '../user/user.model';
-import { SEARCH_RESULT_LIMIT, USER_DEFAULT_IMG_ASSET } from '../shared/constants';
+import { LANG_KO, SEARCH_RESULT_LIMIT, USER_DEFAULT_IMG_ASSET } from '../shared/constants';
 import { UserService } from '../user/user.service';
 import { FriendshipState } from '../friendship/friendship.model';
 import { FriendshipService } from '../friendship/friendship.service';
@@ -25,7 +26,9 @@ export class SearchComponent implements OnInit {
     // variables for search input
     searchOption = 'name';
     searchInput = '';
-    searchPlaceholder = 'Enter name...';
+    emailInputPlaceholder = '';
+    nameInputPlaceholder = '';
+    searchPlaceholder = '';
     searchInputChanged: Subject<string> = new Subject<string>();
 
     searched = false;
@@ -47,13 +50,26 @@ export class SearchComponent implements OnInit {
     FRIENDSHIP_PENDING = FriendshipState.PENDING;
     FRIENDSHIP_NONE = FriendshipState.NONE;
 
+    userLanguage: string | null | undefined;
+    LANG_KO = LANG_KO;
+
     constructor(
+        private translateService: TranslateService,
         private searchService: SearchService,
         private userService: UserService,
         private friendshipService: FriendshipService,
     ) { }
 
     ngOnInit(): void {
+        this.userLanguage = this.translateService.currentLang;
+        this.translateService.get(["emailInputPlaceholder", "nameInputPlaceholder"]).subscribe(
+            (res: {[key: string]: string}) => {
+                this.emailInputPlaceholder = res.emailInputPlaceholder;
+                this.nameInputPlaceholder = res.nameInputPlaceholder;
+                this.searchPlaceholder = this.nameInputPlaceholder;
+            }
+        )
+
         // debounce search input
         this.searchInputChanged.pipe(
             debounceTime(300),
@@ -136,9 +152,9 @@ export class SearchComponent implements OnInit {
         this.removeSearchInput();
         this.searchOption = event.target.value;
         if (event.target.value === 'email') {
-            this.searchPlaceholder = 'Enter email...';
+            this.searchPlaceholder = this.emailInputPlaceholder;
         } else if (event.target.value === 'name') {
-            this.searchPlaceholder = 'Enter name...';
+            this.searchPlaceholder = this.nameInputPlaceholder;
         }
     }
 

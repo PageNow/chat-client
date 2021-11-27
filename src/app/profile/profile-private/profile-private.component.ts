@@ -7,10 +7,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import {
     faPlus, faMinus, faUserAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { TranslateService } from '@ngx-translate/core';
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
-import { DESCRIPTION_MAX_LENGTH, USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
+import { DESCRIPTION_MAX_LENGTH, LANG_KO, USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
 
 const SPINNER_FETCH_MSG = 'Fetching user profile...';
 const SPINNER_UPLOAD_MSG = 'Updating user profile...';
@@ -66,6 +67,8 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     additionalInfoErrorMsg = '';
 
     spinnerMsg = '';
+    userLanguage: string | null | undefined;
+    LANG_KO = LANG_KO;
 
     private s3Http: HttpClient;
 
@@ -73,12 +76,15 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         private router: Router,
         private handler: HttpBackend,
         private spinner: NgxSpinnerService,
+        private translateService: TranslateService,
         private userService: UserService
     ) {
         this.s3Http = new HttpClient(handler);
     }
 
     ngOnInit(): void {
+        this.userLanguage = this.translateService.currentLang;
+
         this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();
         this.currUserInfoSubscription = this.userService.currUserInfo.subscribe(

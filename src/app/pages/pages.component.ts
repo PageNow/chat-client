@@ -9,8 +9,7 @@ import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { Presence } from './pages.model';
 import { PagesService } from './pages.service';
-
-const SPINNER_PAGES_INIT_MSG = 'Fetching data...';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-pages',
@@ -53,16 +52,23 @@ export class PagesComponent implements OnInit, OnDestroy {
     // inviteEmailSuccess = '';
 
     spinnerMsg = '';
+    userLanguage: string | null | undefined;
 
     constructor(
         // private http: HttpClient,
         private spinner: NgxSpinnerService,
+        private translateService: TranslateService,
         private userService: UserService,
-        private pagesService: PagesService,
+        private pagesService: PagesService
     ) { }
 
     ngOnInit(): void {
-        this.spinnerMsg = SPINNER_PAGES_INIT_MSG;
+        this.userLanguage = this.translateService.currentLang;
+        this.translateService.get("fetchingPresenceData").subscribe(
+            (res: string) => {
+                this.spinnerMsg = res;
+            }
+        )
         this.spinner.show();
 
         this.userInfoSubscription = this.userService.currUserInfo.subscribe(

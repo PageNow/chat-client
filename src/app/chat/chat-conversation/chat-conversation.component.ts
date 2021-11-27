@@ -15,8 +15,7 @@ import { UserService } from '../../user/user.service';
 import { UserInfoPublic } from '../../user/user.model';
 import { getFullName } from '../../shared/user-utils';
 import { PagesService } from '../../pages/pages.service';
-
-const SPINNER_LOAD_MESSAGES_MSG = 'Loading messages...';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-chat-conversation',
@@ -60,6 +59,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private spinner: NgxSpinnerService,
+        private translateService: TranslateService,
         private userService: UserService,
         private chatService: ChatService,
         private pagesService: PagesService
@@ -149,7 +149,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 });
         });
 
-        this.spinnerMsg = SPINNER_LOAD_MESSAGES_MSG;
+        this.translateService.get("fetchingMessages").subscribe(
+            (res: string) => {
+                this.spinnerMsg = res;
+            }
+        )
         this.spinner.show();
         this.newMessageSubscription = this.chatService.newMessageSubject.subscribe(
             (res: Message) => {

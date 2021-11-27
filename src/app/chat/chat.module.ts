@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ChatRoutingModule } from './chat-routing.module';
 import { ChatConversationComponent } from './chat-conversation/chat-conversation.component';
@@ -22,8 +23,9 @@ import { PipeModule } from '../pipe/pipe.module';
         ReactiveFormsModule,
         NgxSpinnerModule,
         FontAwesomeModule,
-        ChatRoutingModule,
-        PipeModule
+        PipeModule,
+        TranslateModule.forChild(),
+        ChatRoutingModule
     ]
 })
 export class ChatModule { }

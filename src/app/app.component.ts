@@ -51,16 +51,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // set language
         let userLanguage = localStorage.getItem('language');
-        console.log(localStorage.getItem('language'));
         if (userLanguage === undefined || userLanguage === null) {
             userLanguage = this.translateService.getBrowserCultureLang();
         }
-        console.log(userLanguage);
-        console.log(navigator.language);
         if (LANGUAGES.indexOf(userLanguage) == -1) {
             userLanguage = LANG_EN;
         }
-        console.log(userLanguage);
         this.translateService.addLangs(LANGUAGES);
         this.translateService.setDefaultLang(LANG_EN);
         this.translateService.use(userLanguage);

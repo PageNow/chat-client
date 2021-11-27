@@ -20,9 +20,9 @@ import { TranslateModule } from '@ngx-translate/core';
         HttpClientModule,
         NgxSpinnerModule,
         FontAwesomeModule,
+        TranslateModule.forChild(),
         PagesRoutingModule,
-        ProfileModule,
-        TranslateModule.forChild()
+        ProfileModule
     ]
 })
 export class PagesModule { }

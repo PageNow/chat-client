@@ -34,6 +34,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     showProfile = false;
     profileId: string;
 
+    // variable for refreshing notifications
+    isRefreshingNotification = false;
+
     constructor(
         private spinner: NgxSpinnerService,
         private userService: UserService,
@@ -122,7 +125,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     }
 
     refreshFriendRequests(): void {
-        this.notificationsService.refreshFriendRequests();
+        this.isRefreshingNotification = true;
+        this.friendshipService.getFriendshipRequests()
+            .then((res: UserInfoSummary[]) => {
+                this.notificationsService.updateFriendshipRequests(res);
+                this.isRefreshingNotification = false;
+            })
+            .catch(err => {
+                this.isRefreshingNotification = false;
+                console.log(err);
+            })
     }
 
     onClickProfile(userInfo: UserInfoSummary): void {

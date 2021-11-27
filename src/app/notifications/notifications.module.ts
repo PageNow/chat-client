@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { NotificationsComponent } from './notifications.component';
 import { NotificationsRoutingModule } from './notifications-routing.module';
@@ -14,6 +15,7 @@ import { PipeModule } from '../pipe/pipe.module';
     imports: [
         CommonModule,
         NgxSpinnerModule,
+        TranslateModule.forChild(),
         NotificationsRoutingModule,
         ProfileModule,
         PipeModule

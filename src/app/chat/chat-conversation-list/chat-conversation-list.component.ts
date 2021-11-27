@@ -3,16 +3,15 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Auth } from 'aws-amplify';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
 import { UserService } from 'src/app/user/user.service';
 import { getFullName } from '../../shared/user-utils';
 import { UserInfoPublic } from 'src/app/user/user.model';
-import { USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
+import { LANG_KO, USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
 import { Message } from '../models/message.model';
-
-const SPINNER_CONVERSATION_LIST_FETCH_MSG = 'Fetching conversations...';
 
 @Component({
     selector: 'app-chat-conversation-list',
@@ -25,6 +24,8 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
     userInfoMap: {[key: string]: UserInfoPublic} = {};
 
     spinnerMsg = '';
+    LANG_KO = LANG_KO;
+    userLanguage: string | null | undefined;
 
     // fontawesome icons
     faCircle = faCircle;
@@ -33,12 +34,18 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
 
     constructor(
         private spinner: NgxSpinnerService,
+        private translateService: TranslateService,
         private userService: UserService,
         private chatService: ChatService
     ) { }
 
     ngOnInit(): void {
-        this.spinnerMsg = SPINNER_CONVERSATION_LIST_FETCH_MSG;
+        this.userLanguage = this.translateService.currentLang;
+        this.translateService.get("fetchingConversations").subscribe(
+            (res: string) => {
+                this.spinnerMsg = res;
+            }
+        )
         this.spinner.show();
 
         Auth.currentAuthenticatedUser()

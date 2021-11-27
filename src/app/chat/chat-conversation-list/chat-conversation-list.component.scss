@@ -33,6 +33,11 @@
     color: $tabs-color;
 }
 
+.conversation-content-div:hover {
+    cursor: pointer;
+    color: black;
+}
+
 .conversation-sentat-div {
     font-size: 10px;
     color: $date-color;

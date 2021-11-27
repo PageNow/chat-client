@@ -36,17 +36,11 @@ export class NotificationsService {
         this.sendUpdateCntMessage(this.friendRequestUserArr.length);
     }
 
-    public refreshFriendRequests(): void {
-        this.friendshipService.getFriendshipRequests()
-            .then((res: UserInfoSummary[]) => {
-                this.friendRequestUserArr = res;
-                this.notificationCntSubject.next(res.length);
-                this.friendRequestUserArrSubject.next(res);
-                this.sendUpdateCntMessage(res.length);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+    public updateFriendshipRequests(requests: UserInfoSummary[]): void {
+        this.friendRequestUserArr = requests;
+        this.notificationCntSubject.next(requests.length);
+        this.friendRequestUserArrSubject.next(requests);
+        this.sendUpdateCntMessage(requests.length);
     }
 
     // Send the updated count to background.js to udpate the extension badge text

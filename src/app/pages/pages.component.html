@@ -17,13 +17,18 @@
     <div *ngIf="(shareMode === 'default_all' && domainDenySet.has(currDomain)) || (shareMode === 'default_none' && !domainAllowSet.has(currDomain))"
         class='url-block-div'
     >
-        Click <span class='click-span' (click)="allowCurrDomain()">here</span> to allow <strong>{{ currDomain }}</strong> to be shared
+        <div *ngIf="userLanguage !== 'ko-KR'">
+            Click <span class='click-span' (click)="allowCurrDomain()">here</span> to allow <strong>{{ currDomain }}</strong> to be shared.
+        </div>
+        <div *ngIf="userLanguage === 'ko-KR'">
+            <strong>{{ currDomain }}</strong> 활동을 공유하려면 <span class='click-span' (click)="allowCurrDomain()">여기</span>를 클릭하세요.
+        </div>
     </div>
 
     <!-- Message that is displayed when you have no friend -->
     <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlinePresenceArr.length === 0"
          class='text-center'>
-        <span>Search friends to share your activity with!</span>
+        <span>{{ 'searchFriendsMessage' | translate }}</span>
     </div>
 
     <!-- <div class='d-flex flex-row align-items-center'>

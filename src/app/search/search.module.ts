@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SearchComponent } from './search.component';
 import { SearchRoutingModule } from './search-routing.module';
 import { ProfileModule } from '../profile/profile.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { ProfileModule } from '../profile/profile.module';
         CommonModule,
         FormsModule,
         FontAwesomeModule,
+        TranslateModule.forChild(),
         SearchRoutingModule,
         ProfileModule
     ]

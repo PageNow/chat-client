@@ -7,10 +7,10 @@
 <div class='main-div'>
     <!-- Public profile header (back button and unfriend button) -->
     <div class='back-div'>
-        <span class='back-span' (click)="onClickBack()">&lt; Back</span>
+        <span class='back-span' (click)="onClickBack()">&lt; {{ 'backButton' | translate }}</span>
         <span *ngIf="currUserId && userId !== currUserId && isFriend === true"
               class='unfriend-span' (click)="deleteFriend()" >
-            Unfriend
+            {{ 'unfriend' | translate }}
         </span>
     </div>
     <!-- Public profile user image and user name -->
@@ -28,30 +28,30 @@
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false
                 && friendRequestSent === false && friendRequestReceived === false"
          class='profile-btn-div'>
-        <button class='btn btn-primary btn-sm' (click)="addFriend()">Add Friend</button>
+        <button class='btn btn-primary btn-sm' (click)="addFriend()">{{ 'addFriend' | translate }}</button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === true"
          class='profile-btn-div'>
-        <button class='btn btn-primary btn-sm' (click)="sendMessage()">Message</button>
+        <button class='btn btn-primary btn-sm' (click)="sendMessage()">{{ 'sendMessage' | translate }}</button>
     </div>
     <!-- Action button: action on friend request, edit profile if own profile, 
         and send message if already friend -->
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
          class='profile-btn-div'>
         <button class='btn btn-primary btn-sm' (click)="acceptFriendRequest()">
-            Accept Friend Request
+            {{ 'acceptFriendRequest' | translate }}
         </button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestReceived === true"
          class='profile-btn-div'>
         <button class='btn btn-secondary btn-sm' (click)="deleteFriendRequest()">
-            Decline Friend Request
+            {{ 'declineFriendRequest' | translate }}
         </button>
     </div>
     <div *ngIf="currUserId && userId !== currUserId && isFriend === false && friendRequestSent === true"
          class='profile-btn-div'>
         <button class='btn btn-secondary btn-sm' (click)="deleteFriend()">
-            Cancel Friend Request
+            {{ 'cancelFriendRequest' | translate }}
         </button>
     </div>
     <div *ngIf="currUserId && userId === currUserId" class='profile-btn-div'>
@@ -60,23 +60,23 @@
     <!-- Additional user information -->
     <div class='additional-info-header-div'
          *ngIf="userInfo?.school || userInfo?.work || userInfo?.location || userInfo?.gender">
-        <span><strong>User Information</strong></span>
+        <span><strong>{{ 'userInformation' | translate }}</strong></span>
     </div>
     <div class='additional-info-div'>
         <div *ngIf="userInfo?.school" class='additional-info-item-div'>
-            <div class='additional-info-label-div'>School</div>
+            <div class='additional-info-label-div'>{{ 'school' | translate }}</div>
             <div class='additional-info-content-div'>{{ userInfo?.school }}</div>
         </div>
         <div *ngIf="userInfo?.work" class='additional-info-item-div'>
-            <div class='additional-info-label-div'>Work</div>
+            <div class='additional-info-label-div'>{{ 'work' | translate }}</div>
             <div class='additional-info-content-div'>{{ userInfo?.work }}</div>
         </div>
         <div *ngIf="userInfo?.location" class='additional-info-item-div'>
-            <div class='additional-info-label-div'>Location</div>
+            <div class='additional-info-label-div'>{{ 'location' | translate }}</div>
             <div class='additional-info-content-div'>{{ userInfo?.location }}</div>
         </div>
         <div *ngIf="userInfo?.gender" class='additional-info-item-div'>
-            <div class='additional-info-label-div'>Gender</div>
+            <div class='additional-info-label-div'>{{ 'gender' | translate }}</div>
             <div class='additional-info-content-div'>{{ userInfo?.gender }}</div>
         </div>
     </div>
@@ -85,7 +85,7 @@
         <!-- Friend list section -->
         <div class='friends-div' *ngIf="friendArr.length > 0">
             <div class='friends-section-header-div'>
-                <strong>Friends</strong>
+                <strong>{{ 'friends' | translate }}</strong>
                 <span *ngIf="friendCount !== null && friendCount !== undefined">
                     ({{ friendCount }})
                 </span>
@@ -102,8 +102,8 @@
                         </span>
                     </div>
                     <div class='user-description-div'>
-                        <span *ngIf="user.user_id === currUserId">Me</span>
-                        <span *ngIf="user.user_id !== currUserId && user.friendship_state === 2">Friend</span>
+                        <span *ngIf="user.user_id === currUserId">{{ 'me' | translate }}</span>
+                        <span *ngIf="user.user_id !== currUserId && user.friendship_state === 2">{{ 'friend' | translate }}</span>
                         <span *ngIf="user.user_id !== currUserId && user.friendship_state !== 2 && user.description !== ''">{{ user.description }}</span>
                         <span *ngIf="user.user_id !== currUserId && user.friendship_state !== 2 && user.description === ''">&nbsp;</span>
                     </div>
@@ -126,7 +126,7 @@
         <!-- Mutual friend list section -->
         <div class='friends-div' *ngIf="mutualFriendArr.length > 0">
             <div class='friends-section-header-div'>
-                <strong>Mutual Friends </strong>
+                <strong>{{ 'mutualFriends' | translate }}</strong>
                 <span *ngIf="mutualFriendCount !== null && mutualFriendCount !== undefined">
                     ({{ mutualFriendCount }})
                 </span>
