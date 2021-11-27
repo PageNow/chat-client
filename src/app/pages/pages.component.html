@@ -7,7 +7,7 @@
     <!-- Url of the website you are currently sharing -->
     <div *ngIf="userPresence && userPresence.page && userPresence.page.url !== ''" class='user-share-div'>
         <span class='user-sharing-intro-span'>
-            Now sharing
+            {{ 'nowSharing' | translate }}
         </span>
         <span class='align-middle' style="font-size: 15px; color: black;">
             {{ userPresence.page.url }}
@@ -49,8 +49,8 @@
 
     <!-- Live presence information for online friends -->
     <div class='presence-subheader-div'>
-        <span class='dot' style="background-color: green;"></span>
-        <span>Online Friends ({{ onlinePresenceArr.length }})</span>
+        <span class='dot' style="background-color: green; border: 1px solid green;"></span>
+        <span>{{ 'friendsOnline' | translate }} ({{ onlinePresenceArr.length }})</span>
     </div>
     <div class='presence-div' *ngFor="let presence of onlinePresenceArr">
         <div class='profile-image-div'>
@@ -74,7 +74,7 @@
                 {{ presence.page.title }}
             </a>
             <span *ngIf="presence.page && presence.page.url === ''" class='activity-hidden-span'>
-                Activity Hidden
+                {{ 'activityHidden' | translate }}
             </span>
         </div>
     </div>
@@ -82,9 +82,7 @@
     <!-- List of offline friends -->
     <div class='presence-subheader-div'>
         <span class='dot' style="background-color: white; border: 1px solid black;"></span>
-        <span class='presence-subheader-offline-span'>
-            Offline Friends ({{ offlinePresenceArr.length }})
-        </span>
+        <span class='presence-subheader-offline-span'>{{ 'friendsOffline' | translate }} ({{ offlinePresenceArr.length }})</span>
     </div>
     <div class='presence-div' *ngFor="let presence of offlinePresenceArr">
         <div class='profile-image-div'>
@@ -100,7 +98,7 @@
                 {{ userInfoMap[presence.userId].last_name }}
             </span>
             <span style="font-size: 12px;">
-                Offline
+                {{ 'offline' | translate }}
             </span>
         </div>
     </div>

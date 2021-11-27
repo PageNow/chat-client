@@ -13,3 +13,6 @@ export const INITIAL_MESSAGE_LIMIT = 15;
 export const LOAD_MESSAGE_LIMIT = 20;
 
 export const USER_DEFAULT_IMG_ASSET = '/assets/user.png';
+
+export const LANG_EN = 'en-US';
+export const LANG_KO = 'ko-KR';

@@ -58,7 +58,7 @@ export class PagesComponent implements OnInit, OnDestroy {
         // private http: HttpClient,
         private spinner: NgxSpinnerService,
         private userService: UserService,
-        private pagesService: PagesService
+        private pagesService: PagesService,
     ) { }
 
     ngOnInit(): void {

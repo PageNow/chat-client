@@ -48,3 +48,9 @@ To deploy to host, run `amplify publish`.
 ### Testing
 
 * https://pretagteam.com/question/thismobilityservicecurrentmessagesubscribe-is-not-a-function-in-angular-unit-testing
+
+### Internationalization (i18n)
+
+* https://www.digitalocean.com/community/tutorials/angular-ngx-translate
+* https://www.positronx.io/angular-internationalization-i18n-with-ngx-translate-tutorial/
+* https://www.techiediaries.com/angular/angular-9-internationalization-ngx-translate-tutorial-example/

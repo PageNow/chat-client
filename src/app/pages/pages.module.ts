@@ -8,6 +8,7 @@ import { PagesComponent } from './pages.component';
 import { PagesRoutingModule } from './pages-routing.module';
 import { FormsModule } from '@angular/forms';
 import { ProfileModule } from '../profile/profile.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { ProfileModule } from '../profile/profile.module';
         NgxSpinnerModule,
         FontAwesomeModule,
         PagesRoutingModule,
-        ProfileModule
+        ProfileModule,
+        TranslateModule.forChild()
     ]
 })
 export class PagesModule { }

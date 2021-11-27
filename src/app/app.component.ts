@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { INITIAL_TAB } from './shared/constants';
 import { Auth } from 'aws-amplify';
 import { NavigationEnd, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+
+import { INITIAL_TAB, LANG_EN } from './shared/constants';
+import { LANGUAGES } from './shared/config';
 
 declare let gtag: any;
 
@@ -16,7 +19,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     constructor(
         private location: Location,
-        private router: Router
+        private router: Router,
+        private translateService: TranslateService
     ) { }
 
     ngOnInit(): void {
@@ -44,6 +48,22 @@ export class AppComponent implements OnInit, OnDestroy {
                     break;
             }
         });
+
+        // set language
+        let userLanguage = localStorage.getItem('language');
+        console.log(localStorage.getItem('language'));
+        if (userLanguage === undefined || userLanguage === null) {
+            userLanguage = this.translateService.getBrowserCultureLang();
+        }
+        console.log(userLanguage);
+        console.log(navigator.language);
+        if (LANGUAGES.indexOf(userLanguage) == -1) {
+            userLanguage = LANG_EN;
+        }
+        console.log(userLanguage);
+        this.translateService.addLangs(LANGUAGES);
+        this.translateService.setDefaultLang(LANG_EN);
+        this.translateService.use(userLanguage);
 
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {

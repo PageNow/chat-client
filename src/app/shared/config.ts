@@ -1,3 +1,5 @@
+import { LANG_EN, LANG_KO } from "./constants";
+
 // AWS COGNITO IDs
 export const AWS_USER_POOLS_ID = 'us-west-2_32JgtVKUN';
 export const AWS_USER_POOLS_WEB_CLIENT_ID = '350c3cp4a68op3kp08parkib2l';
@@ -11,3 +13,6 @@ export const USER_API_URL = 'https://bmf1kkygkl.execute-api.us-west-2.amazonaws.
 export const PRESENCE_API_URL = 'https://xfngm1pyhk.execute-api.us-west-2.amazonaws.com/prod';
 export const CHAT_API_URL = 'https://y9e1f4zaea.execute-api.us-west-2.amazonaws.com/prod';
 export const EMAIL_API_URL = 'https://4xtg4v9uoi.execute-api.us-west-2.amazonaws.com/prod';
+
+// Supported languages
+export const LANGUAGES = [ LANG_KO, LANG_EN ];
