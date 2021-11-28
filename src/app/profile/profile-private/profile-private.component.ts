@@ -7,11 +7,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import {
     faPlus, faMinus, faUserAlt
 } from '@fortawesome/free-solid-svg-icons';
-import { TranslateService } from '@ngx-translate/core';
 
 import { UserInfoPrivate, UserInfoUpdate } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 import { DESCRIPTION_MAX_LENGTH, LANG_KO, USER_DEFAULT_IMG_ASSET, VALID_PROFILE_IMG_TYPES } from '../../shared/constants';
+import { LanguageService } from '../../shared/language.service';
 
 const SPINNER_FETCH_MSG = 'Fetching user profile...';
 const SPINNER_UPLOAD_MSG = 'Updating user profile...';
@@ -66,8 +66,11 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
     locationOption = '';
     additionalInfoErrorMsg = '';
 
+    languageInput: string;
+
     spinnerMsg = '';
     userLanguage: string | null | undefined;
+    userLanguageSubscription: Subscription;
     LANG_KO = LANG_KO;
 
     private s3Http: HttpClient;
@@ -76,14 +79,21 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
         private router: Router,
         private handler: HttpBackend,
         private spinner: NgxSpinnerService,
-        private translateService: TranslateService,
-        private userService: UserService
+        private userService: UserService,
+        private languageService: LanguageService
     ) {
-        this.s3Http = new HttpClient(handler);
+        this.s3Http = new HttpClient(this.handler);
     }
 
     ngOnInit(): void {
-        this.userLanguage = this.translateService.currentLang;
+        this.userLanguage = this.languageService.userLanguage;
+        this.userLanguageSubscription = this.languageService.userLanguageSubject.subscribe(
+            (userLanguage: string) => {
+                this.userLanguage = userLanguage;
+                this.languageInput = userLanguage;
+            }
+        );
+        this.languageInput = this.userLanguage;
 
         this.spinnerMsg = SPINNER_FETCH_MSG;
         this.spinner.show();
@@ -143,6 +153,7 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currUserInfoSubscription?.unsubscribe();
+        this.userLanguageSubscription?.unsubscribe();
         window.removeEventListener('message',
             this.messageEventListener.bind(this));
     }
@@ -396,6 +407,12 @@ export class ProfilePrivateComponent implements OnInit, OnDestroy {
 
     viewFriends(): void {
         //
+    }
+
+    onChangeLanguage(value: string): void {
+        this.languageInput = value;
+        localStorage.setItem("language", value);
+        this.languageService.updateUserLanguage(value);
     }
 
     private messageEventListener(event: MessageEvent): void {

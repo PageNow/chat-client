@@ -29,27 +29,28 @@
             </div>
             <!-- Latest message preview and sent time -->
             <div class='d-flex flex-row align-items-end text-nowrap overflow-hidden mb-1'>
-                <div class='conversation-content-div' *ngIf="userLanguage !== LANG_KO"
+                <div class='conversation-content-div'
                      [routerLink]="['/chat', 'conversation', conversation.conversationId]"
                      [queryParams]="{
                         isGroup: conversation.isGroup, title: conversation.title, recipientId: conversation.participantId,
                         recipientName: userInfoMap[conversation.participantId]?.full_name,
                         recipientImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }"
                 >
-                    <span *ngIf="conversation.senderId === currUserId">You:</span>
-                    {{ conversation.latestContent.split('\n')[0].slice(0, 32) }}
-                    {{ conversation.latestContent.split('\n')[0].length < 32 ? '' : '...' }}
-                </div>
-                <div class='conversation-content-div' *ngIf="userLanguage === LANG_KO"
-                     [routerLink]="['/chat', 'conversation', conversation.conversationId]"
-                     [queryParams]="{
-                        isGroup: conversation.isGroup, title: conversation.title, recipientId: conversation.participantId,
-                        recipientName: userInfoMap[conversation.participantId]?.full_name,
-                        recipientImgUrl: userInfoMap[conversation.participantId]?.profile_image_url }"
-                >
-                    <span *ngIf="conversation.senderId === currUserId">회원님:</span>
-                    {{ conversation.latestContent.split('\n')[0].slice(0, 21) }}
-                    {{ conversation.latestContent.split('\n')[0].length < 21 ? '' : '...' }}
+                    <span *ngIf="conversation.senderId === currUserId && userLanguage !== LANG_KO" >
+                        You:
+                    </span>
+                    <span *ngIf="conversation.senderId === currUserId && userLanguage === LANG_KO">
+                        회원님:
+                    </span>
+                    <span *ngIf="conversation.latestContent.match(enRegex)">
+                        {{ conversation.latestContent.split('\n')[0].slice(0, 32) }}
+                        {{ conversation.latestContent.split('\n')[0].length < 32 ? '' : '...' }}
+                    </span>
+                    <span *ngIf="!conversation.latestContent.match(enRegex)">
+                        {{ conversation.latestContent.split('\n')[0].slice(0, 21) }}
+                        {{ conversation.latestContent.split('\n')[0].length < 21 ? '' : '...' }}
+                    </span>
+                    
                 </div>
                 <div class='conversation-sentat-div'>
                     {{ conversation.sentAt | dateFormat }}

@@ -12,6 +12,7 @@ import { getFullName } from '../../shared/user-utils';
 import { UserInfoPublic } from 'src/app/user/user.model';
 import { LANG_KO, USER_DEFAULT_IMG_ASSET } from 'src/app/shared/constants';
 import { Message } from '../models/message.model';
+import { LanguageService } from 'src/app/shared/language.service';
 
 @Component({
     selector: 'app-chat-conversation-list',
@@ -26,9 +27,11 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
     spinnerMsg = '';
     LANG_KO = LANG_KO;
     userLanguage: string | null | undefined;
+    userLanguageSubscription: Subscription;
 
     // fontawesome icons
     faCircle = faCircle;
+    enRegex = /^[A-Za-z0-9.?!, ]*$/;
 
     newMessageSubscription: Subscription;
 
@@ -36,11 +39,17 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
         private spinner: NgxSpinnerService,
         private translateService: TranslateService,
         private userService: UserService,
-        private chatService: ChatService
+        private chatService: ChatService,
+        private languageService: LanguageService
     ) { }
 
     ngOnInit(): void {
         this.userLanguage = this.translateService.currentLang;
+        this.userLanguageSubscription = this.languageService.userLanguageSubject.subscribe(
+            (userLanguage: string) => {
+                this.userLanguage = userLanguage;
+            }
+        );
         this.translateService.get("fetchingConversations").subscribe(
             (res: string) => {
                 this.spinnerMsg = res;
@@ -99,6 +108,7 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.newMessageSubscription?.unsubscribe();
+        this.userLanguageSubscription?.unsubscribe();
     }
 
     subscribeToNewMessages(): void {

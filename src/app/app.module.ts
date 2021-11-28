@@ -14,7 +14,7 @@ import { httpInterceptorProviders } from './interceptors/interceptor-provider';
 import { TabsModule } from './tabs/tabs.module';
 
 function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+    return new TranslateHttpLoader(http, `./assets/i18n/`, '.txt');
 }
 
 @NgModule({
@@ -36,7 +36,7 @@ function HttpLoaderFactory(http: HttpClient) {
                 useFactory: HttpLoaderFactory,
                 deps: [ HttpClient ]
             },
-            defaultLanguage: 'en'
+            defaultLanguage: 'en-US'
         })
     ],
     schemas: [],

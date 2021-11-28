@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faSearch, faTimesCircle, faUserPlus, faUserClock } from '@fortawesome/free-solid-svg-icons';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -11,13 +11,14 @@ import { LANG_KO, SEARCH_RESULT_LIMIT, USER_DEFAULT_IMG_ASSET } from '../shared/
 import { UserService } from '../user/user.service';
 import { FriendshipState } from '../friendship/friendship.model';
 import { FriendshipService } from '../friendship/friendship.service';
+import { LanguageService } from '../shared/language.service';
 
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
     faSearch = faSearch;
     faTimesCircle = faTimesCircle;
     faUserPlus = faUserPlus;
@@ -51,6 +52,7 @@ export class SearchComponent implements OnInit {
     FRIENDSHIP_NONE = FriendshipState.NONE;
 
     userLanguage: string | null | undefined;
+    userLanguageSubscription: Subscription;
     LANG_KO = LANG_KO;
 
     constructor(
@@ -58,10 +60,16 @@ export class SearchComponent implements OnInit {
         private searchService: SearchService,
         private userService: UserService,
         private friendshipService: FriendshipService,
+        private languageService: LanguageService
     ) { }
 
     ngOnInit(): void {
         this.userLanguage = this.translateService.currentLang;
+        this.userLanguageSubscription = this.languageService.userLanguageSubject.subscribe(
+            (userLanguage: string) => {
+                this.userLanguage = userLanguage;
+            }
+        );
         this.translateService.get(["emailInputPlaceholder", "nameInputPlaceholder"]).subscribe(
             (res: {[key: string]: string}) => {
                 this.emailInputPlaceholder = res.emailInputPlaceholder;
@@ -84,6 +92,10 @@ export class SearchComponent implements OnInit {
                 this.endOfSearch = false;
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.userLanguageSubscription?.unsubscribe();
     }
 
     onSearch(): void {

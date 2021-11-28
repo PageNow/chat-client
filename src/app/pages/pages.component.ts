@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { Presence } from './pages.model';
 import { PagesService } from './pages.service';
 import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../shared/language.service';
 
 @Component({
     selector: 'app-pages',
@@ -53,17 +54,24 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     spinnerMsg = '';
     userLanguage: string | null | undefined;
+    userLanguageSubscription: Subscription;
 
     constructor(
         // private http: HttpClient,
         private spinner: NgxSpinnerService,
         private translateService: TranslateService,
         private userService: UserService,
-        private pagesService: PagesService
+        private pagesService: PagesService,
+        private languageService: LanguageService
     ) { }
 
     ngOnInit(): void {
         this.userLanguage = this.translateService.currentLang;
+        this.userLanguageSubscription = this.languageService.userLanguageSubject.subscribe(
+            (userLanguage: string) => {
+                this.userLanguage = userLanguage;
+            }
+        );
         this.translateService.get("fetchingPresenceData").subscribe(
             (res: string) => {
                 this.spinnerMsg = res;
@@ -139,6 +147,7 @@ export class PagesComponent implements OnInit, OnDestroy {
         window.removeEventListener('message',
             this.messageEventListener.bind(this));
         this.userInfoSubscription?.unsubscribe();
+        this.userLanguageSubscription?.unsubscribe();
     }
 
     private messageEventListener(event: MessageEvent): void {
