@@ -32,6 +32,7 @@
     "@types/filesystem": "^0.0.30",
     "@types/har-format": "^1.2.5",
     "aws-amplify": "^3.3.27",
+    "axios": "^0.21.2",
     "install": "^0.13.0",
     "moment": "^2.29.1",
     "ngx-spinner": "^11.0.1",
