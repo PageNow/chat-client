@@ -6,11 +6,11 @@
 <div class='main-div'>
     <div *ngIf="friendRequestUserArr.length > 0"
          class='text-center mb-2' style="font-size: 15px;">
-        <strong>{{ 'friendRequests' | translate }}</strong>
+        <strong>{{ 'Friend Requests' | translate }}</strong>
     </div>
     <div *ngIf="isNotificationLoaded && friendRequestUserArr.length === 0"
          class='text-center' style="font-size: 15px;">
-        {{ 'noNotification' | translate }}
+        {{ 'There is no notification.' | translate }}
     </div>
     <div *ngFor='let user of friendRequestUserArr; let idx = index'
          class='d-flex flex-row align-items-center mb-1'>
@@ -37,18 +37,18 @@
         </div>
         <div class='me-1'>
             <button class='btn btn-outline-primary btn-sm' (click)="acceptFriendRequest(user.user_id)">
-                {{ 'accept' | translate }}
+                {{ 'Accept' | translate }}
             </button>
         </div>
         <div>
             <button class='btn btn-outline-secondary btn-sm' (click)="deleteFriendRequest(user.user_id)">
-                {{ 'decline' | translate }}
+                {{ 'Decline' | translate }}
             </button>
         </div>
     </div>
     <div class="mt-3 text-center">
         <span *ngIf="!isRefreshingNotification" class="refresh-span" (click)="refreshFriendRequests()">
-            {{ 'refreshFriendRequests' | translate }}
+            {{ 'Refresh Friend Requests' | translate }}
         </span>
         <div *ngIf="isRefreshingNotification" class="spinner-border spinner-border-sm text-primary" role="status">
             <span class="sr-only">Loading...</span>

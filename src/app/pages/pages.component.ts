@@ -45,6 +45,7 @@ export class PagesComponent implements OnInit, OnDestroy {
     // variables for current url and domain
     currUrl: string;
     currDomain: string;
+    nonSharingDomainArr = ['google.com', 'messenger.com', 'facebook.com', 'notion.so'];
 
     // variables for invitation email
     // inviteEmailInput = '';
@@ -72,7 +73,7 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.userLanguage = userLanguage;
             }
         );
-        this.translateService.get("fetchingPresenceData").subscribe(
+        this.translateService.get("Fetching presence data...").subscribe(
             (res: string) => {
                 this.spinnerMsg = res;
             }

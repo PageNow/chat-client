@@ -6,7 +6,7 @@
 <div class='text-nowrap overflow-hidden header-div'>
     <div class='d-flex align-items-center h-100'>
         <a class='back-a' [routerLink]="['/chat', 'conversations']">
-            &lt; {{ 'backButton' | translate }}
+            &lt; {{ 'Back' | translate }}
         </a>           
     </div>
     <div class='ms-2 me-1 h-100'>
@@ -20,11 +20,11 @@
         <span *ngIf="conversationIsGroup" style="font-size: 15px;">{{ conversationTitle }}</span>
         <span *ngIf="recipientPresence === undefined || recipientPresence === null"
             class="activity-hidden-span">
-            <i>{{ 'offline' | translate }}</i>
+            <i>{{ 'Offline' | translate }}</i>
         </span>
         <span *ngIf="recipientPresence !== undefined && recipientPresence !== null && recipientPresence.url === ''"
             class="activity-hidden-span">
-            <i>{{ 'activityHidden' | translate }}</i>
+            <i>{{ 'Activity Hidden' | translate }}</i>
         </span>
         <span *ngIf="recipientPresence !== undefined && recipientPresence !== null && recipientPresence.url !== ''"
             class='presence-url-span'>
@@ -37,7 +37,7 @@
 <div class='chat-div' #conversationContainer [scrollTop]="scrollTop">
     <div *ngIf="!messagesAllLoaded && !isLoadingMoreMessages" class='text-center w-100' style="font-size: 11px;">
         <span (click)="loadPreviousMessages()" class='load-prev-messages-span'>
-            {{ 'loadPreviousMessages' | translate }}
+            {{ 'Load Previous Messages' | translate }}
         </span>
     </div>
     <div *ngIf="isLoadingMoreMessages" style="text-align: center;">

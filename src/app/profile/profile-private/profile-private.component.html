@@ -30,11 +30,11 @@
             <input class='file-input' type="file" (change)="onSelectFile($event)"/>
             <span *ngIf="imageSelectUrl !== ''" class='profile-image-action-span'
                   (click)="uploadProfileImage()">
-                {{ 'upload' | translate }}
+                {{ 'Upload' | translate }}
             </span>
             <span *ngIf="imageSelectUrl === ''" class='profile-image-action-span'
                   (click)="deleteProfileImage()">
-                {{ 'delete' | translate }}
+                {{ 'Delete' | translate }}
             </span>
         </div>
         <div *ngIf='imageUploadErrorMsg !== ""' class='error-div'>
@@ -48,10 +48,10 @@
 
     <div class='section-header-div'>
         <span class='section-header-span'>
-            <strong>{{ 'name' | translate }}</strong>
+            <strong>{{ 'Name' | translate }}</strong>
         </span>
         <span class='section-header-save-span' (click)="saveName()">
-            {{ 'save' | translate }}
+            {{ 'Save' | translate }}
         </span>
     </div>
 
@@ -66,10 +66,10 @@
 
     <div class='section-header-div'>
         <span class='section-header-span'>
-            <strong>{{ 'profileHeader' | translate }}</strong>
+            <strong>{{ 'Profile Header' | translate }}</strong>
         </span>
         <span class='section-header-save-span' (click)="saveDescription()">
-            {{ 'save' | translate }}
+            {{ 'Save' | translate }}
         </span>
     </div>
 
@@ -84,10 +84,10 @@
 
     <div class='section-header-div'>
         <span class='section-header-span'>
-            <strong>{{ 'activityPrivacySettings' | translate }}</strong>
+            <strong>{{ 'Activity Privacy Settings' | translate }}</strong>
         </span>
         <span class='section-header-save-span' (click)="saveActivitySettings()">
-            {{ 'save' | translate }}
+            {{ 'Save' | translate }}
         </span>
     </div>
 
@@ -129,7 +129,7 @@
 
     <div class='d-flex flex-row align-items-center'>
         <input [(ngModel)]="domainInput" class='flex-grow-1 me-1' style="font-size: 15px;"
-               placeholder="{{ 'domainInputPlaceholder' | translate }}"/>
+               placeholder="{{ 'Enter website domain (ex. github.com)' | translate }}"/>
         <span class='text-center' style="width: 45px;">
             <fa-icon class='domain-add-icon' [icon]="faPlus"
                  (click)="addDomain()">
@@ -139,10 +139,10 @@
 
     <div class='domain-helper-div'>
         <span *ngIf="activitySettings === 'hide'">
-            * {{ 'hideActivitiesMessage' | translate }}
+            * {{ 'You will be sharing all pages except the ones above' | translate }}
         </span>
         <span *ngIf="activitySettings === 'share'">
-            * {{ 'shareActivitiesMessage' | translate }}
+            * {{ 'You will be sharing only the pages listed above' | translate }}
         </span>
     </div>
 
@@ -152,62 +152,62 @@
 
     <div class='section-header-div'>
         <span class='section-header-span'>
-            <strong>{{ 'additionalInformation' | translate }}</strong>
+            <strong>{{ 'Additional Information' | translate }}</strong>
         </span>
         <span class='section-header-save-span' (click)="saveAdditionalInfo()">
-            {{ 'save' | translate }}
+            {{ 'Save' | translate }}
         </span>
     </div>
 
     <div class='additional-info-div'>
         <div class='info-div'>
-            <div class='info-label'>{{ 'email' | translate }}</div>
+            <div class='info-label'>{{ 'Email' | translate }}</div>
             <input [(ngModel)]="emailInput" class='info-input'
                    disabled placeholder="Enter email" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="emailOption" aria-label=".form-select-sm">
-                <option value="private">{{ 'private' | translate }}</option>
-                <option value="public">{{ 'public' | translate }}</option>
+                <option value="private">{{ 'Private' | translate }}</option>
+                <option value="public">{{ 'Public' | translate }}</option>
             </select>
         </div>
         <div class='info-div'>
-            <div class='info-label'>{{ 'gender' | translate }}</div>
+            <div class='info-label'>{{ 'Gender' | translate }}</div>
             <input [(ngModel)]="genderInput" class='info-input'
                    placeholder="Enter gender" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="genderOption" aria-label=".form-select-sm">
-                <option value="private">{{ 'private' | translate }}</option>
-                <option value="public">{{ 'public' | translate }}</option>
+                <option value="private">{{ 'Private' | translate }}</option>
+                <option value="public">{{ 'Public' | translate }}</option>
             </select>
         </div>
         <div class='info-div'>
-            <div class='info-label'>{{ 'school' | translate }}</div>
+            <div class='info-label'>{{ 'School' | translate }}</div>
             <input [(ngModel)]="schoolInput" class='info-input'
                    placeholder="Enter school" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="schoolOption" aria-label=".form-select-sm">
-                <option value="private">{{ 'private' | translate }}</option>
-                <option value="public">{{ 'public' | translate }}</option>
+                <option value="private">{{ 'Private' | translate }}</option>
+                <option value="public">{{ 'Public' | translate }}</option>
             </select>
         </div>
         <div class='info-div'>
-            <div class='info-label'>{{ 'work' | translate }}</div>
+            <div class='info-label'>{{ 'Work' | translate }}</div>
             <input [(ngModel)]="workInput" class='info-input'
                    placeholder="Enter work" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="workOption" aria-label=".form-select-sm">
-                <option value="private">{{ 'private' | translate }}</option>
-                <option value="public">{{ 'public' | translate }}</option>
+                <option value="private">{{ 'Private' | translate }}</option>
+                <option value="public">{{ 'Public' | translate }}</option>
             </select>
         </div>
         <div class='info-div'>
-            <div class='info-label'>{{ 'location' | translate }}</div>
+            <div class='info-label'>{{ 'Location' | translate }}</div>
             <input [(ngModel)]="locationInput" class='info-input'
                    placeholder="Enter location" />
             <select class="form-select form-select-sm privacy-select"
                     [(ngModel)]="locationOption" aria-label=".form-select-sm">
-                <option value="private">{{ 'private' | translate }}</option>
-                <option value="public">{{ 'public' | translate }}</option>
+                <option value="private">{{ 'Private' | translate }}</option>
+                <option value="public">{{ 'Public' | translate }}</option>
             </select>
         </div>
     </div>

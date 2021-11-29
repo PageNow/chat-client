@@ -50,7 +50,7 @@ export class ChatConversationListComponent implements OnInit, OnDestroy {
                 this.userLanguage = userLanguage;
             }
         );
-        this.translateService.get("fetchingConversations").subscribe(
+        this.translateService.get("Fetching conversations...").subscribe(
             (res: string) => {
                 this.spinnerMsg = res;
             }

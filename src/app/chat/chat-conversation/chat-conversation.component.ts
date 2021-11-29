@@ -149,7 +149,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
                 });
         });
 
-        this.translateService.get("fetchingMessages").subscribe(
+        this.translateService.get("Fetching messages...").subscribe(
             (res: string) => {
                 this.spinnerMsg = res;
             }

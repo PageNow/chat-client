@@ -70,10 +70,10 @@ export class SearchComponent implements OnInit, OnDestroy {
                 this.userLanguage = userLanguage;
             }
         );
-        this.translateService.get(["emailInputPlaceholder", "nameInputPlaceholder"]).subscribe(
+        this.translateService.get(["Enter email...", "Enter name..."]).subscribe(
             (res: {[key: string]: string}) => {
-                this.emailInputPlaceholder = res.emailInputPlaceholder;
-                this.nameInputPlaceholder = res.nameInputPlaceholder;
+                this.emailInputPlaceholder = res["Enter email..."];
+                this.nameInputPlaceholder = res["Enter name..."];
                 this.searchPlaceholder = this.nameInputPlaceholder;
             }
         )
