@@ -7,4 +7,5 @@ export interface Page {
 export interface Presence {
     userId: string;
     page: Page | null;
+    latestPage: Page | null;
 }

@@ -30,8 +30,10 @@ export class PagesComponent implements OnInit, OnDestroy {
     // variables related to presence
     offlinePresenceArr: Presence[] = [];
     offlineUserIdSet: Set<string> = new Set();
-    onlinePresenceArr: Presence[] = [];
-    onlineUserIdSet: Set<string> = new Set();
+    onlineSharingPresenceArr: Presence[] = [];
+    onlineSharingUserIdSet: Set<string> = new Set();
+    onlineHiddenPresenceArr: Presence[] = [];
+    onlineHiddenUserIdSet: Set<string> = new Set();
     userPresence: Presence;
     isPresenceLoaded = false;
 
@@ -96,8 +98,12 @@ export class PagesComponent implements OnInit, OnDestroy {
                 // separate online and offline presence of friends
                 this.offlinePresenceArr = res.presenceArr.filter((x: Presence) => !x.page);
                 this.offlineUserIdSet = new Set(this.offlinePresenceArr.map((x: Presence) => x.userId));
-                this.onlinePresenceArr = res.presenceArr.filter((x: Presence) => x.page);
-                this.onlineUserIdSet = new Set(this.onlinePresenceArr.map((x: Presence) => x.userId));
+                this.onlineSharingPresenceArr = res.presenceArr.filter(
+                    (x: Presence) => x.page && x.page.url && x.page.url !== '');
+                this.onlineSharingUserIdSet = new Set(this.onlineSharingPresenceArr.map((x: Presence) => x.userId));
+                this.onlineHiddenPresenceArr = res.presenceArr.filter(
+                    (x: Presence) => x.page && (!x.page.url || x.page.url === ''));
+                this.onlineHiddenUserIdSet = new Set(this.onlineHiddenPresenceArr.map((x: Presence) => x.userId));
                 this.userPresence = res.userPresence;
                 this.userInfoMap = res.userInfoMap;
                 this.userId = res.userPresence.userId;
@@ -160,14 +166,20 @@ export class PagesComponent implements OnInit, OnDestroy {
                     url: event.data.data.url,
                     title: event.data.data.title,
                     domain: event.data.data.domain
+                },
+                latestPage: {
+                    url: event.data.data.latestUrl,
+                    title: event.data.data.latestTitle,
+                    domain: event.data.data.latestDomain
                 }
             };
             if (presenceUserId === this.userId) {
                 this.userPresence = updatedPresence;
             } else {
+                console.log(event.data);
                 let idxToRemove;
                 if (this.offlineUserIdSet.has(presenceUserId)) {
-                    // move from offlinePresenceArr to onlinePresenceArr
+                    // find the presence data to remove from offlinePresenceArr
                     for (let idx = 0; idx < this.offlinePresenceArr.length; idx++) {
                         if (this.offlinePresenceArr[idx].userId === presenceUserId) {
                             idxToRemove = idx;
@@ -179,51 +191,109 @@ export class PagesComponent implements OnInit, OnDestroy {
                             ...this.offlinePresenceArr.slice(0, idxToRemove),
                             ...this.offlinePresenceArr.slice(idxToRemove + 1)
                         ];
-                        this.onlinePresenceArr = [ updatedPresence, ...this.onlinePresenceArr ];
                         this.offlineUserIdSet.delete(presenceUserId);
-                        this.onlineUserIdSet.add(presenceUserId);
+                        if (updatedPresence.page.url && updatedPresence.page.url !== '') {
+                            // if the user is sharing acitivity
+                            this.onlineSharingPresenceArr = [ updatedPresence, ...this.onlineSharingPresenceArr ];
+                            this.onlineSharingUserIdSet.add(presenceUserId);
+                        } else {
+                            // if the user is not sharing activity
+                            this.onlineHiddenPresenceArr = [ updatedPresence, ...this.onlineHiddenPresenceArr ];
+                            this.onlineHiddenUserIdSet.add(presenceUserId);
+                        }
                     }
-                } else if (this.onlineUserIdSet.has(event.data.data.userId)) {
-                    // move to the front of onlinePresenceArr
-                    for (let idx = 0; idx < this.onlinePresenceArr.length; idx++) {
-                        if (this.onlinePresenceArr[idx].userId === presenceUserId) {
+                } else if (this.onlineSharingUserIdSet.has(event.data.data.userId)) {
+                    // first get the idx in onlineSharingPresenceArr
+                    for (let idx = 0; idx < this.onlineSharingPresenceArr.length; idx++) {
+                        if (this.onlineSharingPresenceArr[idx].userId === presenceUserId) {
                             idxToRemove = idx;
                             break;
                         }
                     }
-                    if (idxToRemove !== undefined && idxToRemove !== null) {
-                        this.onlinePresenceArr = [
-                            ...this.onlinePresenceArr.slice(0, idxToRemove),
-                            ...this.onlinePresenceArr.slice(idxToRemove + 1)
-                        ];
-                        this.onlinePresenceArr = [ updatedPresence, ...this.onlinePresenceArr ];
-                        this.onlineUserIdSet.add(presenceUserId);
+                    if (updatedPresence.page.url && updatedPresence.page.url !== '') {
+                        // if the user is sharing activity, move to the front
+                        if (idxToRemove !== undefined && idxToRemove !== null) {
+                            this.onlineSharingPresenceArr = [
+                                ...this.onlineSharingPresenceArr.slice(0, idxToRemove),
+                                ...this.onlineSharingPresenceArr.slice(idxToRemove + 1)
+                            ];
+                            this.onlineSharingPresenceArr = [ updatedPresence, ...this.onlineSharingPresenceArr ];
+                            this.onlineSharingUserIdSet.add(presenceUserId);
+                        }
+                    } else {
+                        // if the user is not sharing activity, move to the hiddenActivityArray
+                        if (idxToRemove !== undefined && idxToRemove !== null) {
+                            this.onlineSharingPresenceArr = [
+                                ...this.onlineSharingPresenceArr.slice(0, idxToRemove),
+                                ...this.onlineSharingPresenceArr.slice(idxToRemove + 1)
+                            ];
+                            this.onlineSharingUserIdSet.delete(presenceUserId);
+                            this.onlineHiddenPresenceArr = [ updatedPresence, ...this.onlineHiddenPresenceArr ];
+                            this.onlineHiddenUserIdSet.add(presenceUserId);
+                        }
+                    }
+                } else if (this.onlineHiddenUserIdSet.has(event.data.data.userId)) {
+                    // change the order only if the user updates presence to sharing
+                    if (updatedPresence.page.url && updatedPresence.page.url !== '') {
+                        for (let idx = 0; idx < this.onlineHiddenPresenceArr.length; idx++) {
+                            if (this.onlineHiddenPresenceArr[idx].userId === presenceUserId) {
+                                idxToRemove = idx;
+                                break;
+                            }
+                        }
+                        if (idxToRemove !== undefined && idxToRemove !== null) {
+                            this.onlineHiddenPresenceArr = [
+                                ...this.onlineHiddenPresenceArr.slice(0, idxToRemove),
+                                ...this.onlineHiddenPresenceArr.slice(idxToRemove + 1)
+                            ];
+                            this.onlineHiddenUserIdSet.delete(presenceUserId);
+                            this.onlineSharingPresenceArr = [ updatedPresence, ...this.onlineSharingPresenceArr ];
+                            this.onlineSharingUserIdSet.add(presenceUserId);
+                        }
                     }
                 }
             }
         } else if (event.data.type === 'presence-timeout') { // when a friend goes offline
             const presenceUserId = event.data.data.userId;
-            if (this.onlineUserIdSet.has(presenceUserId)) {
-                let idxToRemove;
-                for (let idx = 0; idx < this.onlinePresenceArr.length; idx++) {
-                    if (this.onlinePresenceArr[idx].userId === presenceUserId) {
-                        idxToRemove = idx;
-                        break;
+            if (!this.offlineUserIdSet.has(presenceUserId)) {
+                if (this.onlineSharingUserIdSet.has(presenceUserId)) {
+                    let idxToRemove;
+                    for (let idx = 0; idx < this.onlineSharingPresenceArr.length; idx++) {
+                        if (this.onlineSharingPresenceArr[idx].userId === presenceUserId) {
+                            idxToRemove = idx;
+                            break;
+                        }
+                    }
+                    if (idxToRemove !== undefined && idxToRemove !== null) {
+                        this.onlineSharingPresenceArr = [
+                            ...this.onlineSharingPresenceArr.slice(0, idxToRemove),
+                            ...this.onlineSharingPresenceArr.slice(idxToRemove + 1)
+                        ];
+                        this.onlineSharingUserIdSet.delete(presenceUserId);                        
+                    }
+                } else if (this.onlineHiddenUserIdSet.has(presenceUserId)) {
+                    let idxToRemove;
+                    for (let idx = 0; idx < this.onlineHiddenPresenceArr.length; idx++) {
+                        if (this.onlineHiddenPresenceArr[idx].userId === presenceUserId) {
+                            idxToRemove = idx;
+                            break;
+                        }
+                    }
+                    if (idxToRemove !== undefined && idxToRemove !== null) {
+                        this.onlineHiddenPresenceArr = [
+                            ...this.onlineHiddenPresenceArr.slice(0, idxToRemove),
+                            ...this.onlineHiddenPresenceArr.slice(idxToRemove + 1)
+                        ];
+                        this.onlineHiddenUserIdSet.delete(presenceUserId);                        
                     }
                 }
-                if (idxToRemove !== undefined && idxToRemove !== null) {
-                    this.onlinePresenceArr = [
-                        ...this.onlinePresenceArr.slice(0, idxToRemove),
-                        ...this.onlinePresenceArr.slice(idxToRemove + 1)
-                    ];
-                    const updatedPresence = {
-                        userId: event.data.data.userId,
-                        page: null
-                    };
-                    this.offlinePresenceArr = [ updatedPresence, ...this.offlinePresenceArr ];
-                    this.onlineUserIdSet.delete(presenceUserId);
-                    this.offlineUserIdSet.add(presenceUserId);
-                }
+                const updatedPresence = {
+                    userId: event.data.data.userId,
+                    page: null,
+                    latestPage: null
+                };
+                this.offlinePresenceArr = [ updatedPresence, ...this.offlinePresenceArr ];
+                this.offlineUserIdSet.add(presenceUserId);
             }
         } else if (event.data.type === 'update-domain-array') { // when user sharing setting is updated
             // if a user changes the sharing setting for a domain through popup, apply the change directly to client

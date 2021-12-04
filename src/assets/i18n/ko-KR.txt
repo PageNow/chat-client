@@ -3,6 +3,8 @@
     "Friends Offline": "활동중이지 않은 친구",
     "Offline": "오프라인",
     "Activity Hidden": "활동 비공개",
+    "Latest Shared": "최근 공개 활동",
+    "None": "없음",
     "Now Sharing": "현재 공유중",
     "Search friends to share your activity with!": "활동을 공유할 친구를 찾으세요!",
     "Conversations": "대화목록",

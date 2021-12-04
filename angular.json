@@ -41,7 +41,8 @@
                 "@aws-crypto/sha256-js",
                 "@aws-crypto/sha256-browser",
                 "@aws-crypto/crc32",
-                "@aws-amplify/auth/lib/types"
+                "@aws-amplify/auth/lib/types",
+                "camelcase-keys"
             ],
             "outputPath": "dist/chat-client",
             "index": "src/index.html",

@@ -26,7 +26,7 @@
     </div>
 
     <!-- Message that is displayed when you have no friend -->
-    <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlinePresenceArr.length === 0"
+    <div *ngIf="isPresenceLoaded && offlinePresenceArr.length === 0 && onlineSharingPresenceArr.length === 0 && onlineHiddenPresenceArr.length === 0"
          class='text-center'>
         <span>{{ 'Search friends to share your activity with!' | translate }}</span>
     </div>
@@ -55,9 +55,9 @@
     <!-- Live presence information for online friends -->
     <div class='presence-subheader-div'>
         <span class='dot' style="background-color: green; border: 1px solid green;"></span>
-        <span>{{ 'Friends Online' | translate }} ({{ onlinePresenceArr.length }})</span>
+        <span>{{ 'Friends Online' | translate }} ({{ onlineSharingPresenceArr.length + onlineHiddenPresenceArr.length }})</span>
     </div>
-    <div class='presence-div' *ngFor="let presence of onlinePresenceArr">
+    <div class='presence-div' *ngFor="let presence of onlineSharingPresenceArr.concat(onlineHiddenPresenceArr)">
         <div class='profile-image-div'>
             <img [src]="userInfoMap[presence.userId].profileImgUrl"
                 (click)="onClickProfile(presence.userId)"
@@ -70,7 +70,11 @@
                     {{ userInfoMap[presence.userId].first_name }}
                     {{ userInfoMap[presence.userId].last_name }}
                 </span>
-                <span *ngIf="presence.page && presence.page.domain !== ''" class='domain-span'>
+                <span *ngIf="presence.page && presence.page.url === ''"
+                      class='activity-hidden-span ms-2'>
+                    <strong>{{ 'Activity Hidden' | translate }}</strong>
+                </span>
+                <span *ngIf="presence.page && presence.page.url !== '' && presence.page.domain !== ''" class='domain-span'>
                     <strong>{{ presence.page.domain }}</strong>
                 </span>
             </div>
@@ -78,9 +82,24 @@
                target="_blank" class='page-a'>
                 {{ presence.page.title }}
             </a>
-            <span *ngIf="presence.page && presence.page.url === ''" class='activity-hidden-span'>
-                {{ 'Activity Hidden' | translate }}
-            </span>
+            <!-- If activity is hidden (page.url === '') -->
+            <div *ngIf="presence.page && presence.page.url === ''"
+                 class='d-flex flex-row'>
+                <span class='latest-activity-shared-span'>
+                    {{ 'Latest Shared' | translate }}
+                </span>
+                <a *ngIf="presence.latestPage && presence.latestPage.url !== ''"
+                    [href]='presence.latestPage.url' target="_blank" class='page-a'>
+                    <span *ngIf="presence.latestPage.domain && presence.latestPage.domain !== ''">
+                        {{ presence.latestPage.domain }} -
+                    </span>
+                    {{ presence.latestPage.title }}
+                </a>
+                <span *ngIf="!(presence.latestPage && presence.latestPage.url !== '')"
+                      class="ms-1" style="font-size: 12px;">
+                    {{ 'None' | translate }}
+                </span>
+            </div>
         </div>
     </div>
 
