@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { UserInfoSummary } from '../user/user.model';
@@ -8,7 +8,7 @@ import { EXTENSION_ID } from '../shared/config';
 @Injectable({
     providedIn: 'root'
 })
-export class NotificationsService {
+export class NotificationsService implements OnDestroy {
 
     private friendRequestUserArr: UserInfoSummary[] = [];
     public notificationCntSubject = new BehaviorSubject<number>(0);
@@ -22,18 +22,28 @@ export class NotificationsService {
                 this.friendRequestUserArr = res;
                 this.notificationCntSubject.next(res.length);
                 this.friendRequestUserArrSubject.next(res);
+                window.addEventListener('message',
+                    this.messageEventListener.bind(this));
             })
             .catch(() => {
                 // do nothing
             });
     }
 
+    ngOnDestroy(): void {
+        window.removeEventListener('message',
+            this.messageEventListener.bind(this));
+    }
+
     public removeFriendRequest(userId: string): void {
+        /*** Remove the following lines after migration ***/
         this.friendRequestUserArr = this.friendRequestUserArr
             .filter((x: UserInfoSummary) => x.user_id !== userId);
         this.notificationCntSubject.next(this.friendRequestUserArr.length);
         this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
-        this.sendUpdateCntMessage(this.friendRequestUserArr.length);
+        /*****/
+        this.sendUpdateCntMessage(this.friendRequestUserArr.length); // TODO - remove once migrated
+        this.sendRemoveFriendRequestMessage(userId);
     }
 
     public updateFriendshipRequests(requests: UserInfoSummary[]): void {
@@ -51,5 +61,32 @@ export class NotificationsService {
                 notificationCnt: cnt
             }
         });
+    }
+
+    // Send the friend request that has been either accepted or declined
+    private sendRemoveFriendRequestMessage(userId: string): void {
+        chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'remove-friend-request',
+            data: {
+                userId: userId
+            }
+        });
+    }
+
+    private messageEventListener(event: MessageEvent): void {
+        if (event.data.type === 'remove-friend-request') {
+            this.friendRequestUserArr = this.friendRequestUserArr
+                .filter((x: UserInfoSummary) => x.user_id !== event.data.data.userId);
+            this.notificationCntSubject.next(this.friendRequestUserArr.length);
+            this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
+        } else if (event.data.type === 'update-friend-request') {
+            this.friendshipService.getFriendshipRequests()
+                .then((res: UserInfoSummary[]) => {
+                    this.updateFriendshipRequests(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
     }
 }

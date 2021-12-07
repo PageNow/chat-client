@@ -134,7 +134,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             .catch(err => {
                 this.isRefreshingNotification = false;
                 console.log(err);
-            })
+            });
     }
 
     onClickProfile(userInfo: UserInfoSummary): void {
