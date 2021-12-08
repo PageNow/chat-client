@@ -1,33 +1,54 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 import { UserInfoSummary } from '../user/user.model';
 import { FriendshipService } from '../friendship/friendship.service';
-import { EXTENSION_ID } from '../shared/config';
+import { EXTENSION_ID, USER_API_URL } from '../shared/config';
+import { ShareNotification } from './notifications.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationsService implements OnDestroy {
 
-    private friendRequestUserArr: UserInfoSummary[] = [];
+    private notificationCnt = 0;
     public notificationCntSubject = new BehaviorSubject<number>(0);
+
+    private friendRequestUserArr: UserInfoSummary[] = [];
     public friendRequestUserArrSubject = new BehaviorSubject<UserInfoSummary[]>(this.friendRequestUserArr);
 
+    private shareNotificationArr: ShareNotification[] = [];
+    public shareNotificationArrSubject = new BehaviorSubject<ShareNotification[]>(this.shareNotificationArr);
+
     constructor(
+        private http: HttpClient,
         private friendshipService: FriendshipService
     ) {
         friendshipService.getFriendshipRequests()
             .then((res: UserInfoSummary[]) => {
                 this.friendRequestUserArr = res;
-                this.notificationCntSubject.next(res.length);
+                this.notificationCnt += res.length;
+                this.notificationCntSubject.next(this.notificationCnt);
                 this.friendRequestUserArrSubject.next(res);
-                window.addEventListener('message',
-                    this.messageEventListener.bind(this));
             })
             .catch(() => {
                 // do nothing
             });
+        
+        this.getUnreadShareNotifications()
+            .then((res: ShareNotification[]) => {
+                this.shareNotificationArr = res;
+                this.notificationCnt += res.length;
+                this.notificationCntSubject.next(this.notificationCnt);
+                this.shareNotificationArrSubject.next(res);
+            })
+            .catch(() => {
+                // do nothing
+            });
+
+        window.addEventListener('message',
+            this.messageEventListener.bind(this));
     }
 
     ngOnDestroy(): void {
@@ -71,6 +92,12 @@ export class NotificationsService implements OnDestroy {
                 userId: userId
             }
         });
+    }
+
+    private getUnreadShareNotifications(): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/notifications/share?is_read=false`
+        ).toPromise();
     }
 
     private messageEventListener(event: MessageEvent): void {
