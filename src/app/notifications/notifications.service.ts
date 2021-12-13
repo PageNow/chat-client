@@ -106,7 +106,7 @@ export class NotificationsService implements OnDestroy {
                 .filter((x: UserInfoSummary) => x.user_id !== event.data.data.userId);
             this.notificationCntSubject.next(this.friendRequestUserArr.length);
             this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
-        } else if (event.data.type === 'update-friend-request') {
+        } else if (event.data.type === 'update-friend-requests') {
             this.friendshipService.getFriendshipRequests()
                 .then((res: UserInfoSummary[]) => {
                     this.updateFriendshipRequests(res);

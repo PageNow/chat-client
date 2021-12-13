@@ -145,8 +145,10 @@ $share-div-margin-bottom: 5px;
     margin-right: 8px;
 }
 
-.invite-input {
-    padding-top: 0;
-    padding-bottom: 0;
-    height: 30px;
+.chevron-icon:hover {
+    cursor: pointer;
+}
+
+.shareNotificationButton {
+    font-size: 13px;
 }

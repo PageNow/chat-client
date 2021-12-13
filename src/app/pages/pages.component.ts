@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
+import { faChevronCircleRight, faChevronDown, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 
 import { EXTENSION_ID } from '../shared/config';
 import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
@@ -38,7 +38,9 @@ export class PagesComponent implements OnInit, OnDestroy {
     isPresenceLoaded = false;
 
     // fontawesome icon
-    faEnvelope = faEnvelope;    
+    faChevronCircleRight = faChevronCircleRight;
+    faChevronDown = faChevronDown;
+    faBullhorn = faBullhorn;
 
     // variables for public profile component
     showProfile = false;
@@ -49,11 +51,8 @@ export class PagesComponent implements OnInit, OnDestroy {
     currDomain: string;
     nonSharingDomainArr = ['google.com', 'messenger.com', 'facebook.com', 'notion.so'];
 
-    // variables for invitation email
-    // inviteEmailInput = '';
-    // inviteEmailSending = false;
-    // inviteEmailError = '';
-    // inviteEmailSuccess = '';
+    // variables for managing toolbar
+    isToolbarOpen = true;
 
     spinnerMsg = '';
     userLanguage: string | null | undefined;
@@ -333,25 +332,7 @@ export class PagesComponent implements OnInit, OnDestroy {
             });
     }
 
-    // sendInvitationEmail(): void {
-    //     this.inviteEmailSending = true;
-    //     const body = {
-    //         senderFirstName: this.currUserInfo.first_name,
-    //         senderLastName: this.currUserInfo.last_name,
-    //         recipientEmail: this.inviteEmailInput
-    //     };
-    //     this.http.post(`${EMAIL_API_URL}/email`, body).toPromise()
-    //         .then(() => {
-    //             this.inviteEmailInput = '';
-    //             this.inviteEmailError = '';
-    //             this.inviteEmailSuccess = 'Invitation email sent!'
-    //             this.inviteEmailSending = false;
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //             this.inviteEmailError = 'Something went wrong...';
-    //             this.inviteEmailSuccess = '';
-    //             this.inviteEmailSending = false;
-    //         });
-    // }
+    onClickToolbar(): void {
+        this.isToolbarOpen = !this.isToolbarOpen;
+    }
 }
