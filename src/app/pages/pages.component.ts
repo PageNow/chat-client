@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { faChevronCircleRight, faChevronDown, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { TranslateService } from '@ngx-translate/core';
 
 import { EXTENSION_ID } from '../shared/config';
 import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
@@ -9,7 +10,7 @@ import { UserInfoPrivate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { Presence } from './pages.model';
 import { PagesService } from './pages.service';
-import { TranslateService } from '@ngx-translate/core';
+import { NotificationsService } from '../notifications/notifications.service';
 import { LanguageService } from '../shared/language.service';
 
 @Component({
@@ -50,6 +51,9 @@ export class PagesComponent implements OnInit, OnDestroy {
     currUrl: string;
     currDomain: string;
     nonSharingDomainArr = ['google.com', 'messenger.com', 'facebook.com', 'notion.so'];
+    isCurrPageShared = false;
+    isSendingShareNotification = false;
+    shareNotificationMessage = '';
 
     // variables for managing toolbar
     isToolbarOpen = true;
@@ -64,6 +68,7 @@ export class PagesComponent implements OnInit, OnDestroy {
         private translateService: TranslateService,
         private userService: UserService,
         private pagesService: PagesService,
+        private notificationsService: NotificationsService,
         private languageService: LanguageService
     ) { }
 
@@ -334,5 +339,23 @@ export class PagesComponent implements OnInit, OnDestroy {
 
     onClickToolbar(): void {
         this.isToolbarOpen = !this.isToolbarOpen;
+    }
+
+    sendShareNotification(): void {
+        this.isSendingShareNotification = true;
+        if (!this.userPresence.page) {
+            this.isSendingShareNotification = false;
+            return;
+        }
+        this.notificationsService.sendShareNotification(
+            this.userPresence.page.url, this.userPresence.page.title
+        ).then(() => {
+            this.isSendingShareNotification = false;
+            this.shareNotificationMessage = 'Your friends are notified of your activity! 🎉';
+        }).catch(err => {
+            console.log(err);
+            this.isSendingShareNotification = false;
+            this.shareNotificationMessage = 'Sorry, something went wrong.';
+        });
     }
 }

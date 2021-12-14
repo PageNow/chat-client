@@ -37,19 +37,28 @@
 
     <!-- Toolbar -->
     <div *ngIf="isToolbarOpen && userPresence && userPresence.page && userPresence.page.url !== ''"
-         class="d-flex flex-row align-items-center">
-        <button class="shareNotificationButton me-3">
-            <fa-icon [icon]="faBullhorn" class="me-1"></fa-icon>
-            Notify friends current activity
-        </button>
-        <button style="font-size: 12px;">
-            Stop sharing domain
-        </button>
+         class="d-flex flex-row align-items-center justify-content-center">
+        <span *ngIf="shareNotificationMessage === '' && !isSendingShareNotification"
+              class="me-1 notify-icon" style="font-size: 14px;">
+            <fa-icon [icon]="faBullhorn" class="me-1" style="font-size: 13px;"></fa-icon>
+        </span>
+        <span *ngIf="shareNotificationMessage === '' && !isSendingShareNotification"
+              style="font-size: 14px;">
+            Click <span class='notify-span' (click)="sendShareNotification()">here</span> 
+            to notify friends of your current activity
+        </span>
+        <span *ngIf="shareNotificationMessage !== ''" style="font-size: 14px;">
+            {{ shareNotificationMessage }}
+        </span>
+        <div *ngIf="isSendingShareNotification"
+             class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
 
 
     <!-- Live presence information for online friends -->
-    <div class='presence-subheader-div'>
+    <div class="mt-1 mb-1" style="font-size: 15px;">
         <span class='dot' style="background-color: green; border: 1px solid green;"></span>
         <span>{{ 'Friends Online' | translate }} ({{ onlineSharingPresenceArr.length + onlineHiddenPresenceArr.length }})</span>
     </div>

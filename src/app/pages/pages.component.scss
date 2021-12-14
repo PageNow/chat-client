@@ -51,11 +51,6 @@ $share-div-margin-bottom: 5px;
     margin-bottom: 7px;
 }
 
-.presence-subheader-div {
-    font-size: 15px;
-    margin: 5px 0 5px 0;
-}
-
 .presence-subheader-offline-span {
     color: $tabs-color;
 }
@@ -151,4 +146,13 @@ $share-div-margin-bottom: 5px;
 
 .shareNotificationButton {
     font-size: 13px;
+}
+
+.notify-span {
+    color: $link-color;
+}
+
+.notify-span:hover {
+    cursor: pointer;
+    color: $link-hover-color;
 }

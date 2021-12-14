@@ -74,6 +74,18 @@ export class NotificationsService implements OnDestroy {
         this.sendUpdateCntMessage(requests.length);
     }
 
+    public sendShareNotification(url: string, title: string): Promise<any> {
+        return this.http.post(
+            `${USER_API_URL}/notifications/share`, { url, title }
+        ).toPromise();
+    }
+
+    private getUnreadShareNotifications(): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/notifications/share?is_read=false`
+        ).toPromise();
+    }
+
     // Send the updated count to background.js to udpate the extension badge text
     private sendUpdateCntMessage(cnt: number): void {
         chrome.runtime.sendMessage(EXTENSION_ID, {
@@ -92,12 +104,6 @@ export class NotificationsService implements OnDestroy {
                 userId: userId
             }
         });
-    }
-
-    private getUnreadShareNotifications(): Promise<any> {
-        return this.http.get(
-            `${USER_API_URL}/notifications/share?is_read=false`
-        ).toPromise();
     }
 
     private messageEventListener(event: MessageEvent): void {
