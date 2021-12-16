@@ -12,7 +12,6 @@ import { ShareNotification } from './notifications.model';
 })
 export class NotificationsService implements OnDestroy {
 
-    private notificationCnt = 0;
     public notificationCntSubject = new BehaviorSubject<number>(0);
 
     private friendRequestUserArr: UserInfoSummary[] = [];
@@ -28,8 +27,9 @@ export class NotificationsService implements OnDestroy {
         friendshipService.getFriendshipRequests()
             .then((res: UserInfoSummary[]) => {
                 this.friendRequestUserArr = res;
-                this.notificationCnt += res.length;
-                this.notificationCntSubject.next(this.notificationCnt);
+                this.notificationCntSubject.next(
+                    this.friendRequestUserArr.length + this.shareNotificationArr.length
+                );
                 this.friendRequestUserArrSubject.next(res);
             })
             .catch(() => {
@@ -39,8 +39,9 @@ export class NotificationsService implements OnDestroy {
         this.getUnreadShareNotifications()
             .then((res: ShareNotification[]) => {
                 this.shareNotificationArr = res;
-                this.notificationCnt += res.length;
-                this.notificationCntSubject.next(this.notificationCnt);
+                this.notificationCntSubject.next(
+                    this.friendRequestUserArr.length + this.shareNotificationArr.length
+                );
                 this.shareNotificationArrSubject.next(res);
             })
             .catch(() => {
@@ -60,18 +61,19 @@ export class NotificationsService implements OnDestroy {
         /*** Remove the following lines after migration ***/
         this.friendRequestUserArr = this.friendRequestUserArr
             .filter((x: UserInfoSummary) => x.user_id !== userId);
-        this.notificationCntSubject.next(this.friendRequestUserArr.length);
+        this.notificationCntSubject.next(
+            this.friendRequestUserArr.length + this.shareNotificationArr.length
+        );
         this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
         /*****/
-        this.sendUpdateCntMessage(this.friendRequestUserArr.length); // TODO - remove once migrated
         this.sendRemoveFriendRequestMessage(userId);
     }
 
     public updateFriendshipRequests(requests: UserInfoSummary[]): void {
         this.friendRequestUserArr = requests;
-        this.notificationCntSubject.next(requests.length);
+        this.notificationCntSubject.next(
+            requests.length + this.shareNotificationArr.length);
         this.friendRequestUserArrSubject.next(requests);
-        this.sendUpdateCntMessage(requests.length);
     }
 
     public sendShareNotification(url: string, title: string): Promise<any> {
@@ -80,20 +82,29 @@ export class NotificationsService implements OnDestroy {
         ).toPromise();
     }
 
-    private getUnreadShareNotifications(): Promise<any> {
+    public getUnreadShareNotifications(): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/notifications/share?is_read=false`
         ).toPromise();
     }
 
-    // Send the updated count to background.js to udpate the extension badge text
-    private sendUpdateCntMessage(cnt: number): void {
-        chrome.runtime.sendMessage(EXTENSION_ID, {
-            type: 'update-notification-cnt',
-            data: {
-                notificationCnt: cnt
-            }
-        });
+    public getShareNotificationsSent(limit: number, offset: number): Promise<any> {
+        return this.http.get(
+            `${USER_API_URL}/notifications/share/sent?limit=${limit}&offset=${offset}`
+        ).toPromise();
+    }
+
+    public readShareNotification(eventId: string): Promise<any> {
+        return this.http.post(
+            `${USER_API_URL}/notifications/share/read`, [{ event_id: eventId }]
+        ).toPromise();
+    }
+
+    public updateShareNotifications(res: ShareNotification[]): void {
+        this.shareNotificationArr = res;
+        this.notificationCntSubject.next(
+            res.length + this.friendRequestUserArr.length);
+        this.shareNotificationArrSubject.next(res);
     }
 
     // Send the friend request that has been either accepted or declined
@@ -106,16 +117,41 @@ export class NotificationsService implements OnDestroy {
         });
     }
 
+    // Send the share notification that has been read
+    public sendReadShareNotification(eventId: string): void {
+        chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'read-share-notification',
+            data: {
+                eventId: eventId
+            }
+        });
+    }
+
     private messageEventListener(event: MessageEvent): void {
         if (event.data.type === 'remove-friend-request') {
             this.friendRequestUserArr = this.friendRequestUserArr
                 .filter((x: UserInfoSummary) => x.user_id !== event.data.data.userId);
-            this.notificationCntSubject.next(this.friendRequestUserArr.length);
+            this.notificationCntSubject.next(
+                this.friendRequestUserArr.length + this.shareNotificationArr.length);
             this.friendRequestUserArrSubject.next(this.friendRequestUserArr);
         } else if (event.data.type === 'update-friend-requests') {
             this.friendshipService.getFriendshipRequests()
                 .then((res: UserInfoSummary[]) => {
                     this.updateFriendshipRequests(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        } else if (event.data.type === 'read-share-notification') {
+            this.shareNotificationArr = this.shareNotificationArr
+                .filter((x: ShareNotification) => x.event_id !== event.data.data.eventId);
+            this.notificationCntSubject.next(
+                this.friendRequestUserArr.length + this.shareNotificationArr.length);
+            this.shareNotificationArrSubject.next(this.shareNotificationArr);
+        } else if (event.data.type === 'update-share-notifications') {
+            this.getUnreadShareNotifications()
+                .then((res: ShareNotification[]) => {
+                    this.updateShareNotifications(res);
                 })
                 .catch(err => {
                     console.log(err);

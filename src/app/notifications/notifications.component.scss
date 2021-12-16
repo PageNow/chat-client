@@ -1,7 +1,17 @@
 @import '../../stylings/variables';
 
 .main-div {
-    padding: 10px $main-lr-padding 0 $main-lr-padding;
+    padding: 10px $main-lr-padding 10px $main-lr-padding;
+}
+
+.refresh-icon {
+    font-size: 13px;
+    color: $link-color;
+}
+
+.refresh-icon:hover {
+    cursor: pointer;
+    color: $link-hover-color;
 }
 
 .profile-image {
@@ -28,12 +38,20 @@
     margin-top: -2px;
 }
 
-.refresh-span {
-    font-size: 14px;
-    color: $link-color;
+.share-notification-domain-span {
+    color: $tabs-color;
 }
 
-.refresh-span:hover {
-    color: $link-hover-color;
+.share-notification-a {
+    color: $link-color;
+    text-decoration: none;
+}
+
+.share-notification-a:hover {
     cursor: pointer;
+    color: $link-hover-color;
+}
+
+.date-span {
+    color: $tabs-color;
 }
