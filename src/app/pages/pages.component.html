@@ -44,8 +44,14 @@
         </span>
         <span *ngIf="shareNotificationMessage === '' && !isSendingShareNotification"
               style="font-size: 14px;">
-            Click <span class='notify-span' (click)="sendShareNotification()">here</span> 
-            to notify friends of your current activity
+            <span *ngIf="userLanguage !== 'ko-KR'">
+                Click <span class='notify-span' (click)="sendShareNotification()">here</span> 
+                to notify all friends of your current activity
+            </span>
+            <span *ngIf="userLanguage === 'ko-KR'">
+                친구들에게 페이지 공유 알림을 보내려면 <span class='notify-span' (click)="sendShareNotification()">여기</span>
+                를 클릭하세요.
+            </span>
         </span>
         <span *ngIf="shareNotificationMessage !== ''" style="font-size: 14px;">
             {{ shareNotificationMessage }}
@@ -62,48 +68,71 @@
         <span class='dot' style="background-color: green; border: 1px solid green;"></span>
         <span>{{ 'Friends Online' | translate }} ({{ onlineSharingPresenceArr.length + onlineHiddenPresenceArr.length }})</span>
     </div>
-    <div class='presence-div' *ngFor="let presence of onlineSharingPresenceArr.concat(onlineHiddenPresenceArr)">
-        <div class='profile-image-div'>
-            <img [src]="userInfoMap[presence.userId].profileImgUrl"
-                (click)="onClickProfile(presence.userId)"
-                class="profile-image" onerror="this.src='/assets/user.png'">
-        </div>
-        <div class='presence-page-div'>
-            <div class='presence-user-name-div'>
-                <span class='user-name-span user-name-online-span'
-                      (click)="onClickProfile(presence.userId)">
-                    {{ userInfoMap[presence.userId].first_name }}
-                    {{ userInfoMap[presence.userId].last_name }}
-                </span>
-                <span *ngIf="presence.page && presence.page.url === ''"
-                      class='activity-hidden-span ms-2'>
-                    <i>{{ 'Activity Hidden' | translate }}</i>
-                </span>
-                <span *ngIf="presence.page && presence.page.url !== '' && presence.page.domain !== ''" class='domain-span'>
-                    <strong>{{ presence.page.domain }}</strong>
-                </span>
+    <div *ngFor="let presence of onlineSharingPresenceArr.concat(onlineHiddenPresenceArr); let idx = index;"
+         class='presence-div'>
+        <div class='d-flex flex-row align-items-center text-nowrap overflow-hidden'>
+            <div class='profile-image-div'>
+                <img [src]="userInfoMap[presence.userId].profileImgUrl"
+                    (click)="onClickProfile(presence.userId)"
+                    class="profile-image" onerror="this.src='/assets/user.png'">
             </div>
-            <a *ngIf="presence.page && presence.page.url !== ''" [href]='presence.page.url'
-               target="_blank" class='page-a'>
-                {{ presence.page.title }}
-            </a>
-            <!-- If activity is hidden (page.url === '') -->
-            <div *ngIf="presence.page && presence.page.url === ''"
-                 class='d-flex flex-row'>
-                <span class='latest-activity-shared-span'>
-                    {{ 'Latest Shared' | translate }}
-                </span>
-                <a *ngIf="presence.latestPage && presence.latestPage.url !== ''"
-                    [href]='presence.latestPage.url' target="_blank" class='page-a'>
-                    <span *ngIf="presence.latestPage.domain && presence.latestPage.domain !== ''">
-                        {{ presence.latestPage.domain }} -
+            <div class='presence-page-div'>
+                <div class='presence-user-name-div'>
+                    <span class='user-name-span user-name-online-span'
+                          (click)="onClickProfile(presence.userId)">
+                        {{ userInfoMap[presence.userId].first_name }}
+                        {{ userInfoMap[presence.userId].last_name }}
                     </span>
-                    {{ presence.latestPage.title }}
+                    <span *ngIf="presence.page && presence.page.url === ''"
+                          class='activity-hidden-span ms-2'>
+                        <i>{{ 'Activity Hidden' | translate }}</i>
+                    </span>
+                    <span *ngIf="presence.page && presence.page.url !== '' && presence.page.domain !== ''" class='domain-span'>
+                        <strong>{{ presence.page.domain }}</strong>
+                    </span>
+                </div>
+                <a *ngIf="presence.page && presence.page.url !== ''" [href]='presence.page.url'
+                   target="_blank" class='page-a'>
+                    {{ presence.page.title }}
                 </a>
-                <span *ngIf="!(presence.latestPage && presence.latestPage.url !== '')"
-                      class="ms-1" style="font-size: 12px;">
-                    {{ 'None' | translate }}
-                </span>
+                <!-- If activity is hidden (page.url === '') -->
+                <div *ngIf="presence.page && presence.page.url === ''"
+                     class='d-flex flex-row'>
+                    <span class='latest-activity-shared-span'>
+                        {{ 'Latest Shared' | translate }}
+                    </span>
+                    <a *ngIf="presence.latestPage && presence.latestPage.url !== ''"
+                        [href]='presence.latestPage.url' target="_blank" class='page-a'>
+                        <span *ngIf="presence.latestPage.domain && presence.latestPage.domain !== ''">
+                            {{ presence.latestPage.domain }} -
+                        </span>
+                        {{ presence.latestPage.title }}
+                    </a>
+                    <span *ngIf="!(presence.latestPage && presence.latestPage.url !== '')"
+                          class="ms-1" style="font-size: 12px;">
+                        {{ 'None' | translate }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='d-flex flex-row ms-2'>
+            <button class='btn btn-outline-secondary btn-sm me-1' style='font-size: 11px; padding: 3px 4px 3px 4px;'
+                    (click)="sendMessage(presence.userId)">
+                <fa-icon [icon]="faCommentAlt"></fa-icon>
+            </button>
+            <button *ngIf="!sendingShareNotificationObj[presence.userId] && userPresence && userPresence.page && userPresence.page.url !== ''"
+                    class='btn btn-outline-secondary btn-sm'
+                    style='font-size: 11px; padding: 3px 4px 3px 4px;'
+                    (click)="sendPersonalShareNotification(presence.userId)"
+                    [disabled]="sentShareNotificationObj[presence.userId]">
+                <fa-icon *ngIf="!sentShareNotificationObj[presence.userId]"
+                         [icon]="faBullhorn"></fa-icon>
+                <fa-icon *ngIf="sentShareNotificationObj[presence.userId]"
+                         [icon]="faCheck"></fa-icon>
+            </button>
+            <div *ngIf="sendingShareNotificationObj[presence.userId]"
+                class="spinner-border spinner-border-sm text-primary text-center me-1" role="status">
+                <span class="sr-only">Loading...</span>
             </div>
         </div>
     </div>
@@ -114,21 +143,43 @@
         <span class='presence-subheader-offline-span'>{{ 'Friends Offline' | translate }} ({{ offlinePresenceArr.length }})</span>
     </div>
     <div class='presence-div' *ngFor="let presence of offlinePresenceArr">
-        <div class='profile-image-div'>
-            <img [src]="userInfoMap[presence.userId].profileImgUrl"
-                (click)="onClickProfile(presence.userId)"
-                class="profile-image profile-image-offline"
-                onerror="this.src='/assets/user.png'">
+        <div class='d-flex flex-row align-items-center text-nowrap overflow-hidden'>
+            <div class='profile-image-div'>
+                <img [src]="userInfoMap[presence.userId].profileImgUrl"
+                    (click)="onClickProfile(presence.userId)"
+                    class="profile-image profile-image-offline"
+                    onerror="this.src='/assets/user.png'">
+            </div>
+            <div class='presence-page-div'>
+                <span class='user-name-span user-name-offline-span'
+                      (click)="onClickProfile(presence.userId)">
+                    {{ userInfoMap[presence.userId].first_name }}
+                    {{ userInfoMap[presence.userId].last_name }}
+                </span>
+                <span style="font-size: 12px;">
+                    {{ 'Offline' | translate }}
+                </span>
+            </div>
         </div>
-        <div class='presence-page-div'>
-            <span class='user-name-span user-name-offline-span'
-                  (click)="onClickProfile(presence.userId)">
-                {{ userInfoMap[presence.userId].first_name }}
-                {{ userInfoMap[presence.userId].last_name }}
-            </span>
-            <span style="font-size: 12px;">
-                {{ 'Offline' | translate }}
-            </span>
+        <div class='d-flex flex-row ms-2'>
+            <button class='btn btn-outline-secondary btn-sm me-1' style='font-size: 11px; padding: 3px 4px 3px 4px;'
+                    (click)="sendMessage(presence.userId)">
+                <fa-icon [icon]="faCommentAlt"></fa-icon>
+            </button>
+            <button *ngIf="!sendingShareNotificationObj[presence.userId] && userPresence && userPresence.page && userPresence.page.url !== ''"
+                    class='btn btn-outline-secondary btn-sm'
+                    style='font-size: 11px; padding: 3px 4px 3px 4px;'
+                    (click)="sendPersonalShareNotification(presence.userId)"
+                    [disabled]="sentShareNotificationObj[presence.userId]">
+                <fa-icon *ngIf="!sentShareNotificationObj[presence.userId]"
+                         [icon]="faBullhorn"></fa-icon>
+                <fa-icon *ngIf="sentShareNotificationObj[presence.userId]"
+                         [icon]="faCheck"></fa-icon>
+            </button>
+            <div *ngIf="sendingShareNotificationObj[presence.userId]"
+                class="spinner-border spinner-border-sm text-primary text-center me-1" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
     </div>
 </div>

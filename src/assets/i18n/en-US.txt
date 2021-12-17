@@ -3,7 +3,7 @@
     "Friends Offline": "Friends Offline",
     "Offline": "Offline",
     "Activity Hidden": "Activity Hidden",
-    "Latest Shared": "Latest Shared",
+    "Latest Shared": "Latest",
     "None": "None",
     "Now Sharing": "Now Sharing",
     "Search friends to share your activity with!": "Search friends to share your activity with!",

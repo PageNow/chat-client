@@ -82,6 +82,12 @@ export class NotificationsService implements OnDestroy {
         ).toPromise();
     }
 
+    public sendPersonalShareNotification(userId: string, url: string, title: string): Promise<any> {
+        return this.http.post(
+            `${USER_API_URL}/notifications/share/personal`, { sent_to: userId, url, title }
+        ).toPromise();
+    }
+
     public getUnreadShareNotifications(): Promise<any> {
         return this.http.get(
             `${USER_API_URL}/notifications/share?is_read=false`

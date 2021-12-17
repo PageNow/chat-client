@@ -16,4 +16,8 @@ export interface ShareNotificationSent {
     not_seen_count: number;
     url: string;
     title: string;
+    sent_to: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    profile_image_extension: string | null;
 }

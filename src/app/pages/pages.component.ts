@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { faChevronCircleRight, faChevronDown, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import {
+    faChevronCircleRight, faChevronDown, faBullhorn, faCheck, faCommentAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
 
 import { EXTENSION_ID } from '../shared/config';
@@ -12,6 +15,10 @@ import { Presence } from './pages.model';
 import { PagesService } from './pages.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LanguageService } from '../shared/language.service';
+import { ChatService } from '../chat/chat.service';
+import { getFullName } from '../shared/user-utils';
+
+const SPINNER_SEND_MESSAGE_MSG = 'Loading conversation...';
 
 @Component({
     selector: 'app-pages',
@@ -37,11 +44,15 @@ export class PagesComponent implements OnInit, OnDestroy {
     onlineHiddenUserIdSet: Set<string> = new Set();
     userPresence: Presence;
     isPresenceLoaded = false;
+    sendingShareNotificationObj: {[key: string]: boolean} = {};
+    sentShareNotificationObj: {[key: string]: boolean} = {};
 
     // fontawesome icon
     faChevronCircleRight = faChevronCircleRight;
     faChevronDown = faChevronDown;
     faBullhorn = faBullhorn;
+    faCheck = faCheck;
+    faCommentAlt = faCommentAlt;
 
     // variables for public profile component
     showProfile = false;
@@ -63,11 +74,12 @@ export class PagesComponent implements OnInit, OnDestroy {
     userLanguageSubscription: Subscription;
 
     constructor(
-        // private http: HttpClient,
+        private router: Router,
         private spinner: NgxSpinnerService,
         private translateService: TranslateService,
         private userService: UserService,
         private pagesService: PagesService,
+        private chatService: ChatService,
         private notificationsService: NotificationsService,
         private languageService: LanguageService
     ) { }
@@ -108,6 +120,11 @@ export class PagesComponent implements OnInit, OnDestroy {
                 this.onlineHiddenPresenceArr = res.presenceArr.filter(
                     (x: Presence) => x.page && (!x.page.url || x.page.url === ''));
                 this.onlineHiddenUserIdSet = new Set(this.onlineHiddenPresenceArr.map((x: Presence) => x.userId));
+                res.presenceArr.forEach((x: Presence) => {
+                    this.sendingShareNotificationObj[x.userId] = false;
+                    this.sentShareNotificationObj[x.userId] = false;
+                });
+
                 this.userPresence = res.userPresence;
                 this.userInfoMap = res.userInfoMap;
                 this.userId = res.userPresence.userId;
@@ -341,21 +358,69 @@ export class PagesComponent implements OnInit, OnDestroy {
         this.isToolbarOpen = !this.isToolbarOpen;
     }
 
-    sendShareNotification(): void {
-        this.isSendingShareNotification = true;
+    sendShareNotification(): void {        
         if (!this.userPresence.page) {
-            this.isSendingShareNotification = false;
             return;
         }
+        this.isSendingShareNotification = true;
         this.notificationsService.sendShareNotification(
             this.userPresence.page.url, this.userPresence.page.title
         ).then(() => {
             this.isSendingShareNotification = false;
-            this.shareNotificationMessage = 'Your friends are notified of your activity! 🎉';
+            if (this.userLanguage === 'ko-KR') {
+                this.shareNotificationMessage = '친구들에게 알림이 전송되었습니다! 🎉';
+            } else {
+                this.shareNotificationMessage = 'All your friends are notified of your activity! 🎉';
+            }
         }).catch(err => {
             console.log(err);
             this.isSendingShareNotification = false;
             this.shareNotificationMessage = 'Sorry, something went wrong.';
         });
+    }
+
+    sendPersonalShareNotification(userId: string): void {
+        if (!this.userPresence.page) {
+            return;
+        }
+        this.sendingShareNotificationObj[userId] = true;
+        this.notificationsService.sendPersonalShareNotification(
+            userId, this.userPresence.page.url, this.userPresence.page.title
+        ).then(() => {
+            this.sentShareNotificationObj[userId] = true;
+            this.sendingShareNotificationObj[userId] = false;
+        }).catch(err => {
+            console.log(err);
+            this.sendingShareNotificationObj[userId] = false;
+        })
+    }
+
+    sendMessage(userId: string): void {
+        if (!userId) { return; }
+        this.spinnerMsg = SPINNER_SEND_MESSAGE_MSG;
+        this.spinner.show();
+        this.chatService.getDirectConversation(userId)
+            .then((res: any) => {
+                if (res && res.conversationId) {
+                    return Promise.resolve({ conversationId: res.conversationId });
+                } else {
+                    return this.chatService.createConversation(
+                        [userId], false, '');
+                }
+            })
+            .then(res => {
+                this.spinnerMsg = '';
+                this.spinner.hide();
+                this.router.navigate([`/chat/conversation/${res.conversationId}`], { queryParams: {
+                    isGroup: 'false', title: '', recipientId: userId,
+                    recipientName: getFullName(this.userInfoMap[userId].first_name, this.userInfoMap[userId].last_name),
+                    recipientImgUrl: this.userInfoMap[userId]
+                }});
+            })
+            .catch(err => {
+                console.log(err);
+                this.spinnerMsg = '';
+                this.spinner.hide();
+            });
     }
 }

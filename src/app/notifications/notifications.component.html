@@ -54,8 +54,7 @@
         </div>
     </div>
 
-    <!-- TODO: translate -->
-    <div class='d-flex flex-row align-items-end mb-1'>
+    <div class='d-flex flex-row align-items-end mt-3 mb-1'>
         <span style="font-size: 15px;">
             <strong>{{ 'Share Notifications Received' | translate }}</strong> 
             ({{ shareNotificationArr.length }})
@@ -97,7 +96,7 @@
             </div>
         </div>
         <div class='ms-2'>
-            <button class='btn btn-outline-secondary btn-sm' style="font-size: 13px;"
+            <button class='btn btn-outline-secondary btn-sm' style="font-size: 12px;"
                     (click)="readShareNotification(shareNotification.event_id)">
                 <fa-icon [icon]="faEnvelopeOpen" class='me-1'></fa-icon>
                 <span>{{ 'Read' | translate }}</span>
@@ -106,7 +105,7 @@
     </div>
 
     <!-- Shared notifications sent -->
-    <div class='d-flex flex-row align-items-end mb-1'>
+    <div class='d-flex flex-row align-items-end mt-3 mb-1'>
         <span style='font-size: 15px;'>
             <strong>{{ 'Shared Notifications Recently Sent' | translate }}</strong>
         </span>
@@ -122,20 +121,51 @@
         {{ 'You have not sent any share notification yet.' | translate }}
     </div>
     <div *ngFor='let shareNotification of shareNotificationSentArr'
-         class='d-flex flex-column mb-1' style="font-size: 14px;">
+         class='d-flex flex-column mb-2' style="font-size: 14px;">
         <div class='text-nowrap overflow-hidden'>
-            {{ 'You shared' | translate }} 
-            <a [href]="shareNotification.url" target="_blank" class='share-notification-a ms-1'>
+            <a [href]="shareNotification.url" target="_blank" class='share-notification-a'>
                 {{ extractDomain(shareNotification.url) }} - {{ shareNotification.title }}
             </a>
         </div>
         <div class='d-flex flex-row justify-content-between'>
-            <span class='date-span'>{{ shareNotification.sent_at | dateFormat }}</span>
+            <span *ngIf="userLanguage !== 'ko-KR'">
+                Shared with 
+                <span *ngIf="shareNotification.sent_to">
+                    <strong>{{ shareNotification.first_name }} {{ shareNotification.last_name }}</strong>
+                </span>
+                <span *ngIf="!shareNotification.sent_to">
+                    friends
+                </span>
+                on <i>{{ shareNotification.sent_at | dateFormat: true }}</i>
+            </span>
+            <span *ngIf="userLanguage === 'ko-KR'">
+                <span *ngIf="shareNotification.sent_to">
+                    <strong>{{ shareNotification.first_name }} {{ shareNotification.last_name }}</strong>에게
+                </span>
+                <span *ngIf="!shareNotification.sent_to">
+                    친구들에게
+                </span>
+                <i>{{ shareNotification.sent_at | dateFormat: true }}</i>에 공유 알림 전송
+            </span>
             <span *ngIf='shareNotification.not_seen_count > 0' class='date-span'>
-                {{ shareNotification.not_seen_count }} {{ 'Unread' | translate }}
+                <span *ngIf="shareNotification.sent_to">
+                    <span *ngIf="userLanguage !== 'ko-KR'">Unread</span>
+                    <span *ngIf="userLanguage === 'ko-KR'">안 읽음</span>
+                </span>
+                <span *ngIf="!shareNotification.sent_to">
+                    <span *ngIf="userLanguage !== 'ko-KR'">{{ shareNotification.not_seen_count }} Unread</span>
+                    <span *ngIf="userLanguage === 'ko-KR'">{{ shareNotification.not_seen_count }}명 안 읽음</span>
+                </span>
             </span>
             <span *ngIf='shareNotification.not_seen_count === 0' class='date-span'>
-                {{ 'All Read' | translate }}
+                <span *ngIf="shareNotification.sent_to">
+                    <span *ngIf="userLanguage !== 'ko-KR'">Read</span>
+                    <span *ngIf="userLanguage === 'ko-KR'">읽음</span>
+                </span>
+                <span *ngIf="!shareNotification.sent_to">
+                    <span *ngIf="userLanguage !== 'ko-KR'">All Read</span>
+                    <span *ngIf="userLanguage === 'ko-KR'">모두 읽음</span>
+                </span>
             </span>
         </div>
     </div>

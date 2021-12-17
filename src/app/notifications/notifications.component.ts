@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { faRedo, faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons';
+import { TranslateService } from '@ngx-translate/core';
 
 import { FriendshipService } from '../friendship/friendship.service';
 import { USER_DEFAULT_IMG_ASSET } from '../shared/constants';
@@ -10,6 +11,7 @@ import { UserService } from '../user/user.service';
 import { ShareNotification, ShareNotificationSent } from './notifications.model';
 import { NotificationsService } from './notifications.service';
 import { extractDomainFromUrl } from '../shared/url-utils';
+import { LanguageService } from '../shared/language.service';
 
 const SPINNER_FRIEND_ACCEPT_MSG = 'Accepting friend request...';
 const SPINNER_FRIEND_DELETE_MSG = 'Deleting friend request...';
@@ -38,6 +40,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     areShareNotificationsSentLoaded = false;
 
     spinnerMsg = '';
+    userLanguage: string | null | undefined;
+    userLanguageSubscription: Subscription;
 
     // variables for public profile component
     showProfile = false;
@@ -54,9 +58,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
     constructor(
         private spinner: NgxSpinnerService,
+        private translateService: TranslateService,
         private userService: UserService,
         private friendshipService: FriendshipService,
-        private notificationsService: NotificationsService
+        private notificationsService: NotificationsService,
+        private languageService: LanguageService
     ) { }
 
     ngOnInit(): void {
@@ -90,10 +96,17 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             .catch(err => {
                 console.log(err);
             });
+        this.userLanguage = this.translateService.currentLang;
+        this.userLanguageSubscription = this.languageService.userLanguageSubject.subscribe(
+            (userLanguage: string) => {
+                this.userLanguage = userLanguage;
+            }
+        );
     }
 
     ngOnDestroy(): void {
         this.friendRequestUserArrSubscription?.unsubscribe();
+        this.userLanguageSubscription?.unsubscribe();
     }
 
     // Update the map of user id to profile image url by calling the backend
